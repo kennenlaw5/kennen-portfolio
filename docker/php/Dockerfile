@@ -95,6 +95,7 @@ RUN chown -R www-data:www-data /var/www
 EXPOSE 9000
 
 COPY docker/php/fpm.ini /usr/local/etc/php/conf.d/fpm.ini
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 
 # Use entrypoint script
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/
