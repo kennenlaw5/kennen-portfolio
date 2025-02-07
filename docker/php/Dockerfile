@@ -94,8 +94,10 @@ RUN chown -R www-data:www-data /var/www
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
+COPY docker/php/fpm.ini /usr/local/etc/php/conf.d/fpm.ini
+
 # Use entrypoint script
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-ENTRYPOINT ["docker-entrypoint.sh"] # And here.
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["php-fpm"]
