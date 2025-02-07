@@ -1,30 +1,24 @@
 #!/bin/sh
 set -e
 
-# Install procps (provides the 'ps' command) - TEMPORARY, for debugging
-apt-get update -y && apt-get install -y --no-install-recommends procps
+# Wait for the database to be available (Robustness)
+echo "Waiting for database connection..."
 
-# --- DEBUGGING: Output environment variables and working directory ---
-echo "=== Environment Variables ==="
-printenv
-echo "=== Current Working Directory ==="
-pwd
-echo "=== Files in /var/www ==="
-ls -la /var/www
-echo "=== Files in /usr/local/etc/php/conf.d ==="  # Check for custom .ini files
-ls -la /usr/local/etc/php/conf.d
-echo "=== PHP-FPM Version ==="
-php-fpm -v
-echo "=== PHP Version ==="
-php -v
+while ! nc -z "$DB_HOST" "$DB_PORT"; do
+  sleep 1
+done
 
-echo "=== Listing processes BEFORE artisan commands ==="
-ps aux
+echo "Database connection established."
 
-# Run database migrations
-php artisan migrate --force
+# Check if migrations need to be run
+if php artisan migrate:status | grep -q 'No migrations'; then
+  echo "No migrations to run."
+else
+  echo "Running migrations..."
+  php artisan migrate --force --database=pgsql
+fi
 
-# Clear and cache configuration
+# Clear and cache configuration (AFTER migrations)
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
@@ -32,8 +26,5 @@ php artisan view:cache
 echo "=== Listing processes AFTER artisan commands ==="
 ps aux
 
-echo "=== Checking PHP-FPM config ==="
-php-fpm -tt
-
-# Start PHP-FPM --  We will NOT use exec "$@" here.  We'll start it explicitly.
-php-fpm
+# Start PHP-FPM
+exec "$@"
