@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[286],{286:(e,a,t)=>{t.r(a),t.d(a,{default:()=>r});var n=t(540);const r=()=>n.createElement("div",{className:"p-8"},n.createElement("h1",{className:"text-3xl font-bold"},"Experience"),n.createElement("p",{className:"mt-4"},"I have held multiple roles from Junior Software Engineer to Senior Software Engineer, spearheading projects and technical leadership initiatives."))}}]);
+//# sourceMappingURL=286.js.map

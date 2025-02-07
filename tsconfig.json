@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "lib": ["dom", "ES2020"],
+    "module": "esnext",
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "resources",
+    "paths": {
+      "Sass/*": ["sass/*"],
+      "JS/*": ["js/*"],
+      "Components/*": ["js/components/*"],
+      "Constants/*": ["js/constants/*"]
+    },
+    "moduleResolution": "node",
+    "types": ["react", "react-dom", "react-router-dom"],
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
+  },
+  "include": ["resources/js/**/*"]
+}
+  

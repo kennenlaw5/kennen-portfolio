@@ -1,0 +1,87 @@
+/*!***********************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[1].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[1].use[2]!./node_modules/sass-loader/dist/cjs.js!./resources/sass/ContactForm.module.scss ***!
+  \***********************************************************************************************************************************************************************************************************************************/
+.ContactForm-module__contactForm__qLWkH {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2rem
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__formGroup__WEJQE {
+    margin-bottom: 1rem
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__formGroup__WEJQE:last-of-type {
+    margin-bottom: 0px
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__label__ZCGDP {
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 700;
+    --tw-text-opacity: 1;
+    color: rgb(55 65 81 / var(--tw-text-opacity))
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__input__hYdy3 {
+    width: 100%;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    border-radius: 0.25rem;
+    border-width: 1px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    line-height: 1.25;
+    --tw-text-opacity: 1;
+    color: rgb(55 65 81 / var(--tw-text-opacity));
+    --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__input__hYdy3:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
+    --tw-ring-opacity: 0.5
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__textarea__izlRq {
+    height: 8rem
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__buttonContainer__xLhoD {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__button__FrTN3 {
+    border-radius: 0.25rem;
+    --tw-bg-opacity: 1;
+    background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-weight: 700;
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity))
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__button__FrTN3:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(29 78 216 / var(--tw-bg-opacity))
+}
+.ContactForm-module__contactForm__qLWkH .ContactForm-module__button__FrTN3:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+    --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
+    --tw-ring-opacity: 0.5
+}
+
+/*# sourceMappingURL=resources_js_pages_Contact_tsx.css.map*/
