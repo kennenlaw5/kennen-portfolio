@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+sleep 5
+
 # Start Nginx in the background and keep it there
 nginx -g 'daemon off;' &
 nginx_pid=$!
