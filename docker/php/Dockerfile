@@ -94,7 +94,7 @@ RUN chown -R www-data:www-data /var/www
 EXPOSE 9000
 
 # Use entrypoint script
-COPY docker/php/entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+COPY docker/php/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"] # And here.
 CMD ["php-fpm"]
