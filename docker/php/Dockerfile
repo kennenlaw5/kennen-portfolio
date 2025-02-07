@@ -1,9 +1,9 @@
-FROM php:8.4-fpm
+FROM php:8.4-fpm AS development
 
 WORKDIR /var/www
 
 RUN echo "Docerfile is running"
-# Install system dependenciesRUN apt-get -y -qq update
+# Install system dependencies
 RUN apt-get -y -qq update
 RUN apt-get upgrade -y
 RUN apt-get install -y --no-install-recommends \
@@ -11,6 +11,7 @@ RUN apt-get install -y --no-install-recommends \
     zip \
     unzip \
     curl \
+    git \
     gnupg2
 
 RUN pecl channel-update pecl.php.net
@@ -46,3 +47,54 @@ RUN npm -v
 
 # Expose port 9000
 EXPOSE 9000
+
+#
+# --- Production Stage ---
+#
+FROM php:8.4-fpm AS production
+
+WORKDIR /var/www
+
+# Install system dependencies (minimal set, including git)
+RUN apt-get -y -qq update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+        libzip-dev \
+        zip \
+        unzip \
+        curl \
+        git \
+        gnupg2
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql zip
+
+# Get Composer (using multi-stage build)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy necessary files
+COPY . .
+
+# Install PHP dependencies (production only)
+RUN composer install --optimize-autoloader --no-dev
+
+# Install Node.js, npm, and Yarn
+RUN curl -sL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm \
+    && npm install -g yarn
+
+# Install frontend dependencies and build assets using Yarn
+RUN yarn install && yarn prod
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www
+
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
+
+# Use entrypoint script
+COPY docker/php/entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["php-fpm"]
