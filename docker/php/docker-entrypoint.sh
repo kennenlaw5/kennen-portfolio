@@ -26,10 +26,6 @@ php artisan view:cache
 echo "=== Listing processes AFTER artisan commands ==="
 ps aux
 
-
-# Use envsubst to create the Nginx configuration file
-envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
-
 # Start Nginx in the background and keep it there
 nginx -g 'daemon off;' &
 nginx_pid=$!

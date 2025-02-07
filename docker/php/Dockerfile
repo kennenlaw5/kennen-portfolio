@@ -97,7 +97,7 @@ RUN chown -R www-data:www-data /var/www
 
 COPY docker/php/fpm.ini /usr/local/etc/php/conf.d/fpm.ini
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
-COPY docker/nginx/app.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/conf.d/app.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
