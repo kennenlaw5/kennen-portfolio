@@ -64,10 +64,11 @@ RUN apt-get -y -qq update \
         unzip \
         curl \
         git \
-        gnupg2
+        gnupg2 \
+        libpq-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql zip
+RUN docker-php-ext-install pdo_mysql zip pdo_pgsql
 
 # Get Composer (using multi-stage build)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
