@@ -15,7 +15,7 @@ if php artisan migrate:status | grep -q 'No migrations'; then
   echo "No migrations to run."
 else
   echo "Running migrations..."
-  php artisan migrate --force --database=pgsql
+  php artisan migrate --force
 fi
 
 # Clear and cache configuration
@@ -26,11 +26,16 @@ php artisan view:cache
 echo "=== Listing processes AFTER artisan commands ==="
 ps aux
 
-# Start PHP-FPM
-exec "$@" &
 
-# Keep the script alive. Very important
-while true; do
-    sleep 60 &
-	wait $!
-done
+# Use envsubst to create the Nginx configuration file
+envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+
+# Start Nginx in the background and keep it there
+nginx -g 'daemon off;' &
+nginx_pid=$!
+
+# Start PHP-FPM (and pass control to it)
+exec "$@"
+
+# This part should ideally never be reached, but it's a safeguard
+wait "$nginx_pid"

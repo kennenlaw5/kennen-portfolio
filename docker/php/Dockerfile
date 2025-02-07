@@ -48,7 +48,6 @@ RUN npm -v
 # Expose port 9000
 EXPOSE 9000
 
-#
 # --- Production Stage ---
 #
 FROM php:8.4-fpm AS production
@@ -69,7 +68,8 @@ RUN apt-get -y -qq update \
         gnupg2 \
         libpq-dev \
         procps \
-        netcat-traditional
+        netcat-traditional \
+        nginx
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql zip pdo_pgsql
@@ -95,11 +95,13 @@ RUN yarn install && yarn prod
 # Set permissions
 RUN chown -R www-data:www-data /var/www
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
-
 COPY docker/php/fpm.ini /usr/local/etc/php/conf.d/fpm.ini
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+COPY docker/nginx/app.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 9000 for PHP-FPM
+EXPOSE 9000
+EXPOSE 80
 
 # Use entrypoint script
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/
