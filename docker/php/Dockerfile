@@ -68,8 +68,8 @@ RUN apt-get -y -qq update \
         gnupg2 \
         libpq-dev \
         procps \
-        netcat-traditional \
-        nginx
+        nginx \
+        strace
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql zip pdo_pgsql
