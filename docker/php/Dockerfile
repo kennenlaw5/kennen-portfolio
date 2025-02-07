@@ -102,6 +102,8 @@ COPY docker/nginx/conf.d/app.conf /etc/nginx/conf.d/default.conf
 EXPOSE 9000
 EXPOSE 80
 
+RUN touch /var/log/laravel_startup.log && chown www-data:www-data /var/log/laravel_startup.log
+
 # Use entrypoint script
 COPY docker/php/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
