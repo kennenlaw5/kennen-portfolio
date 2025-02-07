@@ -55,6 +55,8 @@ FROM php:8.4-fpm AS production
 
 WORKDIR /var/www
 
+RUN mkdir -p /usr/share/man/man1mkdir -p /usr/share/man/man1
+
 # Install system dependencies (minimal set, including git)
 RUN apt-get -y -qq update \
     && apt-get upgrade -y \
