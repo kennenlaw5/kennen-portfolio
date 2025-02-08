@@ -3,12 +3,7 @@ module.exports = {
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     './storage/framework/views/*.php',
     './resources/**/*.blade.php',
-    './resources/**/*.js',
-    './resources/**/*.vue',
-    './resources/sass/**/*.scss',
-    './resources/sass/*.scss',
-    './resources/**/*.tsx',
-    './resources/**/*.ts',
+    './resources/**/*.{js,jsx,ts,tsx,vue,css,scss}',
   ],
   theme: {
     extend: {

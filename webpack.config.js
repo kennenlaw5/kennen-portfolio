@@ -5,6 +5,7 @@ module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: {
     app: path.resolve(__dirname, 'resources/js/App.tsx'),
+    appStyles: path.resolve(__dirname, 'resources/sass/app.scss'),
   },
   output: {
     filename: 'js/[name].js',
@@ -46,10 +47,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  require('tailwindcss'),
-                  require('autoprefixer'),
-                ],
+                config: true,
               },
             },
           },
@@ -66,10 +64,7 @@ module.exports = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  require('tailwindcss'),
-                  require('autoprefixer'),
-                ],
+                config: true,
               },
             },
           },
