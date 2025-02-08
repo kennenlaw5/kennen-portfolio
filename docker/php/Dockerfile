@@ -67,8 +67,8 @@ RUN apt-get -y -qq update \
         git \
         gnupg2 \
         libpq-dev \
-        procps
-        # nginx
+        procps \
+        nginx
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql zip pdo_pgsql
@@ -93,6 +93,14 @@ RUN yarn install && yarn prod
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www
+RUN chmod -R 775 /var/www/storage
+
+RUN touch /var/log/php_errors.log && \
+    chown www-data:www-data /var/log/php_errors.log && \
+    touch /var/log/php-fpm_errors.log && \
+    chown www-data:www-data /var/log/php-fpm_errors.log && \
+    touch /var/log/laravel_startup.log && \
+    chown www-data:www-data /var/log/laravel_startup.log
 
 COPY docker/php/fpm.ini /usr/local/etc/php/conf.d/fpm.ini
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini

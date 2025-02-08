@@ -2,8 +2,8 @@
 set -e
 
 # Start Nginx in the background and keep it there
-# nginx -g 'daemon off;' &
-# nginx_pid=$!
+nginx -g 'daemon off;' &
+nginx_pid=$!
 
 # Start PHP-FPM (and pass control to it)
 exec "$@"

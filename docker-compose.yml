@@ -13,6 +13,7 @@ services:
     networks:
       - nginx-proxy
       - default
+    hostname: kennen.local
     depends_on:
       - php
 
