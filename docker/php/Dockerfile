@@ -70,6 +70,8 @@ RUN apt-get -y -qq update \
         procps \
         nginx
 
+RUN rm -f /etc/nginx/sites-enabled/default
+
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql zip pdo_pgsql
 
