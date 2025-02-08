@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
-import TicTacToe from 'Components/TicTacToe/TicTacToe'
 import {FaArrowLeft} from 'react-icons/fa'
+import TicTacToe from 'Components/TicTacToe/TicTacToe'
+import Section from 'Components/Section'
 
 // @todo: Refactor this file
 // Placeholder Go component
@@ -26,7 +27,7 @@ const Games: React.FC = () => {
   // If a game is selected, render that game with a header that includes a back arrow.
   if (selectedGame !== 'none') {
     return (
-      <section className="p-8">
+      <Section>
         <div className="flex items-center mb-4">
           <button
             onClick={handleBack}
@@ -41,13 +42,13 @@ const Games: React.FC = () => {
         <div>
           {selectedGame === 'ticTacToe' ? <TicTacToe /> : <GoGame />}
         </div>
-      </section>
+      </Section>
     )
   }
 
   // Otherwise, render the game selection buttons.
   return (
-    <section className="p-8">
+    <Section>
       <h1 className="text-3xl font-bold mb-6">Games</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Tic Tac Toe Option */}
@@ -76,7 +77,7 @@ const Games: React.FC = () => {
           </div>
         </button>
       </div>
-    </section>
+    </Section>
   )
 }
 

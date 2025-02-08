@@ -1,10 +1,10 @@
 import React from 'react'
 import LetterSelect from 'Components/TicTacToe/LetterSelect'
-import Board from 'Components/TicTacToe/Board'
 import {TicTacToeProvider} from 'Components/TicTacToe/context/TicTacToeContext'
-import ResetButton from 'Components/TicTacToe/ResetButton'
-import ModeSelect from 'Components/TicTacToe/ModeSelect'
+import Board from 'Components/TicTacToe/Board'
 import BoardHelper from 'Components/TicTacToe/BoardHelper'
+import ModeSelect from 'Components/TicTacToe/ModeSelect'
+import ResetButton from 'Components/TicTacToe/ResetButton'
 
 const TicTacToe: React.FC = () => (
   <TicTacToeProvider>

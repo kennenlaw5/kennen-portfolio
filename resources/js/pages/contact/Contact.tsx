@@ -4,7 +4,7 @@ import ContactDetails from 'JS/pages/contact/sections/ContactDetails'
 
 const Contact: React.FC = () => {
   return (
-    <Section className='mx-4' header="Contact Me" subheader="Get in touch with me!">
+    <Section header="Contact Me" subheader="Get in touch with me!">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ContactDetails />
         <div className="mt-8">

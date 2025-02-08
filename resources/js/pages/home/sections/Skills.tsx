@@ -21,7 +21,7 @@ const Skills: React.FC = () => {
             header="Skills & Technologies"
             subheader={renderSubHeader()}
         >
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2 md:gap-4">
                 {Object.values(SKILLS).map(({name, type}) => {
                     const shouldShow = selectedSkillType === SKILL_TYPES.ALL || selectedSkillType === type
 
