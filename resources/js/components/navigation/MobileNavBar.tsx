@@ -1,6 +1,6 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
-import {ROUTES} from 'Constants/routes'
+import {HOME_ROUTE, ROUTES} from 'Constants/routes'
 import classNames from 'classnames'
 
 type TMobileNavBarProps = {
@@ -16,15 +16,23 @@ const MobileNavBar: React.FC<TMobileNavBarProps> = ({isOpen, closeMenu}) => (
         })}
     >
         <ul className="flex flex-col">
-            {Object.entries(ROUTES).map(([routeName, route]) => (
-                <li className="border-t border-blue-600">
+            <li key={HOME_ROUTE.name} className="border-t border-blue-600">
+                <Link
+                    to={HOME_ROUTE.path}
+                    onClick={closeMenu}
+                    className="block text-center py-3 transition hover:bg-blue-600"
+                >
+                    {HOME_ROUTE.name}
+                </Link>
+            </li>
+            {Object.values(ROUTES).map(({name: routeName, path}) => (
+                <li key={routeName} className="border-t border-blue-600">
                     <Link
-                        key={routeName}
-                        to={route}
+                        to={path}
                         onClick={closeMenu}
                         className="block text-center py-3 transition hover:bg-blue-600"
                     >
-                        {routeName[0] + routeName.slice(1).toLowerCase()}
+                        {routeName}
                     </Link>
                 </li>
             ))}

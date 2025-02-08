@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
-import {ROUTES} from 'Constants/routes'
+import {HOME_ROUTE} from 'Constants/routes'
 import DesktopNavBar from 'Components/navigation/DesktopNavBar'
 import MobileNavBar from 'Components/navigation/MobileNavBar'
 import HamburgerButton from 'Components/navigation/HamburgerButton'
@@ -25,7 +25,7 @@ const Header = () => {
     <header className="relative bg-blue-600 text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="text-2xl font-bold">
-          <Link to={ROUTES.HOME}>Kennen Lawrence</Link>
+          <Link to={HOME_ROUTE.path} onClick={closeMenu}>Kennen Lawrence</Link>
         </div>
         <DesktopNavBar />
         <HamburgerButton {...{isOpen, toggleMenu}} />

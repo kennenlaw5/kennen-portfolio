@@ -4,6 +4,8 @@ set -e
 # Clear Laravel's configuration cache
 php artisan config:clear
 php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
 
 # Start Nginx in the background and keep it there
 nginx -g 'daemon off;' &
