@@ -11,7 +11,7 @@ const certificatesData = [
 const Certificates: React.FC = () => {
   return (
     <Section header="Certificates">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             <Card header="CompTIA" subheader="- Curiosity-Driven IT Exploration">
                 <div className="grid grid-cols-3 items-center justify-center">
                     {certificatesData.map((certificate, index) => (

@@ -1,23 +1,38 @@
-import { ROUTES } from 'Constants/routes'
-import React from 'react'
-import {Link, Route} from 'react-router-dom'
+import React, {useState, useEffect} from 'react'
+import {Link} from 'react-router-dom'
+import {ROUTES} from 'Constants/routes'
+import DesktopNavBar from 'Components/navigation/DesktopNavBar'
+import MobileNavBar from 'Components/navigation/MobileNavBar'
+import HamburgerButton from 'Components/navigation/HamburgerButton'
 
-const Header = () => (
-    <header className="bg-blue-600 text-white p-4">
-        <div className="container mx-auto flex justify-between items-center px-4">
-        <div className="text-2xl font-bold">Kennen Lawrence</div>
-        <nav>
-            <ul className="flex space-x-4">
-                <li><Link to={ROUTES.HOME} className="hover:underline">Home</Link></li>
-                <li><Link to={ROUTES.PROJECTS} className="hover:underline">Projects</Link></li>
-                <li><Link to={`/${ROUTES.GAMES}`} className="hover:underline">Games</Link></li>
-                <li><Link to={ROUTES.EXPERIENCE} className="hover:underline">Experience</Link></li>
-                <li><Link to={ROUTES.SKILLS} className="hover:underline">Skills</Link></li>
-                <li><Link to={ROUTES.CONTACT} className="hover:underline">Contact</Link></li>
-            </ul>
-        </nav>
+const Header = () => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) {
+        setIsOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [isOpen])
+
+  const toggleMenu = () => setIsOpen(prev => !prev)
+  const closeMenu = () => setIsOpen(false)
+
+  return (
+    <header className="relative bg-blue-600 text-white shadow-md">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="text-2xl font-bold">
+          <Link to={ROUTES.HOME}>Kennen Lawrence</Link>
         </div>
+        <DesktopNavBar />
+        <HamburgerButton {...{isOpen, toggleMenu}} />
+      </div>
+      <MobileNavBar {...{isOpen, closeMenu}} />
     </header>
-)
+  )
+}
 
 export default Header

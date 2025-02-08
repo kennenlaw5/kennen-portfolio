@@ -6,10 +6,10 @@ import {FaArrowLeft} from 'react-icons/fa'
 // Placeholder Go component
 const GoGame: React.FC = () => {
   return (
-    <div>
+    <>
       <h2 className="text-2xl font-bold mb-4">GO</h2>
       <p className="text-gray-600">GO game coming soon...</p>
-    </div>
+    </>
   )
 }
 

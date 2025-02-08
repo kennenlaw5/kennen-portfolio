@@ -6,7 +6,7 @@ import TurnTracker from 'Components/TicTacToe/TurnTracker'
 
 const BoardHelper: React.FC = () => {
     const {state, dispatch} = useTicTacToeContext()
-    const {gameMode, currentTurn, isGameActive, isBoardFull, winner} = state
+    const {gameMode, isGameActive} = state
 
     return (
         <div className="flex flex-col items-center mb-4">

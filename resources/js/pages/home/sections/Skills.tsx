@@ -13,7 +13,7 @@ const Skills: React.FC = () => {
     }
 
     const renderSubHeader = () => (
-        <SkillFilter selectedType={selectedSkillType} onClick={handleTypeChange} className="ml-4" />
+        <SkillFilter selectedType={selectedSkillType} onClick={handleTypeChange} />
     )
 
     return (

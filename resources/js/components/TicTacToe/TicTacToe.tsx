@@ -8,14 +8,12 @@ import BoardHelper from 'Components/TicTacToe/BoardHelper'
 
 const TicTacToe: React.FC = () => (
   <TicTacToeProvider>
-    <div className="p-8">
-      <ModeSelect />
-      <BoardHelper />
-      <Board />
-      <div className="flex justify-center mt-4">
-        <LetterSelect />
-        <ResetButton />
-      </div>
+    <ModeSelect />
+    <BoardHelper />
+    <Board />
+    <div className="flex justify-center mt-4">
+      <LetterSelect />
+      <ResetButton />
     </div>
   </TicTacToeProvider>
 )

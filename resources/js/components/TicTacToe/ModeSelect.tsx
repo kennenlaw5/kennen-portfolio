@@ -16,8 +16,8 @@ const ModeSelect: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-wrap items-center mb-6 space-x-4">
-        <div>
+        <div className="grid grid-cols-1 xs:grid-cols-2 text-center mb-6 gap-1">
+        <div className="pb-2 xs:pb-0">
           <label className="mr-2 font-medium">Player Vs:</label>
           <select
             value={gameMode}
