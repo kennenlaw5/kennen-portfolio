@@ -13,4 +13,4 @@ nginx_pid=$!
 exec "$@"
 
 # This part should ideally never be reached, but it's a safeguard
-# wait "$nginx_pid"
+wait "$nginx_pid"
