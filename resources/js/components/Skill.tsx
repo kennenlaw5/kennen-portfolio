@@ -1,13 +1,25 @@
 import React from 'react'
+import classNames from 'classnames'
 import styles from 'Sass/Skill.module.scss'
+import {TSkillType} from 'JS/pages/home/sections/types/Skills'
+import {capitalize} from 'JS/helpers'
 
 type TSkillProps = {
-    children: React.ReactNode
+    name: string
+    shouldShow: boolean
+    type: TSkillType
 }
 
-const Skill: React.FC<TSkillProps> = ({children}) => (
-    // <span className="cursor-default bg-blue-100 text-blue-800 px-3 py-1 rounded-full">{children}</span>
-    <span className={styles.skill}>{children}</span>
+const Skill: React.FC<TSkillProps> = ({shouldShow, name, type}) => (
+    <span
+        className={classNames(
+            styles.skill,
+            styles[`skill${capitalize(type)}`],
+            {'hidden': !shouldShow}
+        )}
+    >
+        {name}
+    </span>
 )
 
 export default Skill

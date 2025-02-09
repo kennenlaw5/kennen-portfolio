@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, {useState} from 'react'
 import Skill from 'Components/Skill'
 import {SKILL_TYPES, SKILLS} from 'Constants/skills'
 import {TSkillType} from 'JS/pages/home/sections/types/Skills'
@@ -25,7 +25,7 @@ const Skills: React.FC = () => {
                 {Object.values(SKILLS).map(({name, type}) => {
                     const shouldShow = selectedSkillType === SKILL_TYPES.ALL || selectedSkillType === type
 
-                    return shouldShow ? <Skill key={name}>{name}</Skill> : null
+                    return <Skill {...{shouldShow, key: name, name, type}} />
                 })}
             </div>
       </Section>

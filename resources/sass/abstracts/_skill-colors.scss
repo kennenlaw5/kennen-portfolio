@@ -1,0 +1,41 @@
+@use 'sass:map';
+
+$skill-colors: (
+  frontend: "green",
+  backend: "blue",
+  cloud: "fuchsia",
+  all: "red",
+);
+
+@mixin skill-colors($type) {
+    $color: map.get($skill-colors, $type);
+
+    @if $color != null {
+        @apply bg-#{$color}-100 text-#{$color}-800 border-#{$color}-300;
+    }
+}
+
+@mixin skill-colors-hover($type) {
+    $color: map.get($skill-colors, $type);
+
+    @if $color != null {
+        @apply shadow
+            bg-#{$color}-100
+            text-#{$color}-800
+            border-#{$color}-300
+            hover:bg-#{$color}-200
+            hover:shadow-none;
+    }
+}
+
+@mixin skill-outline-colors($type) {
+    $color: map.get($skill-colors, $type);
+
+    @if $color != null {
+        @apply bg-white
+            border
+            text-#{$color}-800
+            border-#{$color}-300
+            hover:bg-#{$color}-200;
+    }
+}

@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import {SKILL_TYPES} from 'Constants/skills'
 import {TSkillType} from 'JS/pages/home/sections/types/Skills'
 import styles from 'Sass/SkillFilter.module.scss'
+import {capitalize} from 'JS/helpers'
 
 type TSkillFilterProps = {
     selectedType: TSkillType
@@ -15,9 +16,9 @@ const SkillFilter: React.FC<TSkillFilterProps> = ({selectedType, onClick, classN
         {Object.values(SKILL_TYPES).map((type) => (
             <button
                 key={type}
-                className={classNames(styles.skillFilterButton, {
-                    [styles['skillFilterButtonSelected']]: selectedType === type,
-                    [styles['skillFilterButtonUnselected']]: selectedType !== type
+                className={classNames(styles.skillFilterButton, styles[`skillFilterButton${capitalize(type)}`], {
+                    [styles[`skillFilterButtonSelected${capitalize(type)}`]]: selectedType === type,
+                    [styles[`skillFilterButtonUnselected${capitalize(type)}`]]: selectedType !== type
                 })}
                 onClick={() => onClick(type)}
             >

@@ -3,10 +3,10 @@ import Card from 'Components/Card'
 import Section from 'Components/Section'
 
 const certificatesData = [
-    {image: '/images/CompTIA-Security-Plus.png', text: "In-Progress", alt: 'Security+ Certification Logo'},
-    {image: '/images/CompTIA-Network-Plus.png', text: "Todo", alt: 'Network+ Certification Logo'},
-    {image: '/images/CompTIA-A-Plus.png', text: "Todo", alt: 'A+ Certification Logo'},
-];
+    {image: '/images/CompTIA-Security-Plus.png', text: 'In-Progress', alt: 'Security+ Certification Logo'},
+    {image: '/images/CompTIA-Network-Plus.png', text: 'Todo', alt: 'Network+ Certification Logo'},
+    {image: '/images/CompTIA-A-Plus.png', text: 'Todo', alt: 'A+ Certification Logo'},
+]
 
 const Certificates: React.FC = () => {
   return (

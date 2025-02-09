@@ -9,95 +9,115 @@ export const SKILL_TYPES = {
 
 export const SKILLS: TSkills = {
     PHP: {
-        name: "PHP",
+        name: 'PHP',
         type: SKILL_TYPES.BACKEND
     },
     LARAVEL: {
-        name: "Laravel",
+        name: 'Laravel',
         type: SKILL_TYPES.BACKEND
     },
     JAVASCRIPT: {
-        name: "JavaScript",
+        name: 'JavaScript',
         type: SKILL_TYPES.FRONTEND
     },
     TYPESCRIPT: {
-        name: "TypeScript",
+        name: 'TypeScript',
         type: SKILL_TYPES.FRONTEND
     },
     REACT: {
-        name: "React",
+        name: 'React',
         type: SKILL_TYPES.FRONTEND
     },
     JQUERY: {
-        name: "Jquery",
+        name: 'Jquery',
         type: SKILL_TYPES.FRONTEND
     },
     SQL: {
-        name: "SQL",
+        name: 'SQL',
         type: SKILL_TYPES.BACKEND
     },
     GIT: {
-        name: "Git",
+        name: 'Git',
         type: SKILL_TYPES.BACKEND
     },
     AWS_ECOSYSTEM: {
-        name: "AWS Ecosystem",
+        name: 'AWS Ecosystem',
         type: SKILL_TYPES.CLOUD
     },
     JIRA: {
-        name: "Jira",
+        name: 'Jira',
         type: SKILL_TYPES.CLOUD
     },
     BITBUCKET: {
-        name: "Bitbucket",
+        name: 'Bitbucket',
         type: SKILL_TYPES.CLOUD
     },
     GITHUB: {
-        name: "GitHub",
+        name: 'GitHub',
         type: SKILL_TYPES.CLOUD
     },
     HTML: {
-        name: "HTML",
+        name: 'HTML',
         type: SKILL_TYPES.FRONTEND
     },
     CSS_SCSS: {
-        name: "CSS/SCSS",
+        name: 'CSS/SCSS',
         type: SKILL_TYPES.FRONTEND
     },
     MICROSERVICES: {
-        name: "Microservices",
+        name: 'Microservices',
         type: SKILL_TYPES.BACKEND
     },
     NODEJS: {
-        name: "Node.js",
+        name: 'Node.js',
         type: SKILL_TYPES.BACKEND
     },
     COMPOSER: {
-        name: "Composer",
+        name: 'Composer',
         type: SKILL_TYPES.BACKEND
     },
     DOCKER: {
-        name: "Docker",
+        name: 'Docker',
         type: SKILL_TYPES.BACKEND
     },
     VALET: {
-        name: "Valet",
+        name: 'Valet',
         type: SKILL_TYPES.BACKEND
     },
     JAVA: {
-        name: "Java",
+        name: 'Java',
         type: SKILL_TYPES.BACKEND
     },
     C_PLUS_PLUS: {
-        name: "C++",
+        name: 'C++',
         type: SKILL_TYPES.BACKEND
     },
     PYTHON: {
-        name: "Python",
+        name: 'Python',
         type: SKILL_TYPES.BACKEND
     },
     WEBPACK: {
-        name: "Webpack",
+        name: 'Webpack',
         type: SKILL_TYPES.FRONTEND
     },
-  };
+    POSTCSS: {
+        name: 'PostCSS',
+        type: SKILL_TYPES.FRONTEND
+    },
+    YARN: {
+        name: 'Yarn',
+        type: SKILL_TYPES.FRONTEND
+    },
+    NPM: {
+        name: 'Npm',
+        type: SKILL_TYPES.FRONTEND
+    },
+    RENDER: {
+        name: 'Render',
+        type: SKILL_TYPES.CLOUD
+    },
+    JEST: {
+        name: 'Jest',
+        type: SKILL_TYPES.FRONTEND
+    },
+  }
