@@ -5,10 +5,18 @@ import DesktopNavBar from 'Components/navigation/DesktopNavBar'
 import MobileNavBar from 'Components/navigation/MobileNavBar'
 import HamburgerButton from 'Components/navigation/HamburgerButton'
 
-const Header = () => {
+type THeaderProps = {
+  isLoading?: boolean
+}
+
+const Header: React.FC<THeaderProps> = ({isLoading = false}) => {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
+    if (isLoading) {
+      return
+    }
+
     const handleResize = () => {
       if (window.innerWidth >= 768 && isOpen) {
         setIsOpen(false)
@@ -16,7 +24,7 @@ const Header = () => {
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [isOpen])
+  }, [isOpen, isLoading])
 
   const toggleMenu = () => setIsOpen(prev => !prev)
   const closeMenu = () => setIsOpen(false)
@@ -24,11 +32,15 @@ const Header = () => {
   return (
     <header className="relative bg-blue-600 text-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="text-2xl font-bold">
+        <h3 className="font-bold">
           <Link to={HOME_ROUTE.path} onClick={closeMenu}>Kennen Lawrence</Link>
-        </div>
-        <DesktopNavBar />
-        <HamburgerButton {...{isOpen, toggleMenu}} />
+        </h3>
+        {!isLoading ? (
+          <>
+            <DesktopNavBar />
+            <HamburgerButton {...{isOpen, toggleMenu}} />
+          </>
+        ) : null}
       </div>
       <MobileNavBar {...{isOpen, closeMenu}} />
     </header>

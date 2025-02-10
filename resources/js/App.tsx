@@ -4,11 +4,12 @@ import {createRoot} from 'react-dom/client'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import {HOME_ROUTE, ROUTES} from 'Constants/routes'
 import Layout from 'Components/Layout'
+import Loading from 'Components/Loading'
 
 const App: React.FC = () => {
     return (
         <Router>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Loading />}>
                 <Routes>
                     <Route path={HOME_ROUTE.path} element={<Layout />}>
                         <Route index element={<HOME_ROUTE.component />} />
