@@ -8,7 +8,7 @@ import Section from 'Components/Section'
 const GoGame: React.FC = () => {
   return (
     <>
-      <h2 className="text-2xl font-bold mb-4">GO</h2>
+      <h2 className="mb-4">GO</h2>
       <p className="text-gray-600">GO game coming soon...</p>
     </>
   )

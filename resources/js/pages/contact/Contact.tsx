@@ -8,7 +8,7 @@ const Contact: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <ContactDetails />
         <div className="mt-8">
-          <h3 className="text-xl font-bold mb-4">Frequently Asked Questions</h3>
+          <h4 className="font-bold mb-4">Frequently Asked Questions</h4>
           <details className="bg-white p-4 rounded shadow mb-2">
             <summary className="cursor-pointer select-none">What's your preferred method of communication?</summary>
             <p className="mt-3 text-gray-600">Email is usually best, but I'm also responsive on LinkedIn.</p>

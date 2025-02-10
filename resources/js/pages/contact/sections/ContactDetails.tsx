@@ -43,7 +43,7 @@ const ContactDetails: React.FC = () => {
 
     return (
         <div>
-            <h3 className="text-xl font-bold mb-4">Contact Details</h3>
+            <h4 className="font-bold mb-4">Contact Details</h4>
             <ul className="space-y-4">
                 {contactInfo.map((item, index) => <ContactDetail key={index} item={item} />)}
             </ul>

@@ -11,8 +11,8 @@ type TCard = {
 const Card: React.FC<TCard> = ({children, className, header, subheader}) => (
     <div className={classNames('p-4 bg-white shadow rounded select-none cursor-default', className)}>
         <div className='md:flex md:flex-row mb-2'>
-            <h3 className="font-bold text-xl">{header}</h3>
-            {subheader ? <h3 className="text-lg text-gray-500 ml-2">{subheader}</h3> : null}
+            <h4 className="font-bold">{header}</h4>
+            {subheader ? <h5 className="text-gray-500 ml-2">{subheader}</h5> : null}
         </div>
         {children}
     </div>

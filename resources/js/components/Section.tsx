@@ -12,8 +12,13 @@ const Section: React.FC<TCard> = ({children, className, header, subheader}) => (
     <section className={classNames('mb-8', className)}>
         {header || subheader ? (
             <div className='md:flex md:flex-wrap mb-4'>
-                {header ? <h2 className="text-3xl font-bold">{header}</h2> : null}
-                {subheader ? <h2 className="text-2xl text-gray-500 mt-2 md:mt-0 md:ml-4">{subheader}</h2> : null}
+                {header ? <h2>{header}</h2> : null}
+                {subheader ? (
+                    <h3 className="text-gray-500 mt-2 md:mt-auto md:ml-4">
+                        <span className="hidden md:inline-block">-&nbsp;</span>
+                        {subheader}
+                    </h3>
+                ) : null}
             </div>
         ) : null}
         {children}
