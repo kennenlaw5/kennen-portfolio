@@ -24,30 +24,24 @@ const Games: React.FC = () => {
     setSelectedGame('none')
   }
 
-  // If a game is selected, render that game with a header that includes a back arrow.
-  if (selectedGame !== 'none') {
-    return (
-      <Section>
-        <div className="flex items-center mb-4">
-          <button
-            onClick={handleBack}
-            className="mr-2 text-blue-600 hover:text-blue-800"
-          >
-            <FaArrowLeft size={20} />
-          </button>
-          <h1 className="text-3xl font-bold">
-            {selectedGame === 'ticTacToe' ? 'Tic Tac Toe' : 'GO'}
-          </h1>
-        </div>
-        <div>
-          {selectedGame === 'ticTacToe' ? <TicTacToe /> : <GoGame />}
-        </div>
-      </Section>
-    )
-  }
-
-  // Otherwise, render the game selection buttons.
-  return (
+  return selectedGame !== 'none' ? (
+    <Section>
+      <div className="flex items-center mb-4">
+        <button
+          onClick={handleBack}
+          className="mr-2 text-blue-600 hover:text-blue-800"
+        >
+          <FaArrowLeft size={20} />
+        </button>
+        <h1 className="text-3xl font-bold">
+          {selectedGame === 'ticTacToe' ? 'Tic Tac Toe' : 'GO'}
+        </h1>
+      </div>
+      <div>
+        {selectedGame === 'ticTacToe' ? <TicTacToe /> : <GoGame />}
+      </div>
+    </Section>
+  ) : (
     <Section>
       <h1 className="text-3xl font-bold mb-6">Games</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
