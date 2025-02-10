@@ -1,13 +1,25 @@
 import {TBoard, TDifficulty, TPlayerLetter} from 'Components/TicTacToe/types/TicTacToeTypes'
-import {DIFFICULTIES, WINNING_COMBOS} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {BOARD_POSITIONS, DIFFICULTIES, WINNING_COMBOS} from 'Components/TicTacToe/constants/TicTacToeConstants'
 
 export const getIsWinningMove = (board: TBoard, moveIndex: number) => {
-    return WINNING_COMBOS
+    return Object.values(WINNING_COMBOS)
+        .flat()
         .filter((combo) => combo.includes(moveIndex))
         .some(combo => combo.every(index => board[index] === board[combo[0]]))
 }
 
-const getPlayableCombinations = (board: TBoard) => WINNING_COMBOS.filter(combo => combo.some(index => !board[index]))
+const getPlayableCombinations = (board: TBoard) => {
+    return Object.values(WINNING_COMBOS)
+        .flat()
+        .filter(combo => combo.some(index => !board[index]))
+}
+
+const getPlayableCombinationsByIndex = (board: TBoard, index: number) => {
+    return Object.values(WINNING_COMBOS)
+        .flat()
+        .filter(combo => combo.includes(index) && combo.some(index => !board[index]))
+}
+
 const getComputerMoveCount = (board: TBoard, computerLetter: TPlayerLetter) => board.reduce(
     (prevValue, cell) => prevValue + (cell === computerLetter ? 1 : 0),
     0
@@ -18,11 +30,12 @@ const getMoveCount = (board: TBoard) => board.reduce(
 )
 
 const getRandomMove = (board: TBoard): number => {
-    let moveIndex = Math.floor(Math.random() * 9)
+    const boardLength = board.length
+    let moveIndex = Math.floor(Math.random() * boardLength)
 
     // If random move is already taken, try again
     while (board[moveIndex]) {
-        moveIndex = Math.floor(Math.random() * 9)
+        moveIndex = Math.floor(Math.random() * boardLength)
     }
 
     return moveIndex
@@ -54,8 +67,6 @@ const getNormalMove = (board: TBoard, computerLetter: TPlayerLetter): number => 
         return getRandomMove(board)
     }
 
-    const availableCombinations = getPlayableCombinations(board)
-
     // Check if computer can win (runs on normal difficulty)
     const winningMove = getWinningMove(board, computerLetter)
 
@@ -76,68 +87,91 @@ const getNormalMove = (board: TBoard, computerLetter: TPlayerLetter): number => 
     return getRandomMove(board)
 }
 
-const getHardFirstMove = (board: TBoard): number => {
-    // Pick a random corner
-    const corners = [0, 2, 6, 8]
-    return corners[Math.floor(Math.random() * corners.length)]
+const getAvailableCorner = (board: TBoard): number => {
+    const {
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+        TOP_LEFT,
+        TOP_RIGHT,
+    } = BOARD_POSITIONS
+    const availableMoves = [TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT]
+        .filter(index => !board[index])
+
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)]
+}
+
+const getGenericStrategyMove = (board: TBoard, computerLetter: TPlayerLetter, allowedIndexes?: number[]): number | null => {
+    const winningMovesMap = board.map((cell, index) => {
+        const shouldSkip = allowedIndexes && !allowedIndexes.includes(index)
+
+        if (cell || shouldSkip) {
+            return 0
+        }
+
+        const testBoard = [...board]
+        testBoard[index] = computerLetter
+        // Check how many winning moves the computer has on the next turn if this move is made
+        const winningCombos = getPlayableCombinationsByIndex(testBoard, index)
+        .filter(combo => (
+            combo.filter(index => testBoard[index] === computerLetter).length === 2
+        ))
+
+        return winningCombos.length
+    })
+
+    if (winningMovesMap.includes(2)) {
+        return winningMovesMap.indexOf(2)
+    }
+
+    return winningMovesMap.includes(1) ? winningMovesMap.indexOf(1) : null
 }
 
 const getCornerStrategyMove = (board: TBoard, computerLetter: TPlayerLetter): number | null => {
-    const cornerIndexes = [0, 2, 6, 8]
-    const availableCorners = cornerIndexes.filter(index => !board[index])
-    const computerMoves = getComputerMoveCount(board, computerLetter)
-    const isCenterAvailable = !board[4]
-    // Computer's first move is always a corner. If availableCorners is 1, then a corner trap can be setup
-    // Assuming the player has not taken the center
-    if (computerMoves === 1 && availableCorners.length === 3 && isCenterAvailable) {
-        const selectedCombination = getPlayableCombinations(board).find(combo => {
-            // Check if computer has two moves in a combo and there is an empty cell
-            const computerCount = combo.filter(index => board[index] === computerLetter).length
-            const emptyCellCount = combo.filter(index => !board[index]).length
+    const {
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+        MIDDLE_CENTER,
+        TOP_LEFT,
+        TOP_RIGHT,
+    } = BOARD_POSITIONS
+    const corners = [TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT]
+    const computerMoveCount = getComputerMoveCount(board, computerLetter)
+
+    if (computerMoveCount !== 1) {
+        return getGenericStrategyMove(board, computerLetter)
+    }
     
-            return computerCount === 1 && emptyCellCount === 2
-        })!
-
-        return selectedCombination[0] ? selectedCombination[2] : selectedCombination[0]
+    // For second move, determine which corner to play
+    const isCenterTaken = board[MIDDLE_CENTER]
+    const takenCornerIndex = corners.findIndex(index => board[index] === computerLetter)
+    const oppositeCorner = [...corners].reverse()[takenCornerIndex]
+    
+    if (isCenterTaken && !board[oppositeCorner]) {
+        return oppositeCorner
     }
+    
+    const oppositeCornerIndex = corners.findIndex(corner => corner === oppositeCorner)
+    const availableCorners = corners.filter(
+        (corner, index) => !board[corner] && oppositeCornerIndex !== index
+    )
 
-    // Check to verify the second move was a corner first
-    const computerCorners = availableCorners.filter(index => board[index] === computerLetter)
-    const isOnlyComputerandEmptyCorners = computerCorners.length === 2 && availableCorners.length === 2
-    const winningMove = getWinningMove(board, computerLetter)
-
-    if (isOnlyComputerandEmptyCorners) {
-        // Corner trap has been setup, take the center or win if player missed the trap
-        return winningMove ?? 4
-    }
-
-    return winningMove
+    return getGenericStrategyMove(board, computerLetter, availableCorners) ?? availableCorners[0]
 }
 
 const getHardMove = (board: TBoard, computerLetter: TPlayerLetter): number => {
-    // If it's the first move, pick a random corner
-    if (getMoveCount(board) <= 1) {
-        const availableCorners = [0, 2, 6, 8].filter(index => !board[index])
+    const computerMoves = getComputerMoveCount(board, computerLetter)
 
-        return availableCorners[Math.floor(Math.random() * availableCorners.length)]
+    if (!computerMoves) {
+        return getAvailableCorner(board)
     }
 
     const finalMove = getWinningMove(board, computerLetter) ?? getLosingMove(board, computerLetter)
 
-    if (finalMove) {
+    if (finalMove !== null) {
         return finalMove
     }
 
-    const cornerStrategyMove = getCornerStrategyMove(board, computerLetter)
-
-    if (cornerStrategyMove) {
-        return cornerStrategyMove
-    }
-
-    // @todo Find a move where the computer will get a winning move in two combinations on the next turn
-
-    // Fallback: Make any available move (shouldn't happen, but good for safety)
-    return getRandomMove(board)
+    return getCornerStrategyMove(board, computerLetter) ?? getRandomMove(board)
 }
 
 export const getComputerMove = (board: TBoard, difficulty: TDifficulty, computerLetter: TPlayerLetter): number => {
