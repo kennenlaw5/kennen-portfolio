@@ -1,16 +1,16 @@
 import React from 'react'
 import classNames from 'classnames'
 import styles from 'Sass/modules/Skill.module.scss'
-import {TSkillType} from 'JS/pages/home/sections/types/Skills'
+import {TSkillType} from 'Components/types/SkillTypes'
 import {capitalize} from 'JS/helpers'
 
 type TSkillProps = {
     name: string
-    shouldShow: boolean
+    shouldShow?: boolean
     type: TSkillType
 }
 
-const Skill: React.FC<TSkillProps> = ({shouldShow, name, type}) => (
+const Skill: React.FC<TSkillProps> = ({name, shouldShow = true, type}) => (
     <span
         className={classNames(
             styles.skill,

@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import styles from 'Sass/modules/Card.module.scss'
-import {THeader} from 'Components/card/types/card'
+import {THeader} from 'Components/card/types/CardTypes'
 
 type TCardHeaderProps = {
     header: THeader

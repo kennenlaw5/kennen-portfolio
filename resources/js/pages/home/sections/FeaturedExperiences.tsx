@@ -36,7 +36,7 @@ const FeaturedExperiences: React.FC = () => (
             </Card>
             <Card header="Legacy Code Modernization">
                 <p>
-                    Led efforts to refactor and modernize legacy systems, 
+                    Led efforts to refactor and modernize legacy systems,
                     improving maintainability and performance.
                 </p>
             </Card>

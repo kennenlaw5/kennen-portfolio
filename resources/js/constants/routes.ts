@@ -3,7 +3,7 @@ import {lazy} from 'react'
 const Contact = lazy(() => import('JS/pages/contact/Contact'))
 const Games = lazy(() => import('JS/pages/Games'))
 const Home = lazy(() => import('JS/pages/home/Home'))
-const Projects = lazy(() => import('JS/pages/Projects'))
+const Experience = lazy(() => import('JS/pages/experience/Experience'))
 
 type TRoute = {
   path: string
@@ -24,17 +24,17 @@ export const ROUTES: TRoutes = {
     GAMES: {
       path: 'games',
       name: 'Games',
-      component: Games
+      component: Games,
     },
-    PROJECTS: {
-      path: 'projects',
-      name: 'Projects',
-      component: Projects
+    EXPERIENCE: {
+      path: 'experience',
+      name: 'Experience',
+      component: Experience,
     },
     CONTACT: {
       path: 'contact',
       name: 'Contact',
-      component: Contact
+      component: Contact,
     },
   };
   

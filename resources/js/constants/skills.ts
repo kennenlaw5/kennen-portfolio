@@ -1,10 +1,14 @@
-import {TSkills} from 'JS/pages/home/sections/types/Skills'
+import {TSkill} from 'Components/types/SkillTypes'
 
 export const SKILL_TYPES = {
     ALL: 'all',
     BACKEND: 'backend',
     CLOUD: 'cloud',
     FRONTEND: 'frontend',
+}
+
+type TSkills = {
+    [key: string]: TSkill
 }
 
 export const SKILLS: TSkills = {
@@ -28,8 +32,16 @@ export const SKILLS: TSkills = {
         name: 'React',
         type: SKILL_TYPES.FRONTEND
     },
+    GATSBY: {
+        name: 'Gatsby',
+        type: SKILL_TYPES.FRONTEND
+    },
+    AXIOS: {
+        name: 'Axios',
+        type: SKILL_TYPES.FRONTEND
+    },
     JQUERY: {
-        name: 'Jquery',
+        name: 'JQuery',
         type: SKILL_TYPES.FRONTEND
     },
     SQL: {
@@ -119,5 +131,9 @@ export const SKILLS: TSkills = {
     JEST: {
         name: 'Jest',
         type: SKILL_TYPES.FRONTEND
+    },
+    PHPUNIT: {
+        name: 'PHPUnit',
+        type: SKILL_TYPES.BACKEND
     },
   }

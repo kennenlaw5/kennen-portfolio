@@ -10,7 +10,7 @@ type TMobileNavBarProps = {
 
 const MobileNavBar: React.FC<TMobileNavBarProps> = ({isOpen, closeMenu}) => (
     <nav
-        className={classNames("md:hidden bg-blue-500 overflow-hidden transition-all duration-300 ease-in-out absolute top-full left-0 w-full", {
+        className={classNames("md:hidden bg-blue-500 overflow-hidden transition-all duration-300 ease-in-out absolute top-full left-0 w-full z-50", {
             "max-h-80": isOpen,
             "max-h-0": !isOpen,
         })}

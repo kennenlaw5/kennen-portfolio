@@ -33,9 +33,7 @@ const Games: React.FC = () => {
         >
           <FaArrowLeft size={20} />
         </button>
-        <h1 className="text-3xl font-bold">
-          {selectedGame === 'ticTacToe' ? 'Tic Tac Toe' : 'GO'}
-        </h1>
+        <h2>{selectedGame === 'ticTacToe' ? 'Tic Tac Toe' : 'GO'}</h2>
       </div>
       <div>
         {selectedGame === 'ticTacToe' ? <TicTacToe /> : <GoGame />}
@@ -43,7 +41,7 @@ const Games: React.FC = () => {
     </Section>
   ) : (
     <Section>
-      <h1 className="text-3xl font-bold mb-6">Games</h1>
+      <h2 className="mb-6">Games</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {/* Tic Tac Toe Option */}
         <button

@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import styles from 'Sass/modules/Card.module.scss'
 import CardHeader from 'Components/card/CardHeader'
-import {THeader} from 'Components/card/types/card'
+import {THeader} from 'Components/card/types/CardTypes'
 import CardSubHeader from 'Components/card/CardSubheader'
 import CardHeaderIcon from 'Components/card/CardHeaderIcon'
 

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import Skill from 'Components/Skill'
 import {SKILL_TYPES, SKILLS} from 'Constants/skills'
-import {TSkillType} from 'JS/pages/home/sections/types/Skills'
+import {TSkillType} from 'Components/types/SkillTypes'
 import SkillFilter from 'Components/SkillFilter'
 import Section from 'Components/Section'
 

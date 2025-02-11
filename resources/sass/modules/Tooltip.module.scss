@@ -1,0 +1,48 @@
+.tooltip {
+    @apply relative inline-block w-full;
+
+    &Trigger {
+      @apply cursor-help w-fit;
+
+      svg {
+        @apply transition duration-300 ease-in-out;
+      }
+
+      &:hover {
+        svg {
+          @apply text-blue-500;
+        }
+      }
+    }
+
+    &Text {
+      @apply absolute
+        z-10
+        p-2
+        text-sm
+        text-white
+        bg-gray-500
+        top-0
+        rounded
+        shadow-lg
+        opacity-0
+        invisible
+        w-4/5
+        max-w-max
+        -translate-y-full
+        transform
+        transition-all
+        duration-500
+        overflow-hidden;
+
+        &--show {
+          @apply opacity-100
+            visible;
+        }
+
+        &--hide {
+          @apply opacity-0
+            invisible;
+        }
+    }
+  }

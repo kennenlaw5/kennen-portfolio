@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import {SKILL_TYPES} from 'Constants/skills'
-import {TSkillType} from 'JS/pages/home/sections/types/Skills'
+import {TSkillType} from 'Components/types/SkillTypes'
 import styles from 'Sass/modules/SkillFilter.module.scss'
 import {capitalize} from 'JS/helpers'
 
