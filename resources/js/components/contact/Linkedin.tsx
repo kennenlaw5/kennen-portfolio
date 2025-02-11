@@ -4,9 +4,9 @@ import {FaLinkedin} from 'react-icons/fa'
 const Linkedin: React.FC = () => (
     <a
         href={window.APP_CONFIG.linkedin_url}
+        className='link'
         target="_blank"
         rel="noopener noreferrer"
-        className="hover:text-blue-500 transition"
     >
         <FaLinkedin className="text-xl" />
     </a>

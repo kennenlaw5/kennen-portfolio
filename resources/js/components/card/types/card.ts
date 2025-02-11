@@ -1,0 +1,1 @@
+export type THeader = string | React.ReactNode | undefined

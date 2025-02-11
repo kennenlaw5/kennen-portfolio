@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import styles from 'Sass/Skill.module.scss'
+import styles from 'Sass/modules/Skill.module.scss'
 import {TSkillType} from 'JS/pages/home/sections/types/Skills'
 import {capitalize} from 'JS/helpers'
 

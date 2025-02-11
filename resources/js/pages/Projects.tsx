@@ -15,7 +15,7 @@ const Projects: React.FC = () => {
             <h4 className="font-semibold">
               <a
                 href="https://www.amazon.com/Amazon-Autos/b?ie=UTF8&node=10677469011"
-                className="inline-flex text-gray-700 hover:text-blue-500"
+                className="link inline-flex text-gray-700"
                 target="_blank"
                 rel="noopener noreferrer"
               >

@@ -19,7 +19,7 @@ const Skills: React.FC = () => {
     return (
         <Section
             header="Skills & Technologies"
-            subheader={renderSubHeader()}
+            subHeader={renderSubHeader()}
         >
             <div className="flex flex-wrap gap-2 md:gap-4">
                 {Object.values(SKILLS).map(({name, type}) => {

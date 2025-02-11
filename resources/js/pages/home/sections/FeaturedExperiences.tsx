@@ -1,6 +1,6 @@
 import React from 'react'
 import Section from 'Components/Section'
-import Card from 'JS/components/Card'
+import Card from 'Components/card/Card'
 
 const FeaturedExperiences: React.FC = () => (
     <Section header="Featured Experience">
@@ -10,7 +10,7 @@ const FeaturedExperiences: React.FC = () => (
                     {'Played a pivotal role in launching '}
                     <a
                         href="https://www.amazon.com/Amazon-Autos/b?ie=UTF8&node=10677469011"
-                        className="underline hover:text-blue-500"
+                        className="underline link"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -19,7 +19,7 @@ const FeaturedExperiences: React.FC = () => (
                     {' at '}
                     <a
                         href="https://www.a2zsync.com"
-                        className="underline hover:text-blue-500"
+                        className="underline link"
                         target="_blank"
                         rel="noopener noreferrer"
                     >

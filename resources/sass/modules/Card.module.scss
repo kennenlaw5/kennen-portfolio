@@ -1,0 +1,68 @@
+$animation-duration: '300';
+$hover-transition-duration: '200';
+
+.card {
+  @apply p-4 max-h-fit bg-white shadow rounded select-none overflow-hidden;
+
+  &__header {
+    @apply flex items-center justify-between;
+
+    &Content {
+      @apply sm:flex sm:flex-row;
+    }
+
+    &Icon{
+      @apply text-lg transform duration-#{$animation-duration};
+
+      &--clickable {
+        @apply cursor-pointer transition duration-#{$hover-transition-duration} ease-in-out hover:text-blue-500;
+
+        &:hover {
+          h5 {
+            @apply text-blue-300
+          }
+        }
+      }
+
+      &--collapsed {
+        @apply rotate-0;
+      }
+      
+      &--expanded {
+        @apply rotate-180;
+      }
+    }
+  }
+
+  &__title {
+    @apply font-bold;
+  }
+
+  &__subtitle {
+    @apply text-gray-500 sm:mt-auto sm:inline-flex;
+
+    &Separator {
+      @apply hidden sm:inline-block;
+    }
+
+    &--clickable {
+      @apply transition duration-#{$hover-transition-duration} ease-in-out hover:text-blue-300;
+    }
+  }
+
+  &__content {
+    @apply grid transition-all duration-#{$animation-duration} ease-in-out;
+
+    &--collapsed {
+      @apply grid-rows-[0fr];
+    }
+
+    &--expanded {
+      @apply grid-rows-[1fr];
+    }
+  }
+
+  &__contentWrapper{
+      @apply overflow-hidden pt-2;
+  }
+}

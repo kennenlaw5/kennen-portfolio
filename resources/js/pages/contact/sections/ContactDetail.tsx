@@ -7,7 +7,7 @@ type TContactDetailProps = {
 const ContactDetail: React.FC<TContactDetailProps> = ({item}) => (
     <li className="flex items-center">
         <span className="text-blue-500">{<item.icon />}</span>
-        <a href={item.link} className="ml-3 text-gray-700 hover:text-blue-500" target="_blank" rel="noopener noreferrer">
+        <a href={item.link} className="link ml-3 text-gray-700" target="_blank" rel="noopener noreferrer">
             {item.text}
         </a>
     </li>

@@ -2,7 +2,7 @@ import React from 'react'
 import classNames from 'classnames'
 import {SKILL_TYPES} from 'Constants/skills'
 import {TSkillType} from 'JS/pages/home/sections/types/Skills'
-import styles from 'Sass/SkillFilter.module.scss'
+import styles from 'Sass/modules/SkillFilter.module.scss'
 import {capitalize} from 'JS/helpers'
 
 type TSkillFilterProps = {
