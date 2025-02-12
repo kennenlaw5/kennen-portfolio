@@ -1,5 +1,5 @@
 import React from 'react'
-import {GAME_MODES} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {GAME_MODES} from 'Constants/gameConsts'
 import {useTicTacToeContext} from 'Components/TicTacToe/context/TicTacToeContext'
 
 const WinnerAnnouncement: React.FC = () => {

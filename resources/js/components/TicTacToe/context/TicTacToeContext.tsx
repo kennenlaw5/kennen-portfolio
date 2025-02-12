@@ -1,14 +1,14 @@
-import React, {createContext, useReducer, useContext, ReactNode} from 'react'
-import {GAME_MODES, DIFFICULTIES, PLAYER_LETTERS} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import React, {createContext, useReducer, useContext} from 'react'
+import {PLAYER_LETTERS} from 'Components/TicTacToe/constants/TicTacToeConstants'
 import {
     Action,
     TMakePlayerMoveAction,
-    TPlayerLetter,
     TTicTacToeContextProps,
-    TTicTacToeProviderProps,
+    TTicTacToeContextProviderProps,
     TTicTacToeState
 } from 'Components/TicTacToe/types/TicTacToeTypes'
 import {getIsWinningMove, getComputerMove} from 'Components/TicTacToe/helpers'
+import {DIFFICULTIES, GAME_MODES} from 'Constants/gameConsts'
 
 const initialState: TTicTacToeState = {
   gameMode: GAME_MODES.COMPUTER,
@@ -106,13 +106,13 @@ export const useTicTacToeContext = (): TTicTacToeContextProps => {
   const context = useContext(TicTacToeContext)
 
   if (!context) {
-    throw new Error('useTicTacToe must be used within a TicTacToeProvider')
+    throw new Error('useTicTacToeContext must be used within a TicTacToeContextProvider')
   }
 
   return context
 }
 
-export const TicTacToeProvider: React.FC<TTicTacToeProviderProps> = ({children}) => {
+export const TicTacToeContextProvider: React.FC<TTicTacToeContextProviderProps> = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   return (

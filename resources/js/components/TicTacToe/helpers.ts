@@ -1,5 +1,7 @@
-import {TBoard, TDifficulty, TPlayerLetter} from 'Components/TicTacToe/types/TicTacToeTypes'
-import {BOARD_POSITIONS, DIFFICULTIES, WINNING_COMBOS} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {TBoard, TPlayerLetter} from 'Components/TicTacToe/types/TicTacToeTypes'
+import {BOARD_POSITIONS, WINNING_COMBOS} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {DIFFICULTIES} from 'Constants/gameConsts'
+import {TDifficulty} from 'JS/types/gameTypes'
 
 export const getIsWinningMove = (board: TBoard, moveIndex: number) => {
     return Object.values(WINNING_COMBOS)

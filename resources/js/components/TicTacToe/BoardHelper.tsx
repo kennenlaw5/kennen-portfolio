@@ -1,5 +1,5 @@
 import React from 'react'
-import {GAME_MODES} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {GAME_MODES} from 'Constants/gameConsts'
 import {useTicTacToeContext} from 'Components/TicTacToe/context/TicTacToeContext'
 import GameResult from 'Components/TicTacToe/GameResult'
 import TurnTracker from 'Components/TicTacToe/TurnTracker'

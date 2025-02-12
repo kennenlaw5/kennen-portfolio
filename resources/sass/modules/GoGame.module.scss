@@ -1,0 +1,165 @@
+// resources/js/components/GoGame.module.scss
+.game {
+    @apply grid grid-cols-1 items-center mt-8;
+  
+    &__info {
+      @apply grid
+        grid-cols-1
+        md:grid-cols-2
+        lg:grid-cols-3
+        gap-4
+        mb-2
+        grid-flow-row-dense;
+    }
+  
+    &__box {
+      @apply mb-2
+        p-2
+        bg-gray-200
+        rounded-md
+        shadow
+        text-center
+        inline-flex
+        justify-center
+        gap-4;
+  
+      &Label {
+        @apply block
+            mb-1
+            text-sm
+            font-medium
+            text-gray-700;
+      }
+  
+      &Select {
+        @apply block
+            w-full
+            px-3
+            py-2
+            text-sm
+            text-gray-700
+            bg-white
+            border
+            border-gray-300
+            rounded-md
+            focus:outline-none
+            focus:ring-2
+            focus:ring-blue-500
+            focus:border-transparent;
+
+        &--danger {
+            @apply border-red-500;
+        }
+
+        &--warning {
+            @apply border-yellow-500;
+        }
+
+        &--success {
+            @apply border-green-500;
+        }
+
+        &:disabled{
+            @apply opacity-50 cursor-not-allowed;
+        }
+      }
+
+      &__buttonContainer {
+        @apply my-auto;
+      }
+
+      &__score {
+        @apply grid
+            text-xs
+            xs:text-sm
+            grid-cols-3
+            lg:grid-cols-1
+            col-span-1
+            row-start-3
+            md:col-span-2
+            md:row-start-2
+            lg:col-span-1
+            lg:row-start-1
+            justify-center;
+      }
+    }
+  
+    &__button {
+      @apply px-4
+        py-2
+        my-1
+        text-sm
+        rounded-md
+        transition
+        duration-200
+        ease-in-out;
+  
+      &--danger {
+        @apply bg-red-500 text-white;
+         &:hover:not(:disabled) {
+              @apply bg-red-600;
+          }
+      }
+  
+      &--warning {
+        @apply bg-yellow-500 text-white;
+
+        &:hover:not(:disabled) {
+            @apply bg-yellow-600;
+        }
+      }
+    }
+  
+    &__tinyBox {
+      @apply inline-block w-6 h-6 !shadow-none border border-black;
+    }
+  
+    &__board {
+        @apply flex flex-col max-w-full aspect-square md:aspect-[4/3] max-h-[50svh] shadow;
+
+        &Container {
+            @apply w-full flex justify-center h-[70svh] lg:h-[50svh];
+        }
+    }
+  
+    &__boardRow {
+      @apply inline-flex;
+    }
+  
+    &__square {
+        @apply border
+            bg-white
+            w-[10%]
+            border-black
+            box-content
+            p-0
+            aspect-square
+            lg:aspect-[4/3]
+            transition-all
+            duration-300;
+
+        &--red {
+            @apply bg-red-500
+                cursor-default
+                border-red-900
+                shadow-red-700
+                shadow-[inset_0_0px_5px_3px_rgba(0,0,0,0.3)];
+        }
+
+        &--blue {
+            @apply bg-blue-500
+                cursor-default
+                border-blue-900
+                shadow-blue-700
+                shadow-[inset_0_0px_5px_3px_rgba(0,0,0,0.3)];
+        }
+
+        &--redHover {
+            @apply hover:shadow-red-400 hover:shadow-[inset_0_0px_15px_25px_rgba(0,0,0,0.2)];
+        }
+
+        &--blueHover {
+            @apply hover:shadow-blue-400 hover:shadow-[inset_0_0px_15px_25px_rgba(0,0,0,0.1)];
+        }
+    }
+  }

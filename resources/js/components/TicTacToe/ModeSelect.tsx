@@ -1,7 +1,8 @@
 import React from 'react'
-import {TDifficulty, TGameMode} from 'Components/TicTacToe/types/TicTacToeTypes'
-import {DIFFICULTIES, GAME_MODES} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {TDifficulty, TGameMode} from 'JS/types/gameTypes'
+import {DIFFICULTIES, GAME_MODES} from 'Constants/gameConsts'
 import {useTicTacToeContext} from 'Components/TicTacToe/context/TicTacToeContext'
+import {capitalize} from 'JS/helpers'
 
 const ModeSelect: React.FC = () => {
     const {state, dispatch} = useTicTacToeContext()
@@ -25,8 +26,11 @@ const ModeSelect: React.FC = () => {
             className="border p-1 rounded"
             disabled={isGameActive}
           >
-            <option value={GAME_MODES.COMPUTER}>Computer</option>
-            <option value={GAME_MODES.PERSON}>Person</option>
+            {Object.values(GAME_MODES).map((mode) => (
+              <option key={mode} value={mode}>
+                {capitalize(mode)}
+              </option>
+            ))}
           </select>
         </div>
         {gameMode === GAME_MODES.COMPUTER ? (
@@ -38,9 +42,11 @@ const ModeSelect: React.FC = () => {
               className="border p-1 rounded"
               disabled={isGameActive}
             >
-              <option value={DIFFICULTIES.EASY}>Easy</option>
-              <option value={DIFFICULTIES.NORMAL}>Normal</option>
-              <option value={DIFFICULTIES.HARD}>Hard</option>
+              {Object.values(DIFFICULTIES).map((level) => (
+                <option key={level} value={level}>
+                  {capitalize(level)}
+                </option>
+              ))}
             </select>
           </div>
         ) : null}

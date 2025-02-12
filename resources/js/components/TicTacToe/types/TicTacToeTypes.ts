@@ -1,10 +1,9 @@
 import {ReactNode} from 'react'
-import {DIFFICULTIES, GAME_MODES, PLAYER_LETTERS} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {PLAYER_LETTERS} from 'Components/TicTacToe/constants/TicTacToeConstants'
+import {TDifficulty, TGameMode} from 'JS/types/gameTypes'
 
 export type TBoard = string[]
 export type TPlayerLetter = typeof PLAYER_LETTERS[keyof typeof PLAYER_LETTERS]
-export type TGameMode = typeof GAME_MODES[keyof typeof GAME_MODES]
-export type TDifficulty = typeof DIFFICULTIES[keyof typeof DIFFICULTIES]
 export type TTicTacToeState = {
     gameMode: TGameMode
     difficulty: TDifficulty
@@ -16,7 +15,6 @@ export type TTicTacToeState = {
     isBoardFull: boolean
 }
 
-// Tic Tac Toe context
 export type Action =
   | TUpdateFieldAction
   | {type: 'SET_PLAYER_LETTER'; payload: TPlayerLetter}
@@ -25,7 +23,7 @@ export type Action =
   | {type: 'MAKE_COMPUTER_MOVE'}
   | TMakePlayerMoveAction
 
-export type TTicTacToeProviderProps = {
+export type TTicTacToeContextProviderProps = {
   children: ReactNode
 }
 

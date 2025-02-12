@@ -1,5 +1,4 @@
 import React from 'react'
-import {TGameMode, TPlayerLetter} from 'Components/TicTacToe/types/TicTacToeTypes'
 import {PLAYER_LETTERS} from 'Components/TicTacToe/constants/TicTacToeConstants'
 import { useTicTacToeContext } from './context/TicTacToeContext'
 
@@ -20,8 +19,9 @@ const LetterSelect: React.FC = () => {
           onChange={({target: {value}}) => dispatch({type: 'SET_PLAYER_LETTER', payload: value})}
           className="border p-1 rounded"
         >
-          <option value={PLAYER_LETTERS.X}>{PLAYER_LETTERS.X}</option>
-          <option value={PLAYER_LETTERS.O}>{PLAYER_LETTERS.O}</option>
+          {Object.values(PLAYER_LETTERS).map((letter) => (
+            <option key={letter} value={letter}>{letter}</option>
+          ))}
         </select>
       </div>
     </div>

@@ -1,19 +1,10 @@
-import React, {useState} from 'react'
+import React, {lazy, useState} from 'react'
 import {FaArrowLeft} from 'react-icons/fa'
-import TicTacToe from 'Components/TicTacToe/TicTacToe'
+import {TfiLayoutGrid4Alt} from 'react-icons/tfi'
 import Section from 'Components/Section'
 
-// @todo: Refactor this file
-// Placeholder Go component
-const GoGame: React.FC = () => {
-  return (
-    <>
-      <h2 className="mb-4">GO</h2>
-      <p className="text-gray-600">GO game coming soon...</p>
-    </>
-  )
-}
-
+const GoGame = lazy(() => import('Components/go/Go'))
+const TicTacToe = lazy(() => import('Components/TicTacToe/TicTacToe'))
 type GameOption = 'none' | 'ticTacToe' | 'go'
 
 const Games: React.FC = () => {
@@ -33,7 +24,7 @@ const Games: React.FC = () => {
         >
           <FaArrowLeft size={20} />
         </button>
-        <h2>{selectedGame === 'ticTacToe' ? 'Tic Tac Toe' : 'GO'}</h2>
+        <h2>{selectedGame === 'ticTacToe' ? 'Tic Tac Toe' : 'Square Off Pro'}</h2>
       </div>
       <div>
         {selectedGame === 'ticTacToe' ? <TicTacToe /> : <GoGame />}
@@ -54,18 +45,22 @@ const Games: React.FC = () => {
           </div>
         </button>
 
-        {/* GO Option */}
+        {/* Square Off Pro Option */}
         <button
           onClick={() => setSelectedGame('go')}
           className="bg-blue-100 hover:scale-105 transition-transform p-6 rounded-lg shadow focus:outline-none"
         >
           <div className="flex flex-col items-center">
             {/* Icon Placeholder */}
-            <div className="bg-blue-300 h-16 w-16 mb-4 rounded-full flex items-center justify-center">
-              {/* Replace with an icon/image as needed */}
-              <span className="text-white font-bold">G</span>
-            </div>
-            <span className="text-lg font-medium">GO</span>
+            <span className="relative inline-block">
+              <TfiLayoutGrid4Alt className='w-16 h-16 text-red-500' style={{
+                clipPath: 'polygon(0 0, 100% 0, 0 100%, 0% 100%)' // Top-left triangle
+              }} />
+              <TfiLayoutGrid4Alt className='w-16 h-16 text-blue-500 absolute top-0 left-0' style={{
+                clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' // Bottom-right triangle
+              }}/>
+            </span>
+            <span className="text-lg font-medium">Square Off Pro</span>
           </div>
         </button>
       </div>

@@ -2,15 +2,6 @@ export const PLAYER_LETTERS = {
     X: 'X',
     O: 'O',
 }
-export const GAME_MODES = {
-    COMPUTER: 'computer',
-    PERSON: 'person',
-}
-export const DIFFICULTIES = {
-    EASY: 'easy',
-    NORMAL: 'normal',
-    HARD: 'hard',
-}
 export const BOARD_POSITIONS = {
     TOP_LEFT: 0,
     TOP_CENTER: 1,
