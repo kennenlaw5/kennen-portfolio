@@ -9,7 +9,7 @@ const ModeSelectBox: React.FC = () => {
     const {state, dispatch} = useGoGameContext()
     const {
         versus,
-        level,
+        difficulty,
         currentMove,
     } = state
     const allowSelect = currentMove === 0
@@ -27,7 +27,7 @@ const ModeSelectBox: React.FC = () => {
             return
         }
 
-        dispatch({type: 'SET_LEVEL', level: e.target.value})
+        dispatch({type: 'SET_LEVEL', difficulty: e.target.value})
     }
 
     return (
@@ -43,30 +43,27 @@ const ModeSelectBox: React.FC = () => {
                         value={versus}
                         disabled={!allowSelect}
                     >
-                        {/* @TODO: Add back once ai is implemented */}
-                        {/* {Object.values(GAME_MODES).map((mode) => (
+                        {Object.values(GAME_MODES).map((mode) => (
                             <option key={mode} value={mode}>
                                 {capitalize(mode)}
                             </option>
-                        ))} */}
-                        <option disabled>Coming soon!</option>
-                        <option value={GAME_MODES.PERSON}>Person</option>
+                        ))}
                     </select>
                 </div>
             </div>
             {versus === GAME_MODES.COMPUTER ? (
                 <div className={styles.gameBoxButtonContainer}>
-                    <label className={styles.gameBoxLabel} htmlFor="level">Difficulty: </label>
+                    <label className={styles.gameBoxLabel} htmlFor="difficulty">Difficulty: </label>
                     <select 
-                        name="level"
-                        id="level"
-                        value={level}
+                        name="difficulty"
+                        id="difficulty"
+                        value={difficulty}
                         onChange={handleLevelChange}
                         disabled={!allowSelect}
                         className={classNames(styles.gameBoxSelect, styles.gameDifficulty, {
-                            [styles.gameBoxSelectDanger]: level === DIFFICULTIES.HARD,
-                            [styles.gameBoxSelectWarning]: level === DIFFICULTIES.NORMAL,
-                            [styles.gameBoxSelectSuccess]: level === DIFFICULTIES.EASY,
+                            [styles.gameBoxSelectDanger]: difficulty === DIFFICULTIES.HARD,
+                            [styles.gameBoxSelectWarning]: difficulty === DIFFICULTIES.NORMAL,
+                            [styles.gameBoxSelectSuccess]: difficulty === DIFFICULTIES.EASY,
                         })}
                     >
                         {Object.values(DIFFICULTIES).map((difficulty) => (

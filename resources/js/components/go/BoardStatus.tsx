@@ -26,17 +26,14 @@ const BoardStatus: React.FC = () => {
         }
     } = useGoGameContext()
     const isGameOver = winner || currentMove === maxMoves
-    const winnerText = useMemo(() => winner ? 'Winner: ' : 'Tied game!', [winner])
+    const winnerText = useMemo(() => winner ? 'Winner:' : 'Tied game!', [winner])
 
-    return isGameOver ? (
-        <div>
-            <b>{winnerText}</b>
-            {winner ? <CurrentPlayerBox color={winner} /> : null}
-        </div>
-    ) : (
+    return (
         <div className='inline-flex justify-center'>
-            <div className="my-auto">Next player:&nbsp;</div>
-            <CurrentPlayerBox color={nextColor} />
+            <div className={classNames('my-auto', {'font-bold': isGameOver})}>
+                {isGameOver ? winnerText : 'Next Player:'}&nbsp;
+            </div>
+            {!isGameOver || winner ? <CurrentPlayerBox color={winner || nextColor} /> : null}
         </div>
     )
 }

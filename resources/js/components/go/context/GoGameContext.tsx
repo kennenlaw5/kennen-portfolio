@@ -1,5 +1,6 @@
 import React, {createContext, useContext, useReducer} from 'react'
 import {setSquare, undoMove} from 'Components/go/helpers'
+import {setComputerSquare} from 'Components/go/aiHelpers'
 import {BOARD_DIMENSIONS, COLORS} from 'Components/go/constants/GoGameConsts'
 import {DIFFICULTIES, GAME_MODES} from 'Constants/gameConsts'
 import {
@@ -19,16 +20,14 @@ export const initialState: TGameState = {
   maxMoves: BOARD_DIMENSIONS.COLS * BOARD_DIMENSIONS.ROWS,
   nextColor: COLORS.RED,
   previousColor: COLORS.BLUE,
-  colors: {
-    user: COLORS.RED,
-    ai: COLORS.BLUE,
-  },
+  isPlayerTurn: true,
+  previousMoveOffset: 1,
   scores: {
     [COLORS.RED]: 0,
     [COLORS.BLUE]: 0,
   },
   versus: GAME_MODES.PERSON,
-  level: DIFFICULTIES.NORMAL,
+  difficulty: DIFFICULTIES.NORMAL,
   winner: null,
 }
 
@@ -37,6 +36,9 @@ const reducer = (state: TGameState, action: TReducerAction): TGameState => {
         case 'SET_SQUARE': {
             return setSquare(state, action)
         }
+        case 'SET_COMPUTER_SQUARE': {
+            return setComputerSquare(state)
+        }
         case 'UNDO_MOVE': {
             return undoMove(state)
         }
@@ -44,18 +46,18 @@ const reducer = (state: TGameState, action: TReducerAction): TGameState => {
             return {
                 ...initialState,
                 versus: state.versus,
-                level: state.level,
-                colors: state.colors
-            };
+                difficulty: state.difficulty,
+                previousMoveOffset: state.previousMoveOffset,
+            }
         case 'SET_VERSUS':
             return {
                 ...initialState,
                 versus: action.versus,
-                level: state.level,
-                colors: state.colors
+                difficulty: state.difficulty,
+                previousMoveOffset: initialState.previousMoveOffset + (action.versus === GAME_MODES.COMPUTER ? 1 : 0),
             }
         case 'SET_LEVEL':
-            return {...state, level: action.level}
+            return {...state, difficulty: action.difficulty}
         default:
             return state
     }

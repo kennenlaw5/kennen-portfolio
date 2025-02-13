@@ -1,0 +1,59 @@
+.games {
+  @apply flex flex-col items-center mt-8;
+
+  &__header {
+    @apply flex items-center mb-4;
+  }
+
+  &__backButton {
+    @apply mr-2 text-blue-600 hover:text-blue-800 text-3xl;
+  }
+
+  &__title {
+    @apply mb-6 text-3xl;
+  }
+
+  &__grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-6;
+  }
+
+  &__option {
+    @apply bg-blue-100
+      hover:scale-105
+      transition-transform
+      p-6
+      rounded-lg
+      shadow
+      focus:outline-none;
+
+    &Content {
+      @apply flex flex-col items-center;
+    }
+
+    &Image {
+      @apply w-16 h-16 object-contain;
+    }
+
+    &Title {
+      @apply text-lg font-medium;
+    }
+
+    &Icon {
+      @apply relative inline-block;
+
+      &--half {
+        @apply w-16 h-16;
+      }
+
+      &--topLeft {
+        @apply text-red-500;
+        clip-path: polygon(0 0, 100% 0, 0 100%, 0% 100%);
+      }
+
+      &--bottomRight {
+        @apply text-blue-500 absolute top-0 left-0;
+        clip-path: polygon(100% 0, 100% 100%, 0 100%);
+      }
+    }
+  }
+}

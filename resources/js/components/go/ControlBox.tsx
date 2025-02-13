@@ -13,10 +13,16 @@ const ControlBox: React.FC = () => {
         versus,
         currentMove,
         maxMoves,
-        previousMoves
+        previousMoves,
+        isPlayerTurn,
     } = state
+    const canResetBoard = currentMove > 0 && isPlayerTurn
     const previousMoveColor = versus === GAME_MODES.COMPUTER ? nextColor : previousColor
-    const {row: previousRow, column: previousColumn} = previousMoves.locations[currentMove - 1] || {}
+    const previousMoveOffset = versus === GAME_MODES.COMPUTER ? 2 : 1
+    const {
+        row: previousRow,
+        column: previousColumn
+    } = previousMoves.locations[currentMove - previousMoveOffset] || {}
 
     const previousMove = () => {
        dispatch({type: 'UNDO_MOVE'})
@@ -32,7 +38,7 @@ const ControlBox: React.FC = () => {
                 <button
                     className={classNames(styles.gameButton, styles.gameButtonDanger)}
                     onClick={clear}
-                    disabled={currentMove === 0}
+                    disabled={!canResetBoard}
                 >
                     Reset Board
                 </button>
@@ -42,6 +48,7 @@ const ControlBox: React.FC = () => {
                     <button
                         className={classNames(styles.gameButton, styles.gameButtonWarning)}
                         onClick={previousMove}
+                        disabled={!isPlayerTurn}
                     >
                         Undo {capitalize(previousMoveColor)} @ ({previousRow}, {previousColumn})
                     </button>

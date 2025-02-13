@@ -42,9 +42,9 @@ const ModeSelect: React.FC = () => {
               className="border p-1 rounded"
               disabled={isGameActive}
             >
-              {Object.values(DIFFICULTIES).map((level) => (
-                <option key={level} value={level}>
-                  {capitalize(level)}
+              {Object.values(DIFFICULTIES).map((difficulty) => (
+                <option key={difficulty} value={difficulty}>
+                  {capitalize(difficulty)}
                 </option>
               ))}
             </select>

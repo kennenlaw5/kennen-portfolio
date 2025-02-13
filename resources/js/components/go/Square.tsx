@@ -11,11 +11,12 @@ type TSquareProps = {
 
 const Square: React.FC<TSquareProps> = ({rowIndex, columnIndex}) => {
     const {state, dispatch} = useGoGameContext()
-    const {nextColor, squares, winner} = state
+    const {nextColor, squares, winner, isPlayerTurn} = state
     const currentColor = squares[rowIndex][columnIndex]
+    const shouldFadeSquare = winner && winner !== currentColor
 
     const handleClick = () => {
-        if (currentColor || winner) {
+        if (currentColor || winner || !isPlayerTurn) {
             return
         }
 
@@ -24,7 +25,6 @@ const Square: React.FC<TSquareProps> = ({rowIndex, columnIndex}) => {
             row: rowIndex,
             column: columnIndex,
         })
-        // @TODO: runAI(newSquares, row, col);
     }
 
     return (
@@ -34,6 +34,7 @@ const Square: React.FC<TSquareProps> = ({rowIndex, columnIndex}) => {
                 [styles.gameSquareBlue]: currentColor === COLORS.BLUE,
                 [styles.gameSquareRedHover]: !currentColor && nextColor === COLORS.RED,
                 [styles.gameSquareBlueHover]: !currentColor && nextColor === COLORS.BLUE,
+                [styles.gameSquareFade]: shouldFadeSquare,
             })}
             onClick={handleClick}
         />

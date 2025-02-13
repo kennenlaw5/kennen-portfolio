@@ -108,6 +108,10 @@
             @apply bg-yellow-600;
         }
       }
+
+      &:disabled {
+        @apply opacity-50 cursor-not-allowed;
+      }
     }
   
     &__tinyBox {
@@ -160,6 +164,10 @@
 
         &--blueHover {
             @apply hover:shadow-blue-400 hover:shadow-[inset_0_0px_15px_25px_rgba(0,0,0,0.1)];
+        }
+
+        &--fade {
+            @apply opacity-70;
         }
     }
   }
