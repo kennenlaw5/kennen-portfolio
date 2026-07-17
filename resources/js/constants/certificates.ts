@@ -25,11 +25,13 @@ export const RECREATIONAL_CERTIFICATES = [
         text: 'Private Pilot License',
         alt: 'Private Pilot License',
         link: 'https://www.faa.gov/licenses_certificates/airmen_certification/',
+        description: 'FAA-certificated private pilot with a passion for aviation, disciplined planning, and continuous learning.',
     },
     {
         image: '/images/black-belt.png',
         text: '3rd Degree Black Belt',
         alt: '3rd Degree Black Belt',
         link: 'https://exceltaekwondo.com/',
+        description: 'Third-degree black belt and leader at Excel Taekwondo, focused on coaching, discipline, and community.',
     }
 ]

@@ -1,66 +1,207 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# kennen.dev
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Source code for [Kennen Lawrence's portfolio](https://kennen.dev). The site presents professional experience, featured projects, technical skills, contact information, and a pair of interactive browser games.
 
-## About Laravel
+The project uses Laravel as a thin server-side shell for a React single-page application. Nearly all routing, content, presentation, and interaction live in the TypeScript frontend.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel 11 and PHP 8.2+
+- React 18 and TypeScript in strict mode
+- React Router 6
+- Webpack 5 with `ts-loader`
+- Tailwind CSS 3 and SCSS Modules
+- Docker Compose with nginx, PHP-FPM, and MySQL 8
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Architecture
 
-## Learning Laravel
+Laravel routes return Blade views that contain the React mount point. The shared Blade layout loads the compiled assets and exposes contact configuration through `window.APP_CONFIG`. React then renders the requested page through `BrowserRouter`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```text
+Request
+  -> routes/web.php
+  -> Blade SPA shell
+  -> resources/js/App.tsx
+  -> React Router page
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Routes are declared in both of these files and must remain synchronized:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- `routes/web.php` handles direct requests and browser refreshes.
+- `resources/js/constants/routes.ts` controls client-side rendering and navigation.
 
-## Laravel Sponsors
+Blade views are mount shells only. Visible page content belongs in `resources/js`, not in the route-specific Blade files.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Prerequisites
 
-### Premium Partners
+For local development without Docker:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- PHP 8.2 or newer
+- Composer
+- Node.js and npm
 
-## Contributing
+For the containerized environment:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Docker Desktop with Docker Compose
+- Git Bash or WSL when running `docker-reboot` on Windows
 
-## Code of Conduct
+## Initial setup
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Install the PHP and JavaScript dependencies:
 
-## Security Vulnerabilities
+```bash
+composer install
+npm install
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Create the local environment file and application key:
 
-## License
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The default environment uses SQLite. Create and migrate the local database on a fresh checkout:
+
+```bash
+php -r "file_exists('database/database.sqlite') || touch('database/database.sqlite');"
+php artisan migrate
+```
+
+Compile the frontend assets:
+
+```bash
+npm run dev
+```
+
+Webpack writes generated JavaScript and CSS to `public/js` and `public/css`. Those directories are intentionally ignored by Git.
+
+## Running locally
+
+Start Laravel's development server:
+
+```bash
+php artisan serve
+```
+
+The application will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000). During frontend development, run the asset watcher in a second terminal:
+
+```bash
+npm run watch
+```
+
+## Running with Docker
+
+The Docker environment expects these values in `.env`:
+
+```dotenv
+APP_URL=http://localhost:8080
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=kennen_portfolio
+DB_USERNAME=root
+DB_PASSWORD=
+DOCKER_HTTP_PORT=8080
+DOCKER_MYSQL_PORT=3306
+```
+
+After installing dependencies and building the frontend assets, start or restart the Docker environment from Git Bash or WSL:
+
+```bash
+./docker-reboot
+```
+
+From PowerShell, invoke the same script through Bash:
+
+```powershell
+bash ./docker-reboot
+```
+
+The script creates the shared nginx proxy network when necessary, removes orphaned project containers, and starts the stack. Open [http://localhost:8080](http://localhost:8080) after the containers are healthy.
+
+Useful Docker commands:
+
+```bash
+docker compose ps
+docker compose logs -f
+docker compose down
+```
+
+## Environment-backed contact information
+
+Visible contact details must not be hardcoded in React. Configure them in `.env` using these variables:
+
+```dotenv
+CONTACT_PHONE=
+CONTACT_EMAIL=
+CONTACT_LINKEDIN_URL=
+CONTACT_GITHUB_URL=
+CONTACT_RESUME_URL=
+CONTACT_CITY=
+CONTACT_STATE_ABBREVIATION=
+```
+
+The values flow through the application in this order:
+
+```text
+.env
+  -> config/app.php
+  -> window.APP_CONFIG
+  -> React components
+```
+
+The downloadable resume URL follows the same flow and is consumed by the shared resume-download helper.
+
+## Frontend commands
+
+```bash
+npm run dev      # one-time development build and TypeScript check
+npm run watch    # rebuild when source files change
+npm run prod     # minified production build
+```
+
+## Tests and formatting
+
+Run the PHP test suite:
+
+```bash
+php artisan test
+```
+
+Format PHP code with Laravel Pint:
+
+```bash
+./vendor/bin/pint
+```
+
+TypeScript is checked by `ts-loader` during every frontend build. There is currently no separate JavaScript test runner or ESLint configuration.
+
+## Repository structure
+
+```text
+app/                         Thin Laravel application layer
+config/app.php               Application and contact configuration
+docker/                      nginx, PHP, and MySQL configuration
+resources/js/                React application, content, and browser logic
+resources/js/components/     Reusable and feature components
+resources/js/constants/      Routes and static domain data
+resources/js/pages/          Top-level route components
+resources/sass/              Global styles and SCSS Modules
+resources/views/             Blade shells for the React application
+routes/web.php               Server-side SPA routes
+tests/                       PHPUnit tests
+webpack.config.js            Active frontend build configuration
+```
+
+## Development conventions
+
+- Keep visible content and UI behavior in React/TypeScript.
+- Keep Blade views limited to mounting and configuring the SPA.
+- Use the configured `JS`, `Components`, `Constants`, and `Sass` import aliases.
+- Prefix TypeScript types with `T` and keep strict typing intact.
+- Prefer Tailwind utilities for layout and SCSS Modules for component-specific or stateful styles.
+- Preserve distinct project entries and their external links unless a content change explicitly calls for consolidation.
+- Run `npm run dev` before submitting frontend changes.
+
+The `/projects` and `/skills` Laravel routes currently have no corresponding client routes. Project and skill content is presented through the existing home and experience pages.

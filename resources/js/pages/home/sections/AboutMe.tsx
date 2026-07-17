@@ -17,15 +17,21 @@ const AboutMe: React.FC = () => {
     return (
         <Section header="About Me" className="bg-white shadow rounded p-8">
             <p className="mb-4">
-                I'm Kennen Lawrence from Denver, CO. I excel in fostering collaborative environments,
-                leading high-impact projects, and aligning technical initiatives with business objectives.
+                I'm Kennen Lawrence, a senior full-stack engineer in the Denver area with
+                7+ years in software-development roles and more than eight years on
+                software-product teams.
+            </p>
+            <p className="mb-4">
+                At Akido Labs, I work across a FHIR-based clinical platform and build
+                TypeScript features with Next.js, React, NestJS, Node.js, GraphQL, and
+                PostgreSQL. I also create reusable prompts, skills, and agent workflows
+                with validation loops and deliberate context and token control.
             </p>
             <p>
-                My experience spans from launching industry-first tools at A2Z Sync to modernizing legacy codebases.
-                I am procient in engineering strategy and implementation, optimizing performance, enhancing system scalability,
-                and ensuring software reliability. I continuously seek opportunities for growth through industry certications,
-                staying up-to-date with emerging technologies, and leadership training. I continuously strive for excellence
-                both in my professional career and through leadership roles, including my work with Excel Taekwondo.
+                Previously, I reduced CI build time by 57% at Engrain and progressed from
+                help desk and QA to senior engineer at A2Z Sync, where I contributed to
+                Amazon Autos, digital retail products, integrations, and team mentorship.
+                Outside engineering, I serve in a leadership role with Excel Taekwondo.
             </p>
             <button
                 onClick={handleButtonClick}

@@ -2,6 +2,7 @@ import {TSkill} from 'Components/types/SkillTypes'
 
 export const SKILL_TYPES = {
     ALL: 'all',
+    AI: 'ai',
     BACKEND: 'backend',
     CLOUD: 'cloud',
     FRONTEND: 'frontend',
@@ -32,6 +33,14 @@ export const SKILLS: TSkills = {
         name: 'React',
         type: SKILL_TYPES.FRONTEND
     },
+    NEXTJS: {
+        name: 'Next.js',
+        type: SKILL_TYPES.FRONTEND
+    },
+    REDUX: {
+        name: 'Redux',
+        type: SKILL_TYPES.FRONTEND
+    },
     GATSBY: {
         name: 'Gatsby',
         type: SKILL_TYPES.FRONTEND
@@ -48,12 +57,32 @@ export const SKILLS: TSkills = {
         name: 'SQL',
         type: SKILL_TYPES.BACKEND
     },
+    POSTGRESQL: {
+        name: 'PostgreSQL',
+        type: SKILL_TYPES.BACKEND
+    },
+    MYSQL: {
+        name: 'MySQL',
+        type: SKILL_TYPES.BACKEND
+    },
+    GRAPHQL: {
+        name: 'GraphQL',
+        type: SKILL_TYPES.BACKEND
+    },
+    REST_APIS: {
+        name: 'REST APIs',
+        type: SKILL_TYPES.BACKEND
+    },
+    FHIR_R4: {
+        name: 'FHIR R4',
+        type: SKILL_TYPES.BACKEND
+    },
     GIT: {
         name: 'Git',
         type: SKILL_TYPES.BACKEND
     },
-    AWS_ECOSYSTEM: {
-        name: 'AWS Ecosystem',
+    AWS: {
+        name: 'AWS',
         type: SKILL_TYPES.CLOUD
     },
     JIRA: {
@@ -84,6 +113,10 @@ export const SKILLS: TSkills = {
         name: 'Node.js',
         type: SKILL_TYPES.BACKEND
     },
+    NESTJS: {
+        name: 'NestJS',
+        type: SKILL_TYPES.BACKEND
+    },
     COMPOSER: {
         name: 'Composer',
         type: SKILL_TYPES.BACKEND
@@ -91,6 +124,10 @@ export const SKILLS: TSkills = {
     DOCKER: {
         name: 'Docker',
         type: SKILL_TYPES.BACKEND
+    },
+    CI_CD: {
+        name: 'CI/CD',
+        type: SKILL_TYPES.CLOUD
     },
     VALET: {
         name: 'Valet',
@@ -135,5 +172,29 @@ export const SKILLS: TSkills = {
     PHPUNIT: {
         name: 'PHPUnit',
         type: SKILL_TYPES.BACKEND
+    },
+    PROMPTING: {
+        name: 'Prompting',
+        type: SKILL_TYPES.AI
+    },
+    AGENTIC_WORKFLOWS: {
+        name: 'Agentic Workflows',
+        type: SKILL_TYPES.AI
+    },
+    REUSABLE_SKILLS: {
+        name: 'Reusable Skills',
+        type: SKILL_TYPES.AI
+    },
+    VALIDATION_LOOPS: {
+        name: 'Validation Loops',
+        type: SKILL_TYPES.AI
+    },
+    CONTEXT_CONTROL: {
+        name: 'Context Control',
+        type: SKILL_TYPES.AI
+    },
+    TOKEN_EFFICIENCY: {
+        name: 'Token Efficiency',
+        type: SKILL_TYPES.AI
     },
   }

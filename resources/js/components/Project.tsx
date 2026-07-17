@@ -35,11 +35,6 @@ const Project: React.FC<TProjectProps> = ({project, defaultOpen = false, isDropD
                     </a>
                 ) : title}
             </h4>
-            {title && role && company && dateRange ? (
-                <p>
-                    <span className="font-semibold">{role}</span> {subText}
-                </p>
-            ) : null}
             <div className="text-gray-600 mb-2">{description}</div>
             {technologies.length ? (
                 <>

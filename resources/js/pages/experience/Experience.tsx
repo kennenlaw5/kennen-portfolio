@@ -1,12 +1,17 @@
 import React, { Fragment } from 'react'
 import Section from 'Components/Section'
 import Project from 'Components/Project'
+import Card from 'Components/card/Card'
 import {SKILLS} from 'Constants/skills'
 import {TProjects} from 'Components/types/ProjectTypes'
 import {
   A2zInStoreDescription,
   A2zOnlineDescription,
+  AkidoDescription,
+  AkidoProjectDescription,
   AmazonAutosDescription,
+  EngrainDescription,
+  EngrainProjectDescription,
   EngineerDescription,
   HelpDeskDescription,
   JuniorEngineerDescription,
@@ -17,36 +22,89 @@ interface integrationProps {
     name: string
 }
 
+type TExperienceRole = {
+    dateRange: string
+    description: React.ReactNode
+    title: string
+}
+
+type TExperienceCompany = {
+    className?: string
+    company: string
+    dateRange: string
+    roles: TExperienceRole[]
+}
+
 const Experience: React.FC = () => {
   const projects: TProjects = [
+    {
+      title: 'Akido Labs — Clinical Platform and AI-Assisted Engineering',
+      description: <AkidoProjectDescription />,
+      link: 'https://www.akidolabs.com/',
+      company: 'Akido Labs',
+      dateRange: 'Feb 2026–Present',
+      role: 'Senior Full-Stack Software Engineer',
+      technologies: [
+        SKILLS.TYPESCRIPT,
+        SKILLS.NEXTJS,
+        SKILLS.NESTJS,
+        SKILLS.GRAPHQL,
+        SKILLS.FHIR_R4,
+        SKILLS.POSTGRESQL,
+        SKILLS.AGENTIC_WORKFLOWS,
+        SKILLS.VALIDATION_LOOPS,
+        SKILLS.CONTEXT_CONTROL,
+      ],
+    },
+    {
+      title: 'Engrain — CI Build-Time Reduction and AI Workflows',
+      description: <EngrainProjectDescription />,
+      link: 'https://www.engrain.com/',
+      company: 'Engrain',
+      dateRange: 'Apr 2025–Feb 2026',
+      role: 'Senior Full Stack Engineer',
+      technologies: [
+        SKILLS.LARAVEL,
+        SKILLS.REACT,
+        SKILLS.REDUX,
+        SKILLS.MYSQL,
+        SKILLS.REST_APIS,
+        SKILLS.DOCKER,
+        SKILLS.CI_CD,
+        SKILLS.REUSABLE_SKILLS,
+      ],
+    },
     {
       title: 'Amazon Autos',
       description: <AmazonAutosDescription />,
       link: 'https://www.amazon.com/Amazon-Autos/b?ie=UTF8&node=10677469011',
+      company: 'A2Z Sync Inc.',
+      dateRange: 'Jul 2021–Feb 2025',
+      role: 'Senior Software Engineer',
       className: 'col-span-full',
       technologies: [
-        SKILLS.REACT,
         SKILLS.TYPESCRIPT,
-        SKILLS.AWS_ECOSYSTEM,
         SKILLS.PHP,
+        SKILLS.AWS,
+        SKILLS.REST_APIS,
         SKILLS.MICROSERVICES,
-        SKILLS.JIRA,
-        SKILLS.BITBUCKET,
-        SKILLS.PHPUNIT,
       ],
     },
     {
       title: 'A2Z Sync In-Store Application',
       description: <A2zInStoreDescription />,
       link: 'https://a2zsync.com/in-store/',
+      company: 'A2Z Sync Inc.',
+      dateRange: 'Jul 2019–Feb 2025',
+      role: 'Software Engineer through Senior Software Engineer',
       technologies: [
         SKILLS.REACT,
         SKILLS.TYPESCRIPT,
-        SKILLS.AWS_ECOSYSTEM,
+        SKILLS.AWS,
         SKILLS.PHP,
         SKILLS.MICROSERVICES,
         SKILLS.LARAVEL,
-        SKILLS.SQL,
+        SKILLS.REST_APIS,
         SKILLS.NODEJS,
       ],
     },
@@ -54,51 +112,72 @@ const Experience: React.FC = () => {
       title: 'A2Z Sync Digital Retail Tool',
       description: <A2zOnlineDescription />,
       link: 'https://a2zsync.com/online/',
+      company: 'A2Z Sync Inc.',
+      dateRange: 'Jul 2019–Feb 2025',
+      role: 'Software Engineer through Senior Software Engineer',
       technologies: [
         SKILLS.REACT,
         SKILLS.TYPESCRIPT,
         SKILLS.GATSBY,
         SKILLS.AXIOS,
         SKILLS.PHP,
+        SKILLS.MYSQL,
         SKILLS.WEBPACK,
         SKILLS.CSS_SCSS,
       ],
     },
   ]
 
-  const otherProjects: TProjects = [
-      {
+  const experience: TExperienceCompany[] = [
+    {
+      company: 'Akido Labs',
+      dateRange: 'Feb 2026–Present',
+      roles: [
+        {
+          title: 'Senior Full-Stack Software Engineer',
+          dateRange: 'Feb 2026–Present',
+          description: <AkidoDescription />,
+        },
+      ],
+    },
+    {
+      company: 'Engrain',
+      dateRange: 'Apr 2025–Feb 2026',
+      roles: [
+        {
+          title: 'Senior Full Stack Engineer',
+          dateRange: 'Apr 2025–Feb 2026',
+          description: <EngrainDescription />,
+        },
+      ],
+    },
+    {
+      company: 'A2Z Sync Inc.',
+      dateRange: 'Feb 2018–Feb 2025',
+      className: 'col-span-full',
+      roles: [
+        {
+          title: 'Senior Software Engineer',
+          dateRange: 'Jul 2021–Feb 2025',
           description: <SeniorEngineerDescription />,
-          company: 'A2Z Sync Inc.',
-          dateRange: 'July 2021–Present',
-          role: 'Senior Software Engineer',
-          className: 'col-span-full',
-          technologies: [],
-      },
-      {
+        },
+        {
+          title: 'Software Engineer',
+          dateRange: 'Jul 2019–Jul 2021',
           description: <EngineerDescription />,
-          company: 'A2Z Sync Inc.',
-          dateRange: 'July 2019–July 2021',
-          role: 'Software Engineer',
-          className: 'col-span-full',
-          technologies: [],
-      },
-      {
+        },
+        {
+          title: 'Junior Software Engineer',
+          dateRange: 'Feb 2019–Jul 2019',
           description: <JuniorEngineerDescription />,
-          company: 'A2Z Sync Inc.',
-          dateRange: 'Feb 2019–Jul 2020',
-          role: 'Junior Software Engineer',
-          className: 'col-span-full',
-          technologies: [],
-      },
-      {
-          description: <HelpDeskDescription />,
-          company: 'A2Z Sync Inc.',
+        },
+        {
+          title: 'Help Desk Technician & QA Engineer',
           dateRange: 'Feb 2018–Feb 2019',
-          role: 'Help Desk Technician & QA Engineer',
-          className: 'col-span-full',
-          technologies: [],
-      },
+          description: <HelpDeskDescription />,
+        },
+      ],
+    },
   ]
     const integrations: integrationProps[] = [
         {name: 'Integration 1'},
@@ -110,7 +189,8 @@ const Experience: React.FC = () => {
     <>
       <Section header="Projects & Experience">
         <p className="mb-4 text-gray-600 text-xl">
-          Here's a selection of projects that showcase my skills and experience.
+          Senior full-stack engineer with 7+ years in software-development roles
+          and more than eight years on software-product teams.
         </p>
       </Section>
       <Section>
@@ -129,9 +209,32 @@ const Experience: React.FC = () => {
       <Section>
         <h3 className="font-bold mt-8 mb-4">Experience</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {otherProjects.map((project) => (
-                <Project key={project.title || project.role} project={project} isDropDown />
-            ))}
+          {experience.map(({className, company, dateRange, roles}) => (
+            <Card
+              key={company}
+              className={className}
+              header={company}
+              subHeader={dateRange}
+              isDropDown
+            >
+              <div className="space-y-6">
+                {roles.map((role, index) => (
+                  <div
+                    key={`${company}-${role.title}`}
+                    className={index ? 'border-t border-gray-200 pt-6' : ''}
+                  >
+                    <div className="sm:flex sm:items-baseline sm:justify-between sm:gap-4">
+                      <h5 className="font-semibold text-gray-800">{role.title}</h5>
+                      {roles.length > 1 ? (
+                        <p className="text-sm text-gray-500 whitespace-nowrap">{role.dateRange}</p>
+                      ) : null}
+                    </div>
+                    <div className="text-gray-600 mt-2">{role.description}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          ))}
         </div>
       </Section>
   
