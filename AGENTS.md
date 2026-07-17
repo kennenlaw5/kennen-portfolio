@@ -4,9 +4,9 @@ Guidance for AI coding agents working in this repository. Human contributors may
 
 ## Project overview
 
-Kennen Lawrence's personal portfolio site. It is a **Laravel 11 backend that serves a single-page React 18 + TypeScript application**. Laravel does almost no work beyond returning HTML shells and exposing a small block of contact configuration; virtually all UI, routing, and logic lives in the React app under `resources/js`. There is no meaningful database usage or REST API — the site is effectively static content plus two interactive browser games.
+Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel does almost no work beyond returning HTML shells and exposing a small block of contact configuration; virtually all UI, routing, and logic lives in the React app under `resources/js`. There is no meaningful database usage or REST API — the site is effectively static content plus two interactive browser games.
 
-- **Backend:** Laravel 11, PHP 8.2
+- **Backend:** Laravel 13, PHP 8.5
 - **Frontend:** React 18, TypeScript (strict), React Router 6
 - **Build:** Webpack 5 (via `package.json` scripts) with `ts-loader`
 - **Styling:** Tailwind CSS 3 (utility classes in JSX) + SCSS Modules (`*.module.scss`) for game/component-specific styles
@@ -18,15 +18,15 @@ Install dependencies:
 
 ```bash
 composer install      # PHP dependencies
-npm install           # JS dependencies (a yarn.lock also exists; pick one and stay consistent)
+yarn install --frozen-lockfile  # JS dependencies; yarn.lock is authoritative
 ```
 
 Build the frontend (compiles `resources/js` + `resources/sass` into `public/js` and `public/css`):
 
 ```bash
-npm run dev     # one-off development build
-npm run watch   # development build, rebuild on change (use this while working)
-npm run prod    # minified production build
+yarn dev        # one-off development build
+yarn watch      # development build, rebuild on change (use this while working)
+yarn prod       # minified production build
 ```
 
 Run the app locally:
@@ -35,7 +35,7 @@ Run the app locally:
 # Option A — Docker (matches production-ish setup; serves on http://localhost:8080, host kennen.local)
 ./docker-reboot            # creates the docker network, then docker-compose up -d
 
-# Option B — Laravel's dev server (requires a reachable DB per .env; run `npm run watch` alongside)
+# Option B — Laravel's dev server (requires a reachable DB per .env; run `yarn watch` alongside)
 php artisan serve
 ```
 
@@ -49,7 +49,8 @@ Lint / format:
 
 ```bash
 ./vendor/bin/pint                        # PHP formatting (Laravel Pint)
-npx stylelint "resources/**/*.scss"      # SCSS linting (config in .stylelintrc.json)
+yarn lint:styles                         # SCSS linting (config in .stylelintrc.json)
+yarn typecheck                           # strict TypeScript check without output
 # TypeScript is type-checked at build time by ts-loader; `strict` is on in tsconfig.json.
 # There is no ESLint or Prettier config — match the style of surrounding code.
 ```
@@ -132,10 +133,11 @@ Both games follow the same **`useReducer` + Context** state pattern. When touchi
 
 ## Gotchas & things to know
 
-- **Build output is gitignored.** `public/js`, `public/css` (and `public/build`, `public/hot`) are not committed — you must run a build (`npm run dev`/`watch`) for changes to appear. Editing `resources/js` alone does nothing until rebuilt.
-- **Two webpack configs exist.** `webpack.config.js` is the active one (invoked by the `package.json` scripts and using `ts-loader`). `webpack.mix.js` is a leftover Laravel Mix config and is **not** used by the current build scripts — prefer `webpack.config.js`. Some Babel devDependencies are likewise vestigial.
+- **Build output is gitignored.** `public/js`, `public/css` (and `public/build`, `public/hot`) are not committed — you must run a build (`yarn dev`/`watch`) for changes to appear. Editing `resources/js` alone does nothing until rebuilt.
+- **Two webpack configs exist.** `webpack.config.js` is the active one (invoked by the `package.json` scripts and using `ts-loader`). `webpack.mix.js` is a leftover Laravel Mix config and is **not** used by the current build scripts — prefer `webpack.config.js`.
 - **Orphaned routes.** `web.php` defines `/projects` and `/skills`, but `routes.ts` has no matching client route and the nav bars don't link to them, so they render an empty page. Project/experience content actually lives in `pages/experience/Experience.tsx`. Don't assume every server route has a working page.
 - **Route duplication.** Adding or renaming a page requires editing both `routes/web.php` and `resources/js/constants/routes.ts` (see Architecture).
-- **`README.md` is the stock Laravel readme** and contains no project-specific information — this file (AGENTS.md) is the source of truth for how the project is structured.
+- **Render deploys the production Docker target.** `docker/php/Dockerfile` ends with the `production` stage used by Render. Keep PHP, Node, Composer, and Yarn changes compatible with that stage, and verify it with the Docker job in `.github/workflows/ci.yml`.
+- **CI mirrors production.** Pull requests and pushes to `main` run Pint/PHPUnit, Stylelint/TypeScript/Webpack, dependency audits, and a no-push build of the Render production image.
 - **No JS/TS test suite or ESLint** exists; correctness for frontend changes is verified by building and manual review. PHPUnit only covers the (currently empty) default examples.
-- **`.env` is committed** in this repo (unusual) and contains the local `APP_KEY` and contact info; `.env.example` is the sanitized template. Treat real secrets with care and don't add new ones to a committed `.env`.
+- **`.env` is gitignored.** Keep real application keys, contact data, and Render secrets out of commits and Docker build contexts; `.env.example` is the sanitized template.

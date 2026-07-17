@@ -124,12 +124,12 @@ return [
     ],
 
     'contact' => [
-        'phone'              => env('CONTACT_PHONE', ''),
-        'email'              => env('CONTACT_EMAIL', ''),
-        'linkedin_url'       => env('CONTACT_LINKEDIN_URL', ''),
-        'github_url'         => env('CONTACT_GITHUB_URL', ''),
-        'resume_url'         => env('CONTACT_RESUME_URL', ''),
-        'city'               => env('CONTACT_CITY', ''),
+        'phone' => env('CONTACT_PHONE', ''),
+        'email' => env('CONTACT_EMAIL', ''),
+        'linkedin_url' => env('CONTACT_LINKEDIN_URL', ''),
+        'github_url' => env('CONTACT_GITHUB_URL', ''),
+        'resume_url' => env('CONTACT_RESUME_URL', ''),
+        'city' => env('CONTACT_CITY', ''),
         'state_abbreviation' => env('CONTACT_STATE_ABBREVIATION', ''),
     ],
 ];

@@ -11,7 +11,7 @@ $skill-colors: (
 @mixin skill-colors($type) {
     $color: map.get($skill-colors, $type);
 
-    @if $color != null {
+    @if $color {
         @apply bg-#{$color}-100 text-#{$color}-800 border-#{$color}-300;
     }
 }
@@ -19,7 +19,7 @@ $skill-colors: (
 @mixin skill-colors-hover($type) {
     $color: map.get($skill-colors, $type);
 
-    @if $color != null {
+    @if $color {
         @apply shadow
             bg-#{$color}-100
             text-#{$color}-800
@@ -32,7 +32,7 @@ $skill-colors: (
 @mixin skill-outline-colors($type) {
     $color: map.get($skill-colors, $type);
 
-    @if $color != null {
+    @if $color {
         @apply bg-white
             border
             text-#{$color}-800

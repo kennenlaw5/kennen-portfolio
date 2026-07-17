@@ -6,12 +6,13 @@ The project uses Laravel as a thin server-side shell for a React single-page app
 
 ## Tech stack
 
-- Laravel 11 and PHP 8.2+
+- Laravel 13 and PHP 8.5
 - React 18 and TypeScript in strict mode
 - React Router 6
 - Webpack 5 with `ts-loader`
 - Tailwind CSS 3 and SCSS Modules
 - Docker Compose with nginx, PHP-FPM, and MySQL 8
+- Render deployment through the production Docker target
 
 ## Architecture
 
@@ -36,9 +37,9 @@ Blade views are mount shells only. Visible page content belongs in `resources/js
 
 For local development without Docker:
 
-- PHP 8.2 or newer
+- PHP 8.5
 - Composer
-- Node.js and npm
+- Node.js 24 and Yarn 1.22
 
 For the containerized environment:
 
@@ -51,7 +52,7 @@ Install the PHP and JavaScript dependencies:
 
 ```bash
 composer install
-npm install
+yarn install --frozen-lockfile
 ```
 
 Create the local environment file and application key:
@@ -71,7 +72,7 @@ php artisan migrate
 Compile the frontend assets:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Webpack writes generated JavaScript and CSS to `public/js` and `public/css`. Those directories are intentionally ignored by Git.
@@ -87,7 +88,7 @@ php artisan serve
 The application will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000). During frontend development, run the asset watcher in a second terminal:
 
 ```bash
-npm run watch
+yarn watch
 ```
 
 ## Running with Docker
@@ -118,7 +119,9 @@ From PowerShell, invoke the same script through Bash:
 bash ./docker-reboot
 ```
 
-The script creates the shared nginx proxy network when necessary, removes orphaned project containers, and starts the stack. Open [http://localhost:8080](http://localhost:8080) after the containers are healthy.
+The script creates the shared nginx proxy network when necessary, removes orphaned project containers, rebuilds the development image, and starts the stack. Open [http://localhost:8080](http://localhost:8080) after the containers are healthy.
+
+The local Compose stack uses the `development` stage in `docker/php/Dockerfile`. Render uses the final `production` stage from the same file, which builds the PHP dependencies and minified frontend assets into the deployed image.
 
 Useful Docker commands:
 
@@ -156,9 +159,11 @@ The downloadable resume URL follows the same flow and is consumed by the shared 
 ## Frontend commands
 
 ```bash
-npm run dev      # one-time development build and TypeScript check
-npm run watch    # rebuild when source files change
-npm run prod     # minified production build
+yarn dev          # one-time development build and TypeScript check
+yarn watch        # rebuild when source files change
+yarn prod         # minified production build
+yarn typecheck    # strict TypeScript check without emitting assets
+yarn lint:styles  # lint SCSS and SCSS Modules
 ```
 
 ## Tests and formatting
@@ -177,12 +182,37 @@ Format PHP code with Laravel Pint:
 
 TypeScript is checked by `ts-loader` during every frontend build. There is currently no separate JavaScript test runner or ESLint configuration.
 
+Audit the locked dependencies:
+
+```bash
+composer audit --locked
+yarn audit --groups dependencies
+```
+
+## Continuous integration
+
+`.github/workflows/ci.yml` follows the production toolchain and runs on pull requests and pushes to `main`:
+
+- PHP 8.5, Pint, and PHPUnit
+- Node.js 24, Stylelint, strict TypeScript, and a production Webpack build
+- Composer and production JavaScript dependency audits
+- A BuildKit build of the Docker `production` target without pushing an image
+
+The Docker job is the deployment safety check: it builds `docker/php/Dockerfile` with the same target Render uses. To run that check locally:
+
+```bash
+docker build --file docker/php/Dockerfile --target production .
+```
+
+Render supplies application secrets and contact configuration at runtime. `.dockerignore` prevents local `.env` files, dependencies, generated assets, and repository metadata from entering the Docker build context.
+
 ## Repository structure
 
 ```text
 app/                         Thin Laravel application layer
 config/app.php               Application and contact configuration
 docker/                      nginx, PHP, and MySQL configuration
+.github/workflows/           CI checks, including the Render image build
 resources/js/                React application, content, and browser logic
 resources/js/components/     Reusable and feature components
 resources/js/constants/      Routes and static domain data
@@ -202,6 +232,7 @@ webpack.config.js            Active frontend build configuration
 - Prefix TypeScript types with `T` and keep strict typing intact.
 - Prefer Tailwind utilities for layout and SCSS Modules for component-specific or stateful styles.
 - Preserve distinct project entries and their external links unless a content change explicitly calls for consolidation.
-- Run `npm run dev` before submitting frontend changes.
+- Use Yarn for JavaScript dependencies; `yarn.lock` is the tracked deployment lockfile.
+- Run `yarn lint:styles`, `yarn typecheck`, and `yarn prod` before submitting frontend changes.
 
 The `/projects` and `/skills` Laravel routes currently have no corresponding client routes. Project and skill content is presented through the existing home and experience pages.

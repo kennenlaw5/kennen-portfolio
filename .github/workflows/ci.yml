@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: PHP — Pint + PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
+        with:
+          php-version: '8.5'
+          extensions: pdo_sqlite, sqlite3, zip
+          coverage: none
+
+      - uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6 # v4
+
+      - name: Prepare test environment
+        run: |
+          cp .env.example .env
+          touch database/database.sqlite
+          php artisan key:generate
+
+      - name: Pint
+        run: ./vendor/bin/pint --test
+
+      - name: PHPUnit
+        run: php artisan test
+
+  js:
+    name: JS — styles + types + production build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile --non-interactive
+
+      - name: Stylelint
+        run: yarn lint:styles
+
+      - name: TypeScript
+        run: yarn typecheck
+
+      - name: Webpack production build
+        run: yarn prod
+
+  security:
+    name: Security — dependency audits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - uses: shivammathur/setup-php@b604ade2a87db23f8871b7182e69ec5e75effb45 # v2
+        with:
+          php-version: '8.5'
+          coverage: none
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          cache: yarn
+
+      - name: Audit locked PHP dependencies
+        run: composer audit --locked
+
+      - name: Audit production JavaScript dependencies
+        run: yarn audit --groups dependencies
+
+  docker:
+    name: Docker — Render production image builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+
+      - uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4
+
+      - name: Build production image (no push)
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7
+        with:
+          context: .
+          file: docker/php/Dockerfile
+          target: production
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

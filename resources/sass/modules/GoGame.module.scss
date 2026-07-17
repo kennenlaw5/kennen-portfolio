@@ -96,6 +96,7 @@
   
       &--danger {
         @apply bg-red-500 text-white;
+
          &:hover:not(:disabled) {
               @apply bg-red-600;
           }
