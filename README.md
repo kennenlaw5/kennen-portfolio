@@ -235,12 +235,16 @@ Merging to `main` does not deploy automatically. Production releases use the man
    `main` CI run; it does not repeat the build and test suite.
 3. Approve the pending `production` environment deployment.
 4. GitHub calls the Render deploy hook with that exact commit SHA.
+5. GitHub monitors that specific Render deploy until Render reports it as `live` or
+   reports a terminal failure.
 
 The GitHub `production` environment is restricted to `main` and protects the
-`RENDER_DEPLOY_HOOK_URL` secret behind required approval. Keep Render **Auto-Deploy**
-set to **Off** and its health check path set to `/up`. The deploy hook URL comes from
-the Render service's **Settings** page and must be stored as an environment secret,
-never in this repository.
+`RENDER_DEPLOY_HOOK_URL` and `RENDER_API_KEY` secrets behind required approval. Keep
+Render **Auto-Deploy** set to **Off** and its health check path set to `/up`. The deploy
+hook URL comes from the Render service's **Settings** page. Create the API key in
+Render's **Account Settings**; the workflow uses it only to retrieve the status of the
+deploy ID returned by the hook. Store both values as environment secrets, never in this
+repository.
 
 This flow allows multiple changes to accumulate on `main` before intentionally
 releasing the latest validated commit. Wait for the automatic CI run to succeed before
