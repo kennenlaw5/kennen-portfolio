@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
 
 permissions:
   contents: read
@@ -36,7 +37,7 @@ jobs:
         run: php artisan test
 
   js:
-    name: JS — styles + types + production build
+    name: JS — styles + types + tests + production build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5

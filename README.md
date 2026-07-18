@@ -211,7 +211,8 @@ yarn audit --groups dependencies
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` follows the production toolchain and runs on pull requests and pushes to `main`:
+`.github/workflows/ci.yml` follows the production toolchain and runs on pull requests,
+pushes to `main`, and as the validation stage of a manual production deployment:
 
 - PHP 8.5, Pint, and PHPUnit
 - Node.js 24, Stylelint, strict TypeScript, Vitest, and a production Webpack build
@@ -224,7 +225,29 @@ The Docker job is the deployment safety check: it builds `docker/php/Dockerfile`
 docker build --file docker/php/Dockerfile --target production .
 ```
 
-Render supplies application secrets and contact configuration at runtime. `.dockerignore` prevents local `.env` files, dependencies, generated assets, and repository metadata from entering the Docker build context.
+## Production deployments
+
+Merging to `main` does not deploy automatically. Production releases use the manual
+`Deploy to Render` GitHub Actions workflow:
+
+1. Open **Actions → Deploy to Render → Run workflow** and select `main`.
+2. The workflow reruns the complete CI suite against the selected commit.
+3. After CI succeeds, approve the pending `production` environment deployment.
+4. GitHub calls the Render deploy hook with that exact commit SHA.
+
+The GitHub `production` environment is restricted to `main` and protects the
+`RENDER_DEPLOY_HOOK_URL` secret behind required approval. Keep Render **Auto-Deploy**
+set to **Off** and its health check path set to `/up`. The deploy hook URL comes from
+the Render service's **Settings** page and must be stored as an environment secret,
+never in this repository.
+
+This flow allows multiple changes to accumulate on `main` before intentionally
+releasing the latest validated commit. If a release needs to be reverted, use Render's
+rollback action and then deploy the corrective commit through the same workflow.
+
+Render supplies application secrets and contact configuration at runtime. `.dockerignore`
+prevents local `.env` files, dependencies, generated assets, and repository metadata
+from entering the Docker build context.
 
 ## Repository structure
 
@@ -232,7 +255,7 @@ Render supplies application secrets and contact configuration at runtime. `.dock
 app/                         Thin Laravel layer, including anonymous analytics logging
 config/app.php               Application and contact configuration
 docker/                      nginx, PHP, and MySQL configuration
-.github/workflows/           CI checks, including the Render image build
+.github/workflows/           CI checks and the approved Render deployment workflow
 resources/js/                React application, content, and browser logic
 resources/js/components/     Reusable and feature components
 resources/js/constants/      Routes and static domain data
