@@ -77,6 +77,10 @@ export const SKILLS: TSkills = {
         name: 'FHIR R4',
         type: SKILL_TYPES.BACKEND
     },
+    KAFKA: {
+        name: 'Kafka',
+        type: SKILL_TYPES.BACKEND
+    },
     GIT: {
         name: 'Git',
         type: SKILL_TYPES.BACKEND
@@ -127,6 +131,10 @@ export const SKILLS: TSkills = {
     },
     CI_CD: {
         name: 'CI/CD',
+        type: SKILL_TYPES.CLOUD
+    },
+    GITHUB_ACTIONS: {
+        name: 'GitHub Actions',
         type: SKILL_TYPES.CLOUD
     },
     VALET: {
@@ -195,6 +203,30 @@ export const SKILLS: TSkills = {
     },
     TOKEN_EFFICIENCY: {
         name: 'Token Efficiency',
+        type: SKILL_TYPES.AI
+    },
+    MCP: {
+        name: 'MCP',
+        type: SKILL_TYPES.AI
+    },
+    CODEX: {
+        name: 'Codex',
+        type: SKILL_TYPES.AI
+    },
+    CLAUDE_CODE: {
+        name: 'Claude Code CLI',
+        type: SKILL_TYPES.AI
+    },
+    AMAZON_BEDROCK: {
+        name: 'Amazon Bedrock',
+        type: SKILL_TYPES.AI
+    },
+    GITHUB_COPILOT: {
+        name: 'GitHub Copilot',
+        type: SKILL_TYPES.AI
+    },
+    GREPTILE: {
+        name: 'Greptile',
         type: SKILL_TYPES.AI
     },
   }

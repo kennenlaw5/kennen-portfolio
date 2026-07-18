@@ -2,10 +2,12 @@ import React from 'react'
 
 export const AkidoProjectDescription: React.FC = () => (
     <p>
-        Build TypeScript features across a multi-repository, FHIR-based clinical
-        platform using Next.js, React, NestJS, Node.js, GraphQL, and PostgreSQL.
-        Create reusable prompts, skills, and multi-step agent flows with validation
-        and retry loops, while controlling context and token usage.
+        Built TypeScript features across a multi-repository, FHIR-based clinical
+        platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.
+        Used Codex alongside Claude Code CLI configured through Amazon Bedrock, with MCP
+        integrations, to create reusable skills and multi-step agent workflows with
+        validation and retry loops while controlling context and token usage to
+        minimize overhead.
     </p>
 )
 
@@ -13,8 +15,9 @@ export const EngrainProjectDescription: React.FC = () => (
     <p>
         Reduced CI build time by 57%, from 46 minutes to 20 minutes, by changing
         the test strategy and allocating build resources more efficiently. Used
-        structured, reusable prompts for codebase research, implementation planning,
-        debugging, and test design.
+        Codex CLI, Claude Code CLI, and GitHub Copilot CLI with MCP integrations and
+        structured prompts for codebase research, implementation planning, debugging,
+        and test design.
     </p>
 )
 
@@ -85,13 +88,13 @@ export const A2zOnlineDescription: React.FC = () => (
 
 export const AkidoDescription: React.FC = () => (
     <p>
-        Work across a multi-repository, FHIR-based clinical platform, building
+        Worked across a multi-repository, FHIR-based clinical platform, building
         TypeScript features in Next.js and React and in NestJS and Node.js services
-        backed by GraphQL and PostgreSQL. Build reusable prompts, skills, and
-        multi-step agent flows for code changes and debugging, with validation and
-        retry loops when consistency matters. Keep AI usage lean by limiting context,
-        splitting larger tasks into focused passes, and removing repeated instructions
-        and unnecessary tool calls.
+        backed by GraphQL, PostgreSQL, and Kafka. Used Codex alongside Claude Code CLI
+        configured through Amazon Bedrock, with MCP integrations, to build reusable
+        skills and multi-step agent workflows for code changes and debugging. Applied
+        validation and retry loops when consistency mattered and kept AI usage lean
+        through deliberate context and token control.
     </p>
 )
 
@@ -99,10 +102,11 @@ export const EngrainDescription: React.FC = () => (
     <p>
         Cut CI build time from 46 minutes to 20 minutes, a 57% reduction, by changing
         the test strategy and allocating build resources more efficiently. Used
+        Codex CLI, Claude Code CLI, and GitHub Copilot CLI with MCP integrations and
         structured prompts for codebase research, implementation planning, debugging,
-        and test design, then saved successful approaches for reuse. Built full-stack
-        features with Laravel, React, Redux, MySQL, and REST APIs and improved deployment
-        reliability through CI/CD and container workflows.
+        and test design. Built full-stack features with Laravel, React, Redux, MySQL,
+        and REST APIs and improved deployment reliability through CI/CD and container
+        workflows.
     </p>
 )
 

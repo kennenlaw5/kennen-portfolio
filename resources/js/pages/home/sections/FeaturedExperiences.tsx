@@ -16,7 +16,7 @@ const FeaturedExperiences: React.FC = () => (
                     >
                         Akido Labs
                     </a>
-                    {', build TypeScript features across a multi-repository, FHIR-based clinical platform using Next.js, React, NestJS, Node.js, GraphQL, and PostgreSQL.'}
+                    {', built TypeScript features across a multi-repository, FHIR-based clinical platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.'}
                 </p>
             </Card>
             <Card header="AI-Assisted Engineering">

@@ -23,10 +23,21 @@ const Card: React.FC<TCardProps> = (props) => {
         subHeader,
     } = props
     const [isOpen, setIsOpen] = useState(!isDropDown || defaultOpen)
+    const [isContentOverflowVisible, setIsContentOverflowVisible] = useState(!isDropDown || defaultOpen)
 
     const toggleDropDown = () => {
         if (isDropDown) {
+            if (isOpen) {
+                setIsContentOverflowVisible(false)
+            }
+
             setIsOpen(!isOpen)
+        }
+    }
+
+    const handleContentTransitionEnd = (event: React.TransitionEvent<HTMLDivElement>) => {
+        if (event.target === event.currentTarget && isOpen) {
+            setIsContentOverflowVisible(true)
         }
     }
 
@@ -43,8 +54,11 @@ const Card: React.FC<TCardProps> = (props) => {
             <div className={classNames(styles.cardContent, {
                 [styles.cardContentCollapsed]: !isOpen,
                 [styles.cardContentExpanded]: isOpen,
-            })}>
-                <div className={styles.cardContentWrapper}>
+            })} onTransitionEnd={handleContentTransitionEnd}>
+                <div className={classNames(styles.cardContentWrapper, {
+                    [styles.cardContentWrapperClipped]: !isContentOverflowVisible,
+                    [styles.cardContentWrapperOverflowVisible]: isContentOverflowVisible,
+                })}>
                     {children}
                 </div>
             </div>

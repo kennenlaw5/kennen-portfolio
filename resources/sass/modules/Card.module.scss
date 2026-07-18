@@ -63,6 +63,14 @@ $hover-transition-duration: '200';
   }
 
   &__contentWrapper{
-      @apply overflow-hidden pt-2;
+      @apply pt-2;
+
+      &--clipped {
+        @apply overflow-hidden;
+      }
+
+      &--overflowVisible {
+        @apply overflow-visible;
+      }
   }
 }

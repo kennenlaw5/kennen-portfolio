@@ -1,9 +1,12 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
+import classNames from 'classnames'
 import Section from 'Components/Section'
 import Project from 'Components/Project'
 import Card from 'Components/card/Card'
 import {SKILLS} from 'Constants/skills'
 import {TProjects} from 'Components/types/ProjectTypes'
+import {downloadResume} from 'JS/pages/helpers'
+import {FaDownload, FaSpinner} from 'react-icons/fa'
 import {
   A2zInStoreDescription,
   A2zOnlineDescription,
@@ -36,13 +39,22 @@ type TExperienceCompany = {
 }
 
 const Experience: React.FC = () => {
+  const [isDownloadingResume, setIsDownloadingResume] = useState(false)
+
+  const handleResumeDownload = () => {
+    setIsDownloadingResume(true)
+
+    downloadResume()
+      .finally(() => setIsDownloadingResume(false))
+  }
+
   const projects: TProjects = [
     {
       title: 'Akido Labs — Clinical Platform and AI-Assisted Engineering',
       description: <AkidoProjectDescription />,
       link: 'https://www.akidolabs.com/',
       company: 'Akido Labs',
-      dateRange: 'Feb 2026–Present',
+      dateRange: 'Feb 2026–Jul 2026',
       role: 'Senior Full-Stack Software Engineer',
       technologies: [
         SKILLS.TYPESCRIPT,
@@ -51,9 +63,18 @@ const Experience: React.FC = () => {
         SKILLS.GRAPHQL,
         SKILLS.FHIR_R4,
         SKILLS.POSTGRESQL,
+        SKILLS.KAFKA,
+        SKILLS.GITHUB_ACTIONS,
         SKILLS.AGENTIC_WORKFLOWS,
+        SKILLS.REUSABLE_SKILLS,
         SKILLS.VALIDATION_LOOPS,
         SKILLS.CONTEXT_CONTROL,
+        SKILLS.TOKEN_EFFICIENCY,
+        SKILLS.MCP,
+        SKILLS.CODEX,
+        SKILLS.CLAUDE_CODE,
+        SKILLS.AMAZON_BEDROCK,
+        SKILLS.GREPTILE,
       ],
     },
     {
@@ -71,7 +92,11 @@ const Experience: React.FC = () => {
         SKILLS.REST_APIS,
         SKILLS.DOCKER,
         SKILLS.CI_CD,
-        SKILLS.REUSABLE_SKILLS,
+        SKILLS.PROMPTING,
+        SKILLS.MCP,
+        SKILLS.CODEX,
+        SKILLS.CLAUDE_CODE,
+        SKILLS.GITHUB_COPILOT,
       ],
     },
     {
@@ -131,11 +156,11 @@ const Experience: React.FC = () => {
   const experience: TExperienceCompany[] = [
     {
       company: 'Akido Labs',
-      dateRange: 'Feb 2026–Present',
+      dateRange: 'Feb 2026–Jul 2026',
       roles: [
         {
           title: 'Senior Full-Stack Software Engineer',
-          dateRange: 'Feb 2026–Present',
+          dateRange: 'Feb 2026–Jul 2026',
           description: <AkidoDescription />,
         },
       ],
@@ -192,6 +217,21 @@ const Experience: React.FC = () => {
           Senior full-stack engineer with 7+ years in software-development roles
           and more than eight years on software-product teams.
         </p>
+        <button
+          onClick={handleResumeDownload}
+          className="relative inline-flex bg-blue-600 text-white px-5 py-2.5 rounded hover:bg-blue-700 transition disabled:bg-blue-400 disabled:cursor-not-allowed"
+          disabled={isDownloadingResume}
+        >
+          <span className={classNames('inline-flex items-center gap-2', {invisible: isDownloadingResume})}>
+            <FaDownload aria-hidden="true" />
+            Download My Resume
+          </span>
+          {isDownloadingResume ? (
+            <span className="absolute inset-0 flex items-center justify-center">
+              <FaSpinner className="animate-spin text-white text-lg" />
+            </span>
+          ) : null}
+        </button>
       </Section>
       <Section>
         <h3 className="font-bold mt-8 mb-4">Featured Projects</h3>
