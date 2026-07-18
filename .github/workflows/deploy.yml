@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -13,12 +14,34 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
+  verify-ci:
+    name: Verify successful CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Check CI result for selected commit
+        env:
+          DEPLOY_REF: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          response=$(curl --fail-with-body --silent --show-error --location \
+            --header "Accept: application/vnd.github+json" \
+            --header "Authorization: Bearer ${GITHUB_TOKEN}" \
+            --header "X-GitHub-Api-Version: 2026-03-10" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?branch=main&event=push&status=success&head_sha=${DEPLOY_REF}&per_page=1")
+
+          ci_run_url=$(jq --raw-output '.workflow_runs[0].html_url // empty' <<< "$response")
+
+          if [ -z "$ci_run_url" ]; then
+            echo "::error::No successful main-branch CI run exists for ${DEPLOY_REF}. Wait for CI to finish or resolve its failures before deploying."
+            exit 1
+          fi
+
+          echo "Verified successful CI run: ${ci_run_url}"
 
   deploy:
     name: Approve and deploy
-    needs: ci
+    needs: verify-ci
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment:

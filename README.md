@@ -211,8 +211,8 @@ yarn audit --groups dependencies
 
 ## Continuous integration
 
-`.github/workflows/ci.yml` follows the production toolchain and runs on pull requests,
-pushes to `main`, and as the validation stage of a manual production deployment:
+`.github/workflows/ci.yml` follows the production toolchain and runs on pull requests
+and pushes to `main`:
 
 - PHP 8.5, Pint, and PHPUnit
 - Node.js 24, Stylelint, strict TypeScript, Vitest, and a production Webpack build
@@ -231,8 +231,9 @@ Merging to `main` does not deploy automatically. Production releases use the man
 `Deploy to Render` GitHub Actions workflow:
 
 1. Open **Actions → Deploy to Render → Run workflow** and select `main`.
-2. The workflow reruns the complete CI suite against the selected commit.
-3. After CI succeeds, approve the pending `production` environment deployment.
+2. The workflow verifies that the selected commit already has a successful automatic
+   `main` CI run; it does not repeat the build and test suite.
+3. Approve the pending `production` environment deployment.
 4. GitHub calls the Render deploy hook with that exact commit SHA.
 
 The GitHub `production` environment is restricted to `main` and protects the
@@ -242,8 +243,9 @@ the Render service's **Settings** page and must be stored as an environment secr
 never in this repository.
 
 This flow allows multiple changes to accumulate on `main` before intentionally
-releasing the latest validated commit. If a release needs to be reverted, use Render's
-rollback action and then deploy the corrective commit through the same workflow.
+releasing the latest validated commit. Wait for the automatic CI run to succeed before
+starting a deployment. If a release needs to be reverted, use Render's rollback action
+and then deploy the corrective commit through the same workflow.
 
 Render supplies application secrets and contact configuration at runtime. `.dockerignore`
 prevents local `.env` files, dependencies, generated assets, and repository metadata
