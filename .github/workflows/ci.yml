@@ -54,6 +54,9 @@ jobs:
       - name: TypeScript
         run: yarn typecheck
 
+      - name: Frontend tests
+        run: yarn test
+
       - name: Webpack production build
         run: yarn prod
 

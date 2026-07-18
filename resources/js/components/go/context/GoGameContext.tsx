@@ -31,7 +31,7 @@ export const initialState: TGameState = {
   winner: null,
 }
 
-const reducer = (state: TGameState, action: TReducerAction): TGameState => {
+export const reducer = (state: TGameState, action: TReducerAction): TGameState => {
     switch (action.type) {
         case 'SET_SQUARE': {
             return setSquare(state, action)

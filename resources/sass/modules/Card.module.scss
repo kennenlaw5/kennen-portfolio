@@ -5,22 +5,23 @@ $hover-transition-duration: '200';
   @apply p-4 max-h-fit bg-white shadow rounded select-none overflow-hidden;
 
   &__header {
-    @apply flex items-center justify-between;
+    @apply flex w-full items-center justify-between text-left;
 
     &Content {
       @apply sm:flex sm:flex-row;
     }
 
     &Icon{
-      @apply text-lg transform duration-#{$animation-duration};
+      @apply text-lg transform duration-#{$animation-duration} motion-reduce:transition-none;
 
       &--clickable {
-        @apply cursor-pointer transition duration-#{$hover-transition-duration} ease-in-out hover:text-blue-500;
+        @apply cursor-pointer rounded-sm border-0 bg-transparent p-0 transition
+          duration-#{$hover-transition-duration} ease-in-out hover:text-blue-500
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+          focus-visible:ring-offset-2 motion-reduce:transition-none;
 
-        &:hover {
-          h5 {
-            @apply text-blue-300
-          }
+        &:hover .card__subtitle {
+          @apply text-blue-300;
         }
       }
 
@@ -51,7 +52,7 @@ $hover-transition-duration: '200';
   }
 
   &__content {
-    @apply grid transition-all duration-#{$animation-duration} ease-in-out;
+    @apply grid transition-all duration-#{$animation-duration} ease-in-out motion-reduce:transition-none;
 
     &--collapsed {
       @apply grid-rows-[0fr];

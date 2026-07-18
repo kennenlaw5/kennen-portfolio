@@ -7,6 +7,7 @@ import CardSubHeader from 'Components/card/CardSubheader'
 import CardHeaderIcon from 'Components/card/CardHeaderIcon'
 
 type TCardTitleProps = {
+    contentId: string
     header: THeader
     isDropDown: boolean,
     isOpen: boolean,
@@ -16,6 +17,7 @@ type TCardTitleProps = {
 
 const CardTitle: React.FC<TCardTitleProps> = (props) => {
     const {
+        contentId,
         header,
         isDropDown = false,
         isOpen,
@@ -23,18 +25,41 @@ const CardTitle: React.FC<TCardTitleProps> = (props) => {
         toggleDropDown
     } = props
 
-    return (
-        <div
-            className={classNames(styles.cardHeader, {[styles.cardHeaderIconClickable]: isDropDown})}
+    const headerContent = (
+        <>
+            <CardHeader {...{header, subHeader, isDropDown}} />
+            <CardSubHeader {...{header, subHeader, isDropDown}} />
+        </>
+    )
+
+    const titleContent = (
+        <>
+            {header || subHeader ? (isDropDown ? (
+                <span className={styles.cardHeaderContent}>
+                    {headerContent}
+                </span>
+            ) : (
+                <div className={styles.cardHeaderContent}>
+                    {headerContent}
+                </div>
+            )) : null}
+            <CardHeaderIcon {...{isDropDown, isOpen}} />
+        </>
+    )
+
+    return isDropDown ? (
+        <button
+            type="button"
+            aria-controls={contentId}
+            aria-expanded={isOpen}
+            className={classNames(styles.cardHeader, styles.cardHeaderIconClickable)}
             onClick={toggleDropDown}
         >
-            {header || subHeader ? (
-                <div className={styles.cardHeaderContent}>
-                    <CardHeader {...{header, subHeader}} />
-                    <CardSubHeader {...{header, subHeader, isDropDown}} />
-                </div>
-            ) : null}
-            <CardHeaderIcon {...{isDropDown, isOpen}} />
+            {titleContent}
+        </button>
+    ) : (
+        <div className={styles.cardHeader}>
+            {titleContent}
         </div>
     )
 }

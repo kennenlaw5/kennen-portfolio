@@ -10,12 +10,22 @@ type TCardSubHeaderProps = {
 }
 
 const CardSubHeader: React.FC<TCardSubHeaderProps> = ({header, subHeader, isDropDown}) => {
-    return subHeader && header ? (
-        <h5 className={classNames(styles.cardSubtitle, {[styles.cardSubtitleClickable]: isDropDown})}>
+    if (!subHeader || !header) {
+        return null
+    }
+
+    const content = (
+        <>
             <span className={styles.cardSubtitleSeparator}>&nbsp;-&nbsp;</span>
             {subHeader}
-        </h5>
-    ) : null
+        </>
+    )
+
+    return isDropDown ? (
+        <span className={classNames(styles.cardSubtitle, styles.cardSubtitleClickable)}>{content}</span>
+    ) : (
+        <h5 className={styles.cardSubtitle}>{content}</h5>
+    )
 }
 
 export default CardSubHeader

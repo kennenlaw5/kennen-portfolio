@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useId, useState} from 'react'
 import classNames from 'classnames'
 import styles from 'Sass/modules/Card.module.scss'
 import CardTitle from 'Components/card/CardTitle'
@@ -24,6 +24,7 @@ const Card: React.FC<TCardProps> = (props) => {
     } = props
     const [isOpen, setIsOpen] = useState(!isDropDown || defaultOpen)
     const [isContentOverflowVisible, setIsContentOverflowVisible] = useState(!isDropDown || defaultOpen)
+    const contentId = useId()
 
     const toggleDropDown = () => {
         if (isDropDown) {
@@ -48,13 +49,19 @@ const Card: React.FC<TCardProps> = (props) => {
                 isDropDown,
                 isOpen,
                 subHeader,
+                contentId,
                 toggleDropDown
             }} />
 
-            <div className={classNames(styles.cardContent, {
-                [styles.cardContentCollapsed]: !isOpen,
-                [styles.cardContentExpanded]: isOpen,
-            })} onTransitionEnd={handleContentTransitionEnd}>
+            <div
+                id={contentId}
+                aria-hidden={!isOpen}
+                className={classNames(styles.cardContent, {
+                    [styles.cardContentCollapsed]: !isOpen,
+                    [styles.cardContentExpanded]: isOpen,
+                })}
+                onTransitionEnd={handleContentTransitionEnd}
+            >
                 <div className={classNames(styles.cardContentWrapper, {
                     [styles.cardContentWrapperClipped]: !isContentOverflowVisible,
                     [styles.cardContentWrapperOverflowVisible]: isContentOverflowVisible,

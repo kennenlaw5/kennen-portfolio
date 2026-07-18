@@ -7,6 +7,7 @@ import Card from 'Components/card/Card'
 import Tooltip from 'Components/tooltip/Tooltip'
 import TooltipTrigger from 'Components/tooltip/TooltipTrigger'
 import TooltipText from 'Components/tooltip/TooltipText'
+import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
 
 type TProjectProps = {
     defaultOpen?: boolean
@@ -29,9 +30,17 @@ const Project: React.FC<TProjectProps> = ({project, defaultOpen = false, isDropD
         }}>
             <h4 className="font-semibold mb-2">
                 {link ? (
-                    <a href={link} target="_blank" rel="noopener noreferrer" className="link inline-flex text-gray-700">
+                    <a
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link inline-flex text-gray-700"
+                        onClick={() => trackEvent(ANALYTICS_EVENTS.PROJECT_LINK_CLICKED, {
+                            label: title || role || 'Untitled project',
+                        })}
+                    >
                         {title}
-                        <FaExternalLinkAlt className='my-auto ml-2' />
+                        <FaExternalLinkAlt className='my-auto ml-2' aria-hidden="true" />
                     </a>
                 ) : title}
             </h4>

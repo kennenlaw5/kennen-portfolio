@@ -8,13 +8,18 @@ type TTooltipTextProps = {
 }
 
 const TooltipText: React.FC<TTooltipTextProps> = ({children}) => {
-    const {showTooltip} = useTooltipContext()
+    const {showTooltip, tooltipId} = useTooltipContext()
 
     return (
-        <div className={classNames(styles.tooltipText, {
-            [styles.tooltipTextShow]: showTooltip,
-            [styles.tooltipTextHide]: !showTooltip
-        })}>
+        <div
+            id={tooltipId}
+            role="tooltip"
+            aria-hidden={!showTooltip}
+            className={classNames(styles.tooltipText, {
+                [styles.tooltipTextShow]: showTooltip,
+                [styles.tooltipTextHide]: !showTooltip
+            })}
+        >
             {children}
         </div>
     )

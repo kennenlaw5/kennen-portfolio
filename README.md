@@ -9,6 +9,7 @@ The project uses Laravel as a thin server-side shell for a React single-page app
 - Laravel 13 and PHP 8.5
 - React 18 and TypeScript in strict mode
 - React Router 6
+- Vitest, jsdom, and React Testing Library
 - Webpack 5 with `ts-loader`
 - Tailwind CSS 3 and SCSS Modules
 - Docker Compose with nginx, PHP-FPM, and MySQL 8
@@ -32,6 +33,10 @@ Routes are declared in both of these files and must remain synchronized:
 - `resources/js/constants/routes.ts` controls client-side rendering and navigation.
 
 Blade views are mount shells only. Visible page content belongs in `resources/js`, not in the route-specific Blade files.
+
+The only JSON endpoint is `POST /api/analytics/events`. It accepts a small allowlist
+of anonymous interaction events and writes structured `portfolio_event` entries to
+the application log; it does not use cookies, visitor identifiers, or the database.
 
 ## Prerequisites
 
@@ -156,6 +161,17 @@ The values flow through the application in this order:
 
 The downloadable resume URL follows the same flow and is consumed by the shared resume-download helper.
 
+## First-party analytics
+
+The React application records page views, successful resume downloads, project-link
+clicks, and contact-link clicks through the first-party analytics endpoint. Payloads
+contain only the event name, current path, and an optional non-personal label. Browsers
+with Do Not Track enabled do not send events.
+
+On Render, filter the application logs for `portfolio_event` to inspect these events.
+This intentionally provides lightweight operational visibility rather than a visitor
+profile or full analytics dashboard.
+
 ## Frontend commands
 
 ```bash
@@ -163,15 +179,18 @@ yarn dev          # one-time development build and TypeScript check
 yarn watch        # rebuild when source files change
 yarn prod         # minified production build
 yarn typecheck    # strict TypeScript check without emitting assets
+yarn test         # run the frontend test suite once
+yarn test:watch   # run frontend tests in watch mode
 yarn lint:styles  # lint SCSS and SCSS Modules
 ```
 
 ## Tests and formatting
 
-Run the PHP test suite:
+Run the PHP and frontend test suites:
 
 ```bash
 php artisan test
+yarn test
 ```
 
 Format PHP code with Laravel Pint:
@@ -180,7 +199,8 @@ Format PHP code with Laravel Pint:
 ./vendor/bin/pint
 ```
 
-TypeScript is checked by `ts-loader` during every frontend build. There is currently no separate JavaScript test runner or ESLint configuration.
+TypeScript is checked by `ts-loader` during every frontend build. Vitest runs the
+TypeScript unit and component tests in jsdom. There is no ESLint configuration.
 
 Audit the locked dependencies:
 
@@ -194,7 +214,7 @@ yarn audit --groups dependencies
 `.github/workflows/ci.yml` follows the production toolchain and runs on pull requests and pushes to `main`:
 
 - PHP 8.5, Pint, and PHPUnit
-- Node.js 24, Stylelint, strict TypeScript, and a production Webpack build
+- Node.js 24, Stylelint, strict TypeScript, Vitest, and a production Webpack build
 - Composer and production JavaScript dependency audits
 - A BuildKit build of the Docker `production` target without pushing an image
 
@@ -209,7 +229,7 @@ Render supplies application secrets and contact configuration at runtime. `.dock
 ## Repository structure
 
 ```text
-app/                         Thin Laravel application layer
+app/                         Thin Laravel layer, including anonymous analytics logging
 config/app.php               Application and contact configuration
 docker/                      nginx, PHP, and MySQL configuration
 .github/workflows/           CI checks, including the Render image build
@@ -219,8 +239,10 @@ resources/js/constants/      Routes and static domain data
 resources/js/pages/          Top-level route components
 resources/sass/              Global styles and SCSS Modules
 resources/views/             Blade shells for the React application
+routes/api.php               First-party analytics event endpoint
 routes/web.php               Server-side SPA routes
-tests/                       PHPUnit tests
+tests/                       PHPUnit feature and unit tests
+vitest.config.ts             Frontend unit and component test configuration
 webpack.config.js            Active frontend build configuration
 ```
 
@@ -233,6 +255,6 @@ webpack.config.js            Active frontend build configuration
 - Prefer Tailwind utilities for layout and SCSS Modules for component-specific or stateful styles.
 - Preserve distinct project entries and their external links unless a content change explicitly calls for consolidation.
 - Use Yarn for JavaScript dependencies; `yarn.lock` is the tracked deployment lockfile.
-- Run `yarn lint:styles`, `yarn typecheck`, and `yarn prod` before submitting frontend changes.
+- Run `yarn lint:styles`, `yarn typecheck`, `yarn test`, and `yarn prod` before submitting frontend changes.
 
 The `/projects` and `/skills` Laravel routes currently have no corresponding client routes. Project and skill content is presented through the existing home and experience pages.

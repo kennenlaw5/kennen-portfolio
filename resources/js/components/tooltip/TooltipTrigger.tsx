@@ -7,16 +7,31 @@ type TTooltipTriggerProps = {
 }
 
 const TooltipTrigger: React.FC<TTooltipTriggerProps> = ({children}) => {
-    const {setShowTooltip} = useTooltipContext()
+    const {setShowTooltip, tooltipId} = useTooltipContext()
 
     return (
-        <div
+        <button
+            type="button"
+            aria-describedby={tooltipId}
             className={styles.tooltipTrigger}
+            onBlur={() => setShowTooltip(false)}
+            onClick={() => setShowTooltip(true)}
+            onFocus={() => setShowTooltip(true)}
+            onKeyDown={(event) => {
+                if (event.key === 'Escape') {
+                    setShowTooltip(false)
+                    event.currentTarget.blur()
+                }
+            }}
             onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
+            onMouseLeave={(event) => {
+                if (document.activeElement !== event.currentTarget) {
+                    setShowTooltip(false)
+                }
+            }}
         >
             {children}
-        </div>
+        </button>
     )
 }
 

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
 
 export const downloadResume = async () => {
   try {
@@ -10,6 +11,8 @@ export const downloadResume = async () => {
     document.body.appendChild(link);
     link.click();
     link.remove();
+    window.URL.revokeObjectURL(url)
+    trackEvent(ANALYTICS_EVENTS.RESUME_DOWNLOAD)
   } catch (error) {
     console.error('Error downloading file', error);
   }

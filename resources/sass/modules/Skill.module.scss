@@ -8,7 +8,9 @@
         transition-transform
         duration-100
         ease-in-out
-        hover:scale-115;
+        hover:scale-115
+        motion-reduce:transition-none
+        motion-reduce:hover:transform-none;
 
     &--frontend {
         @include skillColors.skill-colors('frontend');

@@ -10,7 +10,7 @@ import {
 import {getIsWinningMove, getComputerMove} from 'Components/TicTacToe/helpers'
 import {DIFFICULTIES, GAME_MODES} from 'Constants/gameConsts'
 
-const initialState: TTicTacToeState = {
+export const initialState: TTicTacToeState = {
   gameMode: GAME_MODES.COMPUTER,
   difficulty: DIFFICULTIES.NORMAL,
   playerLetter: PLAYER_LETTERS.X,
@@ -74,7 +74,7 @@ const makeComputerMove = (state: TTicTacToeState): TTicTacToeState => {
     : newState
 }
 
-const reducer = (state: TTicTacToeState, action: Action): TTicTacToeState => {
+export const reducer = (state: TTicTacToeState, action: Action): TTicTacToeState => {
   switch (action.type) {
     case 'UPDATE_FIELD':
       return {...state, [action.payload.field]: action.payload.value}

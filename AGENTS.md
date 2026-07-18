@@ -4,11 +4,12 @@ Guidance for AI coding agents working in this repository. Human contributors may
 
 ## Project overview
 
-Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel does almost no work beyond returning HTML shells and exposing a small block of contact configuration; virtually all UI, routing, and logic lives in the React app under `resources/js`. There is no meaningful database usage or REST API — the site is effectively static content plus two interactive browser games.
+Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel does almost no work beyond returning HTML shells, exposing a small block of contact configuration, and logging an allowlisted set of anonymous analytics events; virtually all UI, routing, and logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
 
 - **Backend:** Laravel 13, PHP 8.5
 - **Frontend:** React 18, TypeScript (strict), React Router 6
 - **Build:** Webpack 5 (via `package.json` scripts) with `ts-loader`
+- **Frontend tests:** Vitest + jsdom + React Testing Library
 - **Styling:** Tailwind CSS 3 (utility classes in JSX) + SCSS Modules (`*.module.scss`) for game/component-specific styles
 - **Local infra:** Docker Compose (nginx + php-fpm + MySQL)
 
@@ -39,10 +40,12 @@ Run the app locally:
 php artisan serve
 ```
 
-Tests (PHPUnit only — there is no JS test runner configured):
+Tests:
 
 ```bash
 php artisan test          # or: ./vendor/bin/phpunit
+yarn test                 # Vitest unit and component tests
+yarn test:watch           # Vitest watch mode
 ```
 
 Lint / format:
@@ -64,6 +67,11 @@ This is the single most important thing to understand before changing routing or
 3. `layouts/app.blade.php` loads `public/css/appStyles.css` + `public/js/app.js` and injects contact config as `window.APP_CONFIG = @js(config('app.contact'))`.
 4. `resources/js/App.tsx` mounts React into `#root` and hands control to React Router (`BrowserRouter`), which renders the real page based on `window.location`.
 
+Separately, `routes/api.php` exposes `POST /api/analytics/events`. The browser sends
+allowlisted, anonymous interaction events there, and Laravel writes structured
+`portfolio_event` entries to the application log. The endpoint stores no visitor IDs,
+cookies, or database records and honors browser Do Not Track on the client.
+
 **Routes are declared in two places and must be kept in sync:**
 - Server side: `routes/web.php` (so a hard page load / refresh on a deep link returns the SPA shell instead of a 404).
 - Client side: `resources/js/constants/routes.ts` (the `HOME_ROUTE` + `ROUTES` map that `App.tsx` and the nav bars consume).
@@ -73,13 +81,15 @@ If you add a page, add it to **both**. Note the current mismatch (see Gotchas): 
 ## Directory map
 
 ```
-app/                         Laravel PHP (thin — default skeleton + a Controller base + User model)
+app/                         Laravel PHP (thin — SPA support + analytics logging)
 config/app.php               'contact' config block, populated from CONTACT_* env vars
+routes/api.php               Anonymous first-party analytics endpoint
 routes/web.php               Server routes; every route just returns a Blade SPA shell
 resources/views/             Blade shells (one per route), all extend layouts/app.blade.php
 resources/sass/              Global SCSS (app.scss) + SCSS Modules under modules/ + abstracts/
 resources/js/                THE REACT APP — most work happens here
   App.tsx                    Entry point: mounts React, sets up Router + Suspense
+  analytics.ts              Anonymous first-party event helper
   bootstrap.js               Axios global setup
   constants/routes.ts        Client-side route table (lazy-loaded page components)
   constants/                 Static data: skills.ts, certificates.ts, gameConsts.ts
@@ -94,7 +104,8 @@ resources/js/                THE REACT APP — most work happens here
     tooltip/, contact/       Smaller feature components
   types/                     Global/ambient types (globals.d.ts, custom.d.ts for *.module.scss)
 public/                      Webpack output (js/, css/) + static assets (svg/, images/). GITIGNORED build output.
-tests/                       PHPUnit Feature/Unit tests (currently only the default examples)
+tests/                       PHPUnit Feature/Unit tests
+vitest.config.ts             Frontend test configuration
 docker/                      nginx, php, mysql Docker configs
 ```
 
@@ -138,6 +149,6 @@ Both games follow the same **`useReducer` + Context** state pattern. When touchi
 - **Orphaned routes.** `web.php` defines `/projects` and `/skills`, but `routes.ts` has no matching client route and the nav bars don't link to them, so they render an empty page. Project/experience content actually lives in `pages/experience/Experience.tsx`. Don't assume every server route has a working page.
 - **Route duplication.** Adding or renaming a page requires editing both `routes/web.php` and `resources/js/constants/routes.ts` (see Architecture).
 - **Render deploys the production Docker target.** `docker/php/Dockerfile` ends with the `production` stage used by Render. Keep PHP, Node, Composer, and Yarn changes compatible with that stage, and verify it with the Docker job in `.github/workflows/ci.yml`.
-- **CI mirrors production.** Pull requests and pushes to `main` run Pint/PHPUnit, Stylelint/TypeScript/Webpack, dependency audits, and a no-push build of the Render production image.
-- **No JS/TS test suite or ESLint** exists; correctness for frontend changes is verified by building and manual review. PHPUnit only covers the (currently empty) default examples.
+- **CI mirrors production.** Pull requests and pushes to `main` run Pint/PHPUnit, Stylelint/TypeScript/Vitest/Webpack, dependency audits, and a no-push build of the Render production image.
+- **Vitest covers focused frontend behavior.** Keep component interactions, shared helpers, analytics, routing behavior, and pure game reducers covered as those areas change. There is no ESLint configuration, so match surrounding TypeScript style.
 - **`.env` is gitignored.** Keep real application keys, contact data, and Render secrets out of commits and Docker build contexts; `.env.example` is the sanitized template.

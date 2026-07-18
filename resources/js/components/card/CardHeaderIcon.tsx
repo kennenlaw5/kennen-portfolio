@@ -13,7 +13,7 @@ const CardHeaderIcon: React.FC<TCardHeaderIconProps> = ({isDropDown, isOpen}) =>
         <span className={classNames(styles.cardHeaderIcon, {
             [styles.cardHeaderIconCollapsed]: !isOpen,
             [styles.cardHeaderIconExpanded]: isOpen,
-        })}>
+        })} aria-hidden="true">
             <FaChevronDown />
         </span>
     ) : null

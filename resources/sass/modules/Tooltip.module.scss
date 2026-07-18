@@ -2,10 +2,12 @@
     @apply relative inline-block w-full;
 
     &Trigger {
-      @apply cursor-help w-fit;
+      @apply block w-fit cursor-help rounded-sm border-0 bg-transparent p-0 text-left
+        text-inherit focus-visible:outline-none focus-visible:ring-2
+        focus-visible:ring-blue-500 focus-visible:ring-offset-2;
 
       svg {
-        @apply transition duration-300 ease-in-out;
+        @apply transition duration-300 ease-in-out motion-reduce:transition-none;
       }
 
       &:hover {
@@ -33,6 +35,7 @@
         transform
         transition-all
         duration-500
+        motion-reduce:transition-none
         overflow-hidden;
 
         &--show {
