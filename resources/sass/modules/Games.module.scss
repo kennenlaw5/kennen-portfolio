@@ -2,32 +2,64 @@
   @apply flex flex-col items-center mt-8;
 
   &__header {
-    @apply flex items-center mb-4;
+    @apply flex flex-col items-start mb-4;
   }
 
   &__backButton {
-    @apply mr-2 text-blue-600 hover:text-blue-800 text-3xl;
+    @apply inline-flex items-center gap-2 mb-4 text-sm font-semibold text-blue-600 hover:text-blue-800;
+  }
+
+  &__intro {
+    @apply max-w-3xl mb-8;
+  }
+
+  &__eyebrow {
+    @apply block mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600;
   }
 
   &__title {
-    @apply mb-6 text-3xl;
+    @apply mb-3 text-3xl;
+  }
+
+  &__description {
+    @apply text-gray-600 leading-relaxed;
+  }
+
+  &__experimentContext {
+    @apply max-w-3xl mb-6;
   }
 
   &__grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 gap-6;
+    @apply grid grid-cols-1 sm:grid-cols-2 items-stretch gap-6;
   }
 
   &__option {
-    @apply bg-blue-100
+    @apply relative
+      bg-blue-100
       hover:scale-105
       transition-transform
       p-6
       rounded-lg
       shadow
-      focus:outline-none;
+      text-left;
+
+    &Button {
+      @apply absolute inset-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2;
+
+      @media (forced-colors: active) {
+        &:focus-visible {
+          outline: 2px solid ButtonText;
+          outline-offset: -3px;
+        }
+      }
+    }
 
     &Content {
-      @apply flex flex-col items-center;
+      @apply flex flex-col items-start h-full;
+    }
+
+    &Visual {
+      @apply flex justify-center w-full mb-4;
     }
 
     &Image {
@@ -35,7 +67,11 @@
     }
 
     &Title {
-      @apply text-lg font-medium;
+      @apply mb-2 text-xl font-semibold;
+    }
+
+    &Description {
+      @apply text-sm text-gray-700 leading-relaxed;
     }
 
     &Icon {
@@ -57,5 +93,13 @@
         clip-path: polygon(100% 0, 100% 100%, 0 100%);
       }
     }
+  }
+
+  &__concepts {
+    @apply flex flex-wrap gap-2 mt-4;
+  }
+
+  &__concept {
+    @apply inline-flex rounded-full bg-white px-3 py-1 text-xs font-medium text-blue-800 shadow-sm;
   }
 }

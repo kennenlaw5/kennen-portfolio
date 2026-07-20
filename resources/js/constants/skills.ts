@@ -65,6 +65,10 @@ export const SKILLS: TSkills = {
         name: 'MySQL',
         type: SKILL_TYPES.BACKEND
     },
+    REDIS: {
+        name: 'Redis',
+        type: SKILL_TYPES.BACKEND
+    },
     GRAPHQL: {
         name: 'GraphQL',
         type: SKILL_TYPES.BACKEND
@@ -131,6 +135,10 @@ export const SKILLS: TSkills = {
     },
     CI_CD: {
         name: 'CI/CD',
+        type: SKILL_TYPES.CLOUD
+    },
+    ARGO_CD: {
+        name: 'Argo CD',
         type: SKILL_TYPES.CLOUD
     },
     GITHUB_ACTIONS: {

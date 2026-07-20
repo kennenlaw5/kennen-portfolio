@@ -23,7 +23,7 @@ export const HOME_ROUTE: TRoute = {
 export const ROUTES: TRoutes = {
     GAMES: {
       path: 'games',
-      name: 'Games',
+      name: 'Engineering Lab',
       component: Games,
     },
     EXPERIENCE: {
@@ -37,4 +37,3 @@ export const ROUTES: TRoutes = {
       component: Contact,
     },
   };
-  

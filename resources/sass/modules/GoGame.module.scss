@@ -1,6 +1,110 @@
 // resources/js/components/GoGame.module.scss
 .game {
     @apply grid grid-cols-1 items-center mt-8;
+
+    &__rules {
+        @apply mb-4 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm;
+
+        &[open] {
+            .game__rulesIcon {
+                @apply rotate-180;
+            }
+        }
+
+        &Summary {
+            @apply flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-left
+                transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2
+                focus-visible:ring-blue-500 focus-visible:ring-inset;
+
+            &::-webkit-details-marker {
+                display: none;
+            }
+
+            @media (forced-colors: active) {
+                &:focus-visible {
+                    outline: 2px solid ButtonText;
+                    outline-offset: -3px;
+                }
+            }
+
+            &Title {
+                @apply block font-semibold text-gray-900;
+            }
+
+            &Description {
+                @apply mt-0.5 block text-sm text-gray-600;
+            }
+        }
+
+        &Icon {
+            @apply shrink-0 text-blue-600 transition-transform duration-200;
+
+            @media (prefers-reduced-motion: reduce) {
+                @apply transition-none;
+            }
+        }
+
+        &Content {
+            @apply border-t border-gray-200 px-4 py-5;
+        }
+
+        &Heading {
+            @apply mb-1 text-xl font-bold text-gray-900;
+        }
+
+        &Intro {
+            @apply mb-5 max-w-3xl text-gray-700;
+        }
+
+        &Steps {
+            @apply grid list-none grid-cols-1 gap-3 p-0 md:grid-cols-3;
+        }
+
+        &Step {
+            @apply flex gap-3 rounded-md bg-gray-100 p-3 text-gray-700;
+
+            &Number {
+                @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600
+                    text-sm font-bold text-white;
+            }
+
+            &Title {
+                @apply mb-1 text-base font-semibold text-gray-900;
+            }
+        }
+
+        &Capture {
+            @apply mt-5;
+        }
+
+        &Subheading {
+            @apply mb-2 text-base font-semibold text-gray-900;
+        }
+
+        &CaptureGrid {
+            @apply grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-3;
+        }
+
+        &CaptureCard {
+            @apply rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-700;
+        }
+
+        &CaptureLocation {
+            @apply block font-semibold text-gray-900;
+        }
+
+        &Note {
+            @apply mt-2 rounded-md border-l-4 border-blue-500 bg-blue-50 px-3 py-2 text-sm text-gray-700;
+        }
+
+        &Overlap {
+            @apply mt-4 space-y-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-gray-700;
+        }
+
+        &Controls {
+            @apply mt-5 space-y-2 text-sm text-gray-700;
+        }
+    }
   
     &__info {
       @apply grid
