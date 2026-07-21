@@ -107,13 +107,16 @@ jobs:
             exit 1
           fi
 
+          render_deploy_url="https://dashboard.render.com/web/${service_id}/deploys/${deploy_id}"
+
           echo "deploy_id=${deploy_id}" >> "$GITHUB_OUTPUT"
           echo "service_id=${service_id}" >> "$GITHUB_OUTPUT"
+          echo "deploy_url=${render_deploy_url}" >> "$GITHUB_OUTPUT"
           echo "::notice::Render started deployment ${deploy_id} for commit ${DEPLOY_REF}."
           {
             echo "### Render deployment triggered"
             echo "- Commit: \`${DEPLOY_REF}\`"
-            echo "- Deploy: \`${deploy_id}\`"
+            echo "- Deploy: [\`${deploy_id}\`](${render_deploy_url})"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Wait for Render to report success
@@ -121,6 +124,7 @@ jobs:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ steps.trigger_render_deploy.outputs.service_id }}
           RENDER_DEPLOY_ID: ${{ steps.trigger_render_deploy.outputs.deploy_id }}
+          RENDER_DEPLOY_URL: ${{ steps.trigger_render_deploy.outputs.deploy_url }}
         run: |
           previous_status=''
           consecutive_api_errors=0
@@ -155,7 +159,7 @@ jobs:
                   echo "::notice::Render deployment ${RENDER_DEPLOY_ID} is live."
                   {
                     echo "### Render deployment complete"
-                    echo "- Deploy: \`${RENDER_DEPLOY_ID}\`"
+                    echo "- Deploy: [\`${RENDER_DEPLOY_ID}\`](${RENDER_DEPLOY_URL})"
                     echo "- Status: **live**"
                   } >> "$GITHUB_STEP_SUMMARY"
                   exit 0
