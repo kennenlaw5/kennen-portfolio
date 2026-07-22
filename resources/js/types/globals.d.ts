@@ -3,7 +3,6 @@ export type AppConfig = {
     email: string
     linkedin_url: string
     github_url: string
-    resume_url: string
     city: string
     state_abbreviation: string
 }

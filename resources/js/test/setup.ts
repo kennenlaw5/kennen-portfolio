@@ -11,7 +11,6 @@ window.APP_CONFIG = {
     email: 'kennen@example.com',
     linkedin_url: 'https://www.linkedin.com/in/kennen-lawrence',
     github_url: 'https://github.com/kennenlaw5',
-    resume_url: '/resume.pdf',
     city: 'Denver',
     state_abbreviation: 'CO',
 }

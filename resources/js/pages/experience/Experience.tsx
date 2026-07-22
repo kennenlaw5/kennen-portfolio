@@ -1,12 +1,14 @@
-import React, { Fragment, useState } from 'react'
-import classNames from 'classnames'
+import React, { Fragment } from 'react'
 import Section from 'Components/Section'
 import Project from 'Components/Project'
 import Card from 'Components/card/Card'
 import {SKILLS} from 'Constants/skills'
 import {TProjects} from 'Components/types/ProjectTypes'
-import {downloadResume} from 'JS/pages/helpers'
-import {FaDownload, FaSpinner} from 'react-icons/fa'
+import {
+  trackResumeDownloadIntent,
+  RESUME_DOWNLOAD_PATH,
+} from 'JS/pages/helpers'
+import {FaDownload} from 'react-icons/fa'
 import {
   A2zInStoreDescription,
   A2zOnlineDescription,
@@ -39,15 +41,6 @@ type TExperienceCompany = {
 }
 
 const Experience: React.FC = () => {
-  const [isDownloadingResume, setIsDownloadingResume] = useState(false)
-
-  const handleResumeDownload = () => {
-    setIsDownloadingResume(true)
-
-    downloadResume()
-      .finally(() => setIsDownloadingResume(false))
-  }
-
   const projects: TProjects = [
     {
       title: 'Akido Labs — Clinical Platform and AI-Assisted Engineering',
@@ -220,21 +213,16 @@ const Experience: React.FC = () => {
           Senior full-stack engineer with 7+ years in software-development roles
           and more than eight years on software-product teams.
         </p>
-        <button
-          onClick={handleResumeDownload}
-          className="relative inline-flex bg-blue-600 text-white px-5 py-2.5 rounded hover:bg-blue-700 transition disabled:bg-blue-400 disabled:cursor-not-allowed"
-          disabled={isDownloadingResume}
+        <a
+          href={RESUME_DOWNLOAD_PATH}
+          onClick={trackResumeDownloadIntent}
+          className="inline-flex bg-blue-600 text-white px-5 py-2.5 rounded hover:bg-blue-700 transition"
         >
-          <span className={classNames('inline-flex items-center gap-2', {invisible: isDownloadingResume})}>
+          <span className="inline-flex items-center gap-2">
             <FaDownload aria-hidden="true" />
             Download My Resume
           </span>
-          {isDownloadingResume ? (
-            <span className="absolute inset-0 flex items-center justify-center">
-              <FaSpinner className="animate-spin text-white text-lg" />
-            </span>
-          ) : null}
-        </button>
+        </a>
       </Section>
       <Section>
         <h3 className="font-bold mt-8 mb-4">Featured Projects</h3>

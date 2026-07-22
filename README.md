@@ -17,7 +17,7 @@ The project uses Laravel as a thin server-side shell for a React single-page app
 
 ## Architecture
 
-Laravel routes return Blade views that contain the React mount point. The shared Blade layout loads the compiled assets and exposes contact configuration through `window.APP_CONFIG`. React then renders the requested page through `BrowserRouter`.
+Laravel SPA page routes return Blade views that contain the React mount point. The shared Blade layout loads the compiled assets and exposes public contact configuration through `window.APP_CONFIG`. React then renders the requested page through `BrowserRouter`.
 
 ```text
 Request
@@ -27,16 +27,20 @@ Request
   -> React Router page
 ```
 
-Routes are declared in both of these files and must remain synchronized:
+SPA page routes are declared in both of these files and must remain synchronized:
 
-- `routes/web.php` handles direct requests and browser refreshes.
+- `routes/web.php` handles direct requests and browser refreshes for SPA pages.
 - `resources/js/constants/routes.ts` controls client-side rendering and navigation.
 
 Blade views are mount shells only. Visible page content belongs in `resources/js`, not in the route-specific Blade files.
 
-The only JSON endpoint is `POST /api/analytics/events`. It accepts a small allowlist
+The only JSON API endpoint is `POST /api/analytics/events`. It accepts a small allowlist
 of anonymous interaction events and writes structured `portfolio_event` entries to
 the application log; it does not use cookies, visitor identifiers, or the database.
+
+`GET /resume/download` is a server-only file endpoint. It retrieves the configured
+resume from its upstream source and returns it as a same-origin attachment; it is not
+a React route and does not belong in the client route table.
 
 ## Prerequisites
 
@@ -136,7 +140,7 @@ docker compose logs -f
 docker compose down
 ```
 
-## Environment-backed contact information
+## Environment-backed contact and resume configuration
 
 Visible contact details must not be hardcoded in React. Configure them in `.env` using these variables:
 
@@ -145,7 +149,6 @@ CONTACT_PHONE=
 CONTACT_EMAIL=
 CONTACT_LINKEDIN_URL=
 CONTACT_GITHUB_URL=
-CONTACT_RESUME_URL=
 CONTACT_CITY=
 CONTACT_STATE_ABBREVIATION=
 ```
@@ -159,14 +162,52 @@ The values flow through the application in this order:
   -> React components
 ```
 
-The downloadable resume URL follows the same flow and is consumed by the shared resume-download helper.
+The upstream resume URL is configured separately and remains server-side:
+
+```dotenv
+CONTACT_RESUME_URL=https://docs.google.com/document/d/document-id/export?format=pdf
+RESUME_DOWNLOAD_RATE_LIMIT_PER_IP=30
+RESUME_DOWNLOAD_RATE_LIMIT_GLOBAL=120
+```
+
+`config/resume.php` reads this value, and `ResumeDownloadService` retrieves it when a
+visitor requests `/resume/download`. The URL must be an absolute HTTPS URL whose
+response declares `application/pdf` and begins with the PDF signature. Laravel returns
+validated content as a same-origin attachment; the upstream URL is never serialized
+into `window.APP_CONFIG`.
+
+Missing or invalid configuration returns `503`; upstream and validation failures return
+`502` and log a structured `resume_download_failed` warning. Successful responses use
+`no-store` so a newly published resume is picked up on the next request.
+
+The React links intentionally omit the HTML `download` attribute. A successful Laravel
+response supplies `Content-Disposition: attachment`, while an upstream or configuration
+error remains visible in the browser instead of being saved under a misleading PDF filename.
+
+Render terminates public traffic at its load balancer and does not publish stable ingress
+CIDRs, so `bootstrap/app.php` trusts the proxy address while accepting only the forwarded
+client address and protocol. Forwarded host, port, and path-prefix values are intentionally
+ignored.
+
+Render normalizes the first `X-Forwarded-For` address and keeps the service origin behind its
+edge. The per-IP limit relies on that deployment contract and remains a best-effort fairness
+control rather than an authentication boundary. Moving the application off Render or exposing
+its origin directly requires revalidating this assumption.
+
+The named resume limiter defaults to 30 requests per client and 120 requests globally per
+minute. Both values are environment-configurable. The global bucket bounds upstream work even
+when callers rotate genuine addresses. Limiter state uses Laravel's configured cache; keep
+that cache shared if the service is scaled to multiple instances.
 
 ## First-party analytics
 
-The React application records page views, successful resume downloads, project-link
-clicks, and contact-link clicks through the first-party analytics endpoint. Payloads
+The React application records page views, resume-download requests, project-link clicks,
+and contact-link clicks through the first-party analytics endpoint. Payloads
 contain only the event name, current path, and an optional non-personal label. Browsers
 with Do Not Track enabled do not send events.
+
+The `resume_download` event represents click intent, not confirmation that the browser
+saved the response.
 
 On Render, filter the application logs for `portfolio_event` to inspect these events.
 This intentionally provides lightweight operational visibility rather than a visitor
@@ -258,8 +299,9 @@ from entering the Docker build context.
 ## Repository structure
 
 ```text
-app/                         Thin Laravel layer, including anonymous analytics logging
-config/app.php               Application and contact configuration
+app/                         Thin Laravel layer, including resume proxying and analytics logging
+config/app.php               Application and public contact configuration
+config/resume.php            Server-only upstream resume configuration
 docker/                      nginx, PHP, and MySQL configuration
 .github/workflows/           CI checks and the approved Render deployment workflow
 resources/js/                React application, content, and browser logic
@@ -269,7 +311,7 @@ resources/js/pages/          Top-level route components
 resources/sass/              Global styles and SCSS Modules
 resources/views/             Blade shells for the React application
 routes/api.php               First-party analytics event endpoint
-routes/web.php               Server-side SPA routes
+routes/web.php               Server-side SPA routes and the resume download endpoint
 tests/                       PHPUnit feature and unit tests
 vitest.config.ts             Frontend unit and component test configuration
 webpack.config.js            Active frontend build configuration

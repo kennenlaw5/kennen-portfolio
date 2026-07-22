@@ -1,19 +1,12 @@
-import React, {useState} from 'react'
-import classNames from 'classnames'
-import {downloadResume} from 'JS/pages/helpers'
+import React from 'react'
+import {
+    trackResumeDownloadIntent,
+    RESUME_DOWNLOAD_PATH,
+} from 'JS/pages/helpers'
 import Section from 'Components/Section'
-import {FaDownload, FaSpinner} from 'react-icons/fa'
+import {FaDownload} from 'react-icons/fa'
 
 const AboutMe: React.FC = () => {
-    const [isLoading, setIsLoading] = useState(false)
-
-    const handleButtonClick = () => {
-        setIsLoading(true)
-
-        downloadResume()
-            .finally(() => setIsLoading(false))
-    }
-
     return (
         <Section header="About Me" className="bg-white shadow rounded p-8">
             <p className="mb-4">
@@ -34,21 +27,16 @@ const AboutMe: React.FC = () => {
                 Amazon Autos, digital retail products, integrations, and team mentorship.
                 Outside engineering, I serve in a leadership role with Excel Taekwondo.
             </p>
-            <button
-                onClick={handleButtonClick}
-                className="relative inline-block mt-4 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition disabled:bg-blue-400 disabled:cursor-not-allowed"
-                disabled={isLoading}
+            <a
+                href={RESUME_DOWNLOAD_PATH}
+                onClick={trackResumeDownloadIntent}
+                className="inline-block mt-4 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition"
             >
-                <span className={classNames('inline-flex items-center gap-2', {invisible: isLoading})}>
+                <span className="inline-flex items-center gap-2">
                     <FaDownload aria-hidden="true" />
                     Download My Resume
                 </span>
-                {isLoading ? (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                        <FaSpinner className="animate-spin text-white text-lg" />
-                    </div>
-                ) : null}
-            </button>
+            </a>
         </Section>
     )
 }
