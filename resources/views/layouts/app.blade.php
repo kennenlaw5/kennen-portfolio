@@ -11,7 +11,10 @@
   <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
   <link rel="stylesheet" href="{{ asset('css/appStyles.css') }}">
   <script>
-    window.APP_CONFIG = @js(config('app.contact'));
+    window.APP_CONFIG = @js([
+      ...config('app.contact'),
+      'analytics' => config('analytics'),
+    ]);
   </script>
 </head>
 <body class="bg-gray-100 text-gray-900">

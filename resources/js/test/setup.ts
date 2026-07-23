@@ -13,4 +13,8 @@ window.APP_CONFIG = {
     github_url: 'https://github.com/kennenlaw5',
     city: 'Denver',
     state_abbreviation: 'CO',
+    analytics: {
+        enabled: false,
+        measurement_id: '',
+    },
 }
