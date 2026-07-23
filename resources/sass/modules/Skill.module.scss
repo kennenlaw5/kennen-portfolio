@@ -27,4 +27,8 @@
     &--cloud {
         @include skillColors.skill-colors('cloud');
     }
+
+    &--tooling {
+        @include skillColors.skill-colors('tooling');
+    }
 }

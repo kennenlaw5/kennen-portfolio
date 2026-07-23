@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import {SKILL_TYPES} from 'Constants/skills'
+import {SKILL_TYPE_LABELS, SKILL_TYPES} from 'Constants/skills'
 import {TSkillType} from 'Components/types/SkillTypes'
 import styles from 'Sass/modules/SkillFilter.module.scss'
 import {capitalize} from 'JS/helpers'
@@ -12,7 +12,11 @@ type TSkillFilterProps = {
 }
 
 const SkillFilter: React.FC<TSkillFilterProps> = ({selectedType, onClick, className}) => (
-    <div className={classNames(styles.skillFilter, className)}>
+    <div
+        className={classNames(styles.skillFilter, className)}
+        role="group"
+        aria-label="Filter skills by category"
+    >
         {Object.values(SKILL_TYPES).map((type) => (
             <button
                 key={type}
@@ -21,8 +25,10 @@ const SkillFilter: React.FC<TSkillFilterProps> = ({selectedType, onClick, classN
                     [styles[`skillFilterButtonUnselected${capitalize(type)}`]]: selectedType !== type
                 })}
                 onClick={() => onClick(type)}
+                type="button"
+                aria-pressed={selectedType === type}
             >
-                {type.toUpperCase()}
+                {SKILL_TYPE_LABELS[type]}
             </button>
         ))}
     </div>
