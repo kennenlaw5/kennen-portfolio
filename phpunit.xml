@@ -19,6 +19,7 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>
+        <env name="APP_CONFIG_CACHE" value="bootstrap/cache/phpunit-config.php" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_STORE" value="array"/>
@@ -27,6 +28,16 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="LOG_CHANNEL" value="stack" force="true"/>
+        <env name="LOG_STACK" value="stderr" force="true"/>
+        <env name="SENTRY_DSN" value="" force="true"/>
+        <env name="SENTRY_LARAVEL_DSN" value="" force="true"/>
+        <env name="SENTRY_ENABLE_LOGS" value="(false)" force="true"/>
+        <env name="SENTRY_ENABLE_METRICS" value="(false)" force="true"/>
+        <env name="SENTRY_SEND_DEFAULT_PII" value="(false)" force="true"/>
+        <env name="SENTRY_MAX_REQUEST_BODY_SIZE" value="none" force="true"/>
+        <env name="SENTRY_TRACES_SAMPLE_RATE" value="0" force="true"/>
+        <env name="SENTRY_PROFILES_SAMPLE_RATE" value="0" force="true"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>

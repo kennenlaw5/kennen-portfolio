@@ -98,6 +98,7 @@ RUN touch /var/log/php_errors.log && \
 
 COPY docker/php/fpm.ini /usr/local/etc/php/conf.d/fpm.ini
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
+RUN php docker/php/verify-production-config.php
 COPY docker/nginx/conf.d/app.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 9000 for PHP-FPM

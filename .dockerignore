@@ -13,6 +13,7 @@ public/css
 public/hot
 public/js
 public/storage
+bootstrap/cache/*.php
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
