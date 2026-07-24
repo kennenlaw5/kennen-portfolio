@@ -17,7 +17,7 @@ The project uses Laravel as a thin server-side shell for a React single-page app
 
 ## Architecture
 
-Laravel SPA page routes return Blade views that contain the React mount point. The shared Blade layout loads the compiled assets and exposes public contact configuration through `window.APP_CONFIG`. React then renders the requested page through `BrowserRouter`.
+Laravel SPA page routes return Blade views that contain the React mount point. The shared Blade layout loads the compiled assets and exposes public contact and analytics configuration through `window.APP_CONFIG`. React then renders the requested page through `BrowserRouter`.
 
 ```text
 Request
@@ -38,10 +38,9 @@ the client route table and that allowlist.
 
 Blade views are mount shells only. Visible page content belongs in `resources/js`, not in the route-specific Blade files.
 
-The only JSON API endpoint is `POST /api/analytics/events`. It is temporarily retained
-for compatibility, but the React application no longer calls it; direct requests still
-write allowlisted `portfolio_event` entries to the application log until the endpoint
-is removed in a follow-up change.
+`routes/api.php` remains loaded for future application APIs but currently registers no
+routes. Browser analytics never traverse Laravel; any future API must define its own
+explicit origin, schema, validation, and rate-limit boundaries.
 
 `GET /resume/download` is a server-only file endpoint. It retrieves the configured
 resume from its upstream source and returns it as a same-origin attachment; it is not
@@ -209,7 +208,9 @@ that cache shared if the service is scaled to multiple instances.
 The React application routes page views, resume-download clicks, project-link clicks,
 and contact-link clicks through a typed GA4 adapter. Events use closed, non-personal
 parameters: canonical page paths, contact methods, stable project IDs, and the home or
-experience resume placement.
+experience resume placement. The resulting data is forgeable, best-effort,
+browser-reported directional telemetry—not proof of a human visitor or an auditable
+interaction ledger.
 
 The adapter stays inert unless analytics is configured and the visitor has granted
 permission. Do Not Track and Global Privacy Control prevent analytics from becoming
@@ -218,8 +219,9 @@ authority. Analytics failures are isolated from the underlying navigation and do
 interactions.
 
 The `resume_download_clicked` event represents click intent, not confirmation that the
-browser saved the response. The legacy first-party endpoint remains registered but is
-not used by the browser analytics flow.
+browser saved the response. The former public Laravel analytics-ingestion endpoint was
+removed rather than maintained as a partial custom analytics platform; no replacement
+proxy or application-owned analytics datastore exists.
 
 Before enabling analytics, the GA4 web stream must also disable Enhanced Measurement's
 **Page changes based on browser history events** option. `send_page_view: false` disables
@@ -313,7 +315,7 @@ from entering the Docker build context.
 ## Repository structure
 
 ```text
-app/                         Thin Laravel layer, including resume proxying and a legacy analytics endpoint
+app/                         Thin Laravel layer, including SPA and resume support
 config/app.php               Application and public contact configuration
 config/analytics.php         Public fail-closed analytics configuration
 config/resume.php            Server-only upstream resume configuration
@@ -325,7 +327,7 @@ resources/js/constants/      Routes and static domain data
 resources/js/pages/          Top-level route components
 resources/sass/              Global styles and SCSS Modules
 resources/views/             Blade shells for the React application
-routes/api.php               Temporarily retained legacy analytics event endpoint
+routes/api.php               Empty route file reserved for explicitly designed future APIs
 routes/web.php               Server-side SPA routes and the resume download endpoint
 tests/                       PHPUnit feature and unit tests
 vitest.config.ts             Frontend unit and component test configuration

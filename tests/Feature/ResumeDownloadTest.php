@@ -36,29 +36,6 @@ class ResumeDownloadTest extends TestCase
     }
 
     /**
-     * Verify analytics traffic cannot consume the resume throttle budget.
-     */
-    public function test_analytics_requests_do_not_consume_the_resume_download_limit(): void
-    {
-        $pdf = "%PDF-1.4\nportfolio resume";
-
-        config(['resume.url' => self::RESUME_URL]);
-        Http::fake([
-            self::RESUME_URL => Http::response($pdf, 200, ['Content-Type' => 'application/pdf']),
-        ]);
-
-        for ($attempt = 0; $attempt < 30; $attempt++) {
-            $this->postJson('/api/analytics/events', [
-                'event' => 'page_view',
-                'path' => '/',
-            ])->assertNoContent();
-        }
-
-        $this->get('/resume/download')->assertOk();
-        Http::assertSentCount(1);
-    }
-
-    /**
      * Verify the resume limit is enforced independently for forwarded clients.
      */
     public function test_trusted_forwarded_clients_receive_independent_resume_limits(): void

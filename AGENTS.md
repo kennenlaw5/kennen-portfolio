@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository. Human contributors may
 
 ## Project overview
 
-Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, temporarily retains an unused legacy analytics endpoint, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
+Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
 
 - **Backend:** Laravel 13, PHP 8.5
 - **Frontend:** React 18, TypeScript (strict), React Router 6
@@ -67,11 +67,12 @@ This is the single most important thing to understand before changing routing or
 3. `layouts/app.blade.php` loads `public/css/appStyles.css` + `public/js/app.js` and injects public contact and analytics config as `window.APP_CONFIG`.
 4. `resources/js/App.tsx` mounts React into `#root` and hands control to React Router (`BrowserRouter`), which renders the real page based on `window.location`.
 
-Separately, `routes/api.php` temporarily retains the legacy
-`POST /api/analytics/events` endpoint. React no longer calls it; browser telemetry flows
-through the typed, permission-gated GA4 adapter in `resources/js/analytics`. Direct
-requests to the legacy endpoint still write structured `portfolio_event` entries to the
-application log until a follow-up change removes it.
+`routes/api.php` remains loaded but currently registers no routes. Browser telemetry
+flows directly through the typed, permission-gated GA4 adapter in
+`resources/js/analytics`; Laravel has no analytics-ingestion endpoint. Any future API
+must define its own explicit origin, schema, validation, and rate-limit boundaries.
+GA data remains forgeable, best-effort, browser-reported directional telemetry rather
+than proof of a human visitor or an auditable ledger.
 
 The GA4 web stream must keep Enhanced Measurement's browser-history page views disabled
 before analytics is enabled. `send_page_view: false` covers tag-load behavior only;
@@ -95,11 +96,11 @@ current mismatch (see Gotchas): `web.php` serves `/projects` and `/skills`, but
 ## Directory map
 
 ```
-app/                         Laravel PHP (thin — SPA support, resume proxy + legacy analytics endpoint)
+app/                         Laravel PHP (thin — SPA support and resume proxy)
 config/app.php               Public 'contact' config block, populated from CONTACT_* env vars
 config/analytics.php         Public fail-closed analytics configuration
 config/resume.php            Server-only upstream resume URL
-routes/api.php               Temporarily retained legacy analytics endpoint
+routes/api.php               Empty route file reserved for explicitly designed future APIs
 routes/web.php               Blade SPA shells plus the resume download endpoint
 resources/views/             Blade shells (one per route), all extend layouts/app.blade.php
 resources/sass/              Global SCSS (app.scss) + SCSS Modules under modules/ + abstracts/

@@ -2,34 +2,30 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Support\Facades\Log;
+use Illuminate\Routing\Route as RouteDefinition;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
+/**
+ * Verify the removed custom analytics ingestion boundary stays absent.
+ */
 class AnalyticsTest extends TestCase
 {
-    public function test_it_logs_an_allowed_anonymous_event(): void
+    /**
+     * Verify no route or fallback handles the obsolete analytics endpoint.
+     */
+    public function test_obsolete_analytics_route_is_not_registered(): void
     {
-        Log::shouldReceive('info')
-            ->once()
-            ->with('portfolio_event', [
-                'event' => 'project_link_clicked',
-                'path' => '/experience',
-                'label' => 'Amazon Autos',
-            ]);
+        $isRegistered = collect(Route::getRoutes()->getRoutes())->contains(
+            static fn (RouteDefinition $route): bool => in_array('POST', $route->methods(), true)
+                && $route->uri() === 'api/analytics/events',
+        );
+
+        $this->assertFalse($isRegistered);
 
         $this->postJson('/api/analytics/events', [
-            'event' => 'project_link_clicked',
-            'path' => '/experience',
-            'label' => 'Amazon Autos',
-        ])->assertNoContent();
-    }
-
-    public function test_it_rejects_unknown_event_types(): void
-    {
-        $this->postJson('/api/analytics/events', [
-            'event' => 'arbitrary_event',
+            'event' => 'page_view',
             'path' => '/',
-        ])->assertUnprocessable()
-            ->assertJsonValidationErrors('event');
+        ])->assertNotFound();
     }
 }
