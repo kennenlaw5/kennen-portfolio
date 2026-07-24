@@ -1,5 +1,7 @@
 <?php
 
+use App\Services\Observability\OperationalTelemetryLogger;
+use App\Services\Resume\Exceptions\ResumeDownloadException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +21,14 @@ return Application::configure(basePath: dirname(__DIR__))
             headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO,
         );
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions): void {
         Integration::handles($exceptions);
+        $exceptions->dontReportDuplicates();
+        $exceptions->reportable(
+            static function (ResumeDownloadException $exception): false {
+                app(OperationalTelemetryLogger::class)->resumeDownloadFailed($exception);
+
+                return false;
+            },
+        );
     })->create();

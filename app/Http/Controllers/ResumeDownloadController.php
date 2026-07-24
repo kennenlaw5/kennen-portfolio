@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Observability\OperationalTelemetryLogger;
 use App\Services\Resume\Exceptions\ResumeConfigurationException;
+use App\Services\Resume\Exceptions\ResumeDownloadException;
 use App\Services\Resume\Exceptions\ResumeUnavailableException;
 use App\Services\Resume\ResumeDownloadService;
 use Illuminate\Http\Response;
+use Throwable;
 
 /**
  * Serve the configured resume as a same-origin file download.
@@ -23,11 +26,19 @@ class ResumeDownloadController extends Controller
     private readonly ResumeDownloadService $resumeDownloadService;
 
     /**
+     * The closed operational stderr boundary used if reporting itself throws.
+     */
+    private readonly OperationalTelemetryLogger $operationalTelemetryLogger;
+
+    /**
      * Create a resume download controller.
      */
-    public function __construct(ResumeDownloadService $resumeDownloadService)
-    {
+    public function __construct(
+        ResumeDownloadService $resumeDownloadService,
+        OperationalTelemetryLogger $operationalTelemetryLogger,
+    ) {
         $this->resumeDownloadService = $resumeDownloadService;
+        $this->operationalTelemetryLogger = $operationalTelemetryLogger;
     }
 
     /**
@@ -37,9 +48,13 @@ class ResumeDownloadController extends Controller
     {
         try {
             $body = $this->resumeDownloadService->fetch();
-        } catch (ResumeConfigurationException) {
+        } catch (ResumeConfigurationException $exception) {
+            $this->reportFailure($exception);
+
             return $this->unavailableResponse(503, 'Resume is temporarily unavailable.');
-        } catch (ResumeUnavailableException) {
+        } catch (ResumeUnavailableException $exception) {
+            $this->reportFailure($exception);
+
             return $this->unavailableResponse(502, 'Resume download is temporarily unavailable.');
         }
 
@@ -49,6 +64,18 @@ class ResumeDownloadController extends Controller
             'Content-Type' => 'application/octet-stream',
             'X-Content-Type-Options' => 'nosniff',
         ]);
+    }
+
+    /**
+     * Report one handled failure while preserving the closed stderr fallback.
+     */
+    private function reportFailure(ResumeDownloadException $exception): void
+    {
+        try {
+            report($exception);
+        } catch (Throwable) {
+            $this->operationalTelemetryLogger->resumeDownloadFailed($exception);
+        }
     }
 
     /**

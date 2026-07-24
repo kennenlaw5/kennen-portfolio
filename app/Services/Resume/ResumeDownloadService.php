@@ -7,7 +7,6 @@ use App\Services\Resume\Exceptions\ResumeUnavailableException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Retrieve and validate the configured resume document.
@@ -22,11 +21,11 @@ class ResumeDownloadService
         $resumeUrl = (string) config('resume.url');
 
         if ($resumeUrl === '') {
-            $this->configurationFailure('missing_url');
+            throw ResumeConfigurationException::missingUrl();
         }
 
         if (filter_var($resumeUrl, FILTER_VALIDATE_URL) === false || strtolower((string) parse_url($resumeUrl, PHP_URL_SCHEME)) !== 'https') {
-            $this->configurationFailure('invalid_url');
+            throw ResumeConfigurationException::invalidUrl();
         }
 
         try {
@@ -42,49 +41,45 @@ class ResumeDownloadService
                 ->timeout(15)
                 ->get($resumeUrl);
         } catch (ConnectionException|RequestException) {
-            $this->upstreamFailure(['reason' => 'upstream_unavailable']);
+            throw ResumeUnavailableException::upstreamUnavailable();
         }
 
         if (! $upstream->successful()) {
-            $this->upstreamFailure([
-                'reason' => 'upstream_response',
-                'status' => $upstream->status(),
-            ]);
+            throw ResumeUnavailableException::upstreamResponse($upstream->status());
         }
 
         $body = $upstream->body();
         $contentType = $upstream->header('Content-Type');
 
         if (! str_starts_with(strtolower($contentType), 'application/pdf') || ! str_starts_with($body, '%PDF-')) {
-            $this->upstreamFailure([
-                'reason' => 'invalid_pdf',
-                'status' => $upstream->status(),
-                'content_type' => $contentType,
-            ]);
+            throw ResumeUnavailableException::invalidPdf(
+                $upstream->status(),
+                $this->classifyContentType($contentType),
+            );
         }
 
         return $body;
     }
 
     /**
-     * Log and report an invalid resume configuration.
+     * Normalize an upstream content type into the closed telemetry vocabulary.
      */
-    private function configurationFailure(string $reason): never
+    private function classifyContentType(string $contentType): string
     {
-        Log::warning('resume_download_failed', ['reason' => $reason]);
+        $mediaType = strtolower(trim(explode(';', $contentType, 2)[0]));
 
-        throw new ResumeConfigurationException;
-    }
+        if ($mediaType === '') {
+            return ResumeUnavailableException::CONTENT_CLASS_MISSING;
+        }
 
-    /**
-     * Log and report a failure to retrieve a valid resume.
-     *
-     * @param  array<string, int|string>  $context
-     */
-    private function upstreamFailure(array $context): never
-    {
-        Log::warning('resume_download_failed', $context);
+        if ($mediaType === 'application/pdf') {
+            return ResumeUnavailableException::CONTENT_CLASS_PDF;
+        }
 
-        throw new ResumeUnavailableException;
+        if (in_array($mediaType, ['text/html', 'application/xhtml+xml'], true)) {
+            return ResumeUnavailableException::CONTENT_CLASS_HTML;
+        }
+
+        return ResumeUnavailableException::CONTENT_CLASS_OTHER;
     }
 }

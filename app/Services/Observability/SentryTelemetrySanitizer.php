@@ -2,6 +2,7 @@
 
 namespace App\Services\Observability;
 
+use App\Services\Resume\Exceptions\ResumeDownloadException;
 use GuzzleHttp\Exception\ConnectException as GuzzleConnectException;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
 use Illuminate\Database\QueryException;
@@ -101,7 +102,34 @@ class SentryTelemetrySanitizer
             $sanitized->setStacktrace($this->sanitizeStacktrace($event->getStacktrace()));
         }
 
+        if ($hint?->exception instanceof ResumeDownloadException) {
+            $this->applyResumeDownloadContext($sanitized, $hint->exception);
+        }
+
         return $sanitized;
+    }
+
+    /**
+     * Replace caller context with the closed typed resume failure mapping.
+     */
+    private function applyResumeDownloadContext(
+        Event $event,
+        ResumeDownloadException $exception,
+    ): void {
+        $context = OperationalTelemetryLogger::resumeDownloadContext(
+            $exception,
+            $event->getEnvironment(),
+            $event->getRelease(),
+        );
+        $event->setTags([
+            'feature' => OperationalTelemetryLogger::RESUME_DOWNLOAD_COMPONENT,
+            'failure_reason' => $exception->reason(),
+            'environment' => $context['environment'],
+        ]);
+        $event->setContext(
+            OperationalTelemetryLogger::RESUME_DOWNLOAD_COMPONENT,
+            $context,
+        );
     }
 
     /**

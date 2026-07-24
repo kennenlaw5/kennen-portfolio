@@ -187,16 +187,13 @@ class ResumeDownloadTest extends TestCase
     {
         config(['resume.url' => $url]);
         Http::fake();
-        Log::spy();
+        $this->expectResumeFailureLog(['reason' => $reason]);
 
         $this->get('/resume/download')
             ->assertStatus(503)
             ->assertSeeText('Resume is temporarily unavailable.');
 
         Http::assertNothingSent();
-        Log::shouldHaveReceived('warning')
-            ->once()
-            ->with('resume_download_failed', ['reason' => $reason]);
     }
 
     /**
@@ -208,18 +205,14 @@ class ResumeDownloadTest extends TestCase
         Http::fake([
             self::RESUME_URL => Http::response('Unavailable', 503),
         ]);
-        Log::spy();
+        $this->expectResumeFailureLog([
+            'reason' => 'upstream_response',
+            'upstream_status' => 503,
+        ]);
 
         $this->get('/resume/download')
             ->assertStatus(502)
             ->assertSeeText('Resume download is temporarily unavailable.');
-
-        Log::shouldHaveReceived('warning')
-            ->once()
-            ->with('resume_download_failed', [
-                'reason' => 'upstream_response',
-                'status' => 503,
-            ]);
     }
 
     /**
@@ -231,15 +224,11 @@ class ResumeDownloadTest extends TestCase
         Http::fake([
             self::RESUME_URL => Http::failedConnection(),
         ]);
-        Log::spy();
+        $this->expectResumeFailureLog(['reason' => 'upstream_unavailable']);
 
         $this->get('/resume/download')
             ->assertStatus(502)
             ->assertSeeText('Resume download is temporarily unavailable.');
-
-        Log::shouldHaveReceived('warning')
-            ->once()
-            ->with('resume_download_failed', ['reason' => 'upstream_unavailable']);
     }
 
     /**
@@ -253,40 +242,35 @@ class ResumeDownloadTest extends TestCase
                 throw new RequestException(new ClientResponse(new Psr7Response(502)));
             },
         ]);
-        Log::spy();
+        $this->expectResumeFailureLog(['reason' => 'upstream_unavailable']);
 
         $this->get('/resume/download')
             ->assertStatus(502)
             ->assertSeeText('Resume download is temporarily unavailable.');
-
-        Log::shouldHaveReceived('warning')
-            ->once()
-            ->with('resume_download_failed', ['reason' => 'upstream_unavailable']);
     }
 
     /**
      * Verify responses that are not valid PDFs are rejected.
      */
     #[DataProvider('invalidPdfResponses')]
-    public function test_it_rejects_an_invalid_pdf_response(string $body, string $contentType): void
-    {
+    public function test_it_rejects_an_invalid_pdf_response(
+        string $body,
+        string $contentType,
+        string $contentClass,
+    ): void {
         config(['resume.url' => self::RESUME_URL]);
         Http::fake([
             self::RESUME_URL => Http::response($body, 200, ['Content-Type' => $contentType]),
         ]);
-        Log::spy();
+        $this->expectResumeFailureLog([
+            'reason' => 'invalid_pdf',
+            'upstream_status' => 200,
+            'content_class' => $contentClass,
+        ]);
 
         $this->get('/resume/download')
             ->assertStatus(502)
             ->assertSeeText('Resume download is temporarily unavailable.');
-
-        Log::shouldHaveReceived('warning')
-            ->once()
-            ->with('resume_download_failed', [
-                'reason' => 'invalid_pdf',
-                'status' => 200,
-                'content_type' => $contentType,
-            ]);
     }
 
     /**
@@ -305,13 +289,41 @@ class ResumeDownloadTest extends TestCase
     /**
      * Provide invalid upstream bodies and their reported content types.
      *
-     * @return array<string, array{string, string}>
+     * @return array<string, array{string, string, string}>
      */
     public static function invalidPdfResponses(): array
     {
         return [
-            'HTML response' => ['<!doctype html>', 'text/html'],
-            'mislabelled response' => ['not a PDF', 'application/pdf'],
+            'HTML response' => ['<!doctype html>', 'text/html', 'html'],
+            'mislabelled response' => ['not a PDF', 'application/pdf', 'pdf'],
         ];
+    }
+
+    /**
+     * Expect one closed operational record on the explicit stderr channel.
+     *
+     * @param  array<string, int|string>  $exceptionContext
+     */
+    private function expectResumeFailureLog(array $exceptionContext): void
+    {
+        $context = [
+            'event' => 'resume_download_failed',
+            'component' => 'resume_download',
+            ...$exceptionContext,
+            'environment' => app()->environment(),
+        ];
+        $release = config('sentry.release');
+
+        if (is_string($release) && $release !== '') {
+            $context['release'] = $release;
+        }
+
+        Log::shouldReceive('channel')
+            ->once()
+            ->with('stderr')
+            ->andReturnSelf();
+        Log::shouldReceive('warning')
+            ->once()
+            ->with('resume_download_failed', $context);
     }
 }

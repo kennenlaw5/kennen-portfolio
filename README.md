@@ -181,8 +181,11 @@ validated content as a same-origin attachment; the upstream URL is never seriali
 into `window.APP_CONFIG`.
 
 Missing or invalid configuration returns `503`; upstream and validation failures return
-`502` and log a structured `resume_download_failed` warning. Successful responses use
-`no-store` so a newly published resume is picked up on the next request.
+`502`. Each handled failure crosses Laravel's reporting pipeline once, produces one
+sanitized Sentry Error event when transport is healthy, and writes one closed
+`resume_download_failed` warning to the explicit `stderr` channel without Laravel's
+generic duplicate. Successful responses use `no-store` so a newly published resume is
+picked up on the next request.
 
 The React links intentionally omit the HTML `download` attribute. A successful Laravel
 response supplies `Content-Disposition: attachment`, while an upstream or configuration
@@ -259,6 +262,15 @@ The total adapter catches every internal `Throwable`, performs no recursive logg
 returns `null` so only the affected remote event is dropped. Laravel's later report
 callbacks, normal HTTP handling, and stderr fallback continue. Automated tests use a
 synthetic in-memory transport and never a real DSN.
+
+Handled resume failures use typed domain exceptions with a closed reason and optional
+validated upstream status plus normalized `pdf`, `html`, `other`, or `missing` content
+class. The Sentry callback runs first; the last typed callback emits the closed stderr
+record and suppresses Laravel's generic typed-family log. Both surfaces share only the
+constant event/component, reason, bounded context, environment, and release. Raw
+requests, responses, URLs, bodies, headers, content types, and upstream exceptions are
+not retained or chained. If reporting or logging fails, the existing controlled HTTP
+response remains authoritative.
 
 ## Frontend commands
 

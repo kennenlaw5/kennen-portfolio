@@ -90,6 +90,20 @@ decision and final-envelope tests. The adapter catches every internal `Throwable
 performs no recursive logging, and returns `null` to drop only that remote event.
 Application code must keep using Laravel `report()` rather than direct Sentry calls.
 
+Handled resume failures are the typed exception family for that reporting rule. The
+controller reports each caught failure once; `Integration::handles(...)` remains the
+first reportable callback; duplicate reporting is disabled; and the final typed callback
+delegates to `OperationalTelemetryLogger`, writes one closed
+`resume_download_failed` warning to the explicit `stderr` channel, and returns `false`
+to suppress only Laravel's generic typed-family duplicate. No reportable callback may
+follow that stop handler without revisiting the ordering tests.
+
+The resume service must continue to discard raw upstream exceptions and normalize raw
+content types to `pdf`, `html`, `other`, or `missing`. Typed Error/stderr context may
+contain only the constant event/component, closed reason, validated integer upstream
+status, normalized content class, environment, and release. Reporting and logging
+failures must not replace the controlled `502`/`503` response.
+
 Both Sentry DSN names remain blank until the explicit release gate. Structured Logs,
 tracing, profiling, metrics, browser Sentry, replay, feedback, attachments, automatic
 request integrations, and breadcrumbs remain disabled where the SDK permits it. Context
@@ -120,7 +134,7 @@ current mismatch (see Gotchas): `web.php` serves `/projects` and `/skills`, but
 
 ```
 app/                         Laravel PHP (thin — SPA support, sanitized error reporting, resume proxy)
-  Services/Observability/    Final Sentry Error-event privacy boundary
+  Services/Observability/    Final Sentry privacy boundary plus closed stderr records
 config/app.php               Public 'contact' config block, populated from CONTACT_* env vars
 config/analytics.php         Public fail-closed analytics configuration
 config/resume.php            Server-only upstream resume URL
