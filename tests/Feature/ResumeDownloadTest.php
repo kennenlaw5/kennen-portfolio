@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\ResumeDownloadController;
 use GuzzleHttp\Psr7\Response as Psr7Response;
+use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Http\Request;
@@ -155,11 +156,22 @@ class ResumeDownloadTest extends TestCase
         $response->assertOk()
             ->assertDownload('Kennen Lawrence - Resume.pdf')
             ->assertHeader('Content-Type', 'application/octet-stream')
+            ->assertHeader(
+                'Content-Disposition',
+                'attachment; filename="Kennen Lawrence - Resume.pdf"',
+            )
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertContent($pdf);
 
-        $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+        $cacheControl = (string) $response->headers->get('Cache-Control');
+
+        $this->assertStringContainsString('private', $cacheControl);
+        $this->assertStringContainsString('no-store', $cacheControl);
         Http::assertSentCount(1);
-        Http::assertSent(fn ($request) => $request->url() === self::RESUME_URL);
+        Http::assertSent(
+            static fn (ClientRequest $request): bool => $request->method() === 'GET'
+                && $request->url() === self::RESUME_URL,
+        );
     }
 
     /**

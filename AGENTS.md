@@ -104,6 +104,12 @@ contain only the constant event/component, closed reason, validated integer upst
 status, normalized content class, environment, and release. Reporting and logging
 failures must not replace the controlled `502`/`503` response.
 
+Laravel's named `GET /resume/download` route also serves `HEAD`. A `HEAD` request must
+continue through the controller's real upstream `GET`, redirect restrictions, and
+complete PDF validation before Symfony removes the downstream body. It shares the
+normal composite limiter and typed failure semantics with `GET`; do not add a health
+route, bypass header, monitor secret, alternate upstream method, or limiter exemption.
+
 Both Sentry DSN names remain blank until the explicit release gate. Structured Logs,
 tracing, profiling, metrics, browser Sentry, replay, feedback, attachments, automatic
 request integrations, and breadcrumbs remain disabled where the SDK permits it. Context
@@ -116,9 +122,10 @@ before analytics is enabled. `send_page_view: false` covers tag-load behavior on
 `PageViewTracker` is the sole application page-view source. Provider page context is
 restricted to canonical same-origin URLs with referrer attribution suppressed.
 
-`routes/web.php` also exposes the server-only `GET /resume/download` endpoint. It reads
-the upstream URL from `config/resume.php`, validates the fetched PDF, and returns an
-attachment. The upstream URL must never be added to `window.APP_CONFIG`.
+`routes/web.php` also exposes the server-only `GET`/`HEAD /resume/download` endpoint.
+It reads the upstream URL from `config/resume.php`, validates the fetched PDF, and
+returns attachment metadata (plus the body for `GET`). The upstream URL must never be
+added to `window.APP_CONFIG`.
 
 **SPA page routes are declared in two places and must be kept in sync:**
 - Server side: `routes/web.php` (so a hard page load / refresh on an SPA deep link returns the shell instead of a 404).

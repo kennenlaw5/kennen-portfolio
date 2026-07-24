@@ -42,9 +42,11 @@ Blade views are mount shells only. Visible page content belongs in `resources/js
 routes. Browser analytics never traverse Laravel; any future API must define its own
 explicit origin, schema, validation, and rate-limit boundaries.
 
-`GET /resume/download` is a server-only file endpoint. It retrieves the configured
-resume from its upstream source and returns it as a same-origin attachment; it is not
-a React route and does not belong in the client route table.
+`GET` and `HEAD /resume/download` use the same server-only file endpoint. Both methods
+retrieve and validate the complete configured upstream PDF through the normal limiter;
+`GET` returns it as a same-origin attachment, while `HEAD` returns the same status and
+attachment metadata without transferring the body. This is not a React route and does
+not belong in the client route table.
 
 ## Prerequisites
 
@@ -176,9 +178,11 @@ RESUME_DOWNLOAD_RATE_LIMIT_GLOBAL=120
 
 `config/resume.php` reads this value, and `ResumeDownloadService` retrieves it when a
 visitor requests `/resume/download`. The URL must be an absolute HTTPS URL whose
-response declares `application/pdf` and begins with the PDF signature. Laravel returns
-validated content as a same-origin attachment; the upstream URL is never serialized
-into `window.APP_CONFIG`.
+response declares `application/pdf` and begins with the PDF signature. Laravel's named
+`GET` route also accepts `HEAD`; the framework still executes the controller's real
+upstream `GET` and complete PDF validation before removing the downstream response
+body. Laravel returns validated content as a same-origin attachment; the upstream URL
+is never serialized into `window.APP_CONFIG`.
 
 Missing or invalid configuration returns `503`; upstream and validation failures return
 `502`. Each handled failure crosses Laravel's reporting pipeline once, produces one
@@ -186,6 +190,10 @@ sanitized Sentry Error event when transport is healthy, and writes one closed
 `resume_download_failed` warning to the explicit `stderr` channel without Laravel's
 generic duplicate. Successful responses use `no-store` so a newly published resume is
 picked up on the next request.
+
+`HEAD` consumes the same per-IP and shared global limiter as `GET`. It preserves the
+same `502`/`503` typed failure reporting and returns `429` normally when the limiter is
+exhausted; monitoring must not bypass those policies.
 
 The React links intentionally omit the HTML `download` attribute. A successful Laravel
 response supplies `Content-Disposition: attachment`, while an upstream or configuration
