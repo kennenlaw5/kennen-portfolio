@@ -1,6 +1,6 @@
 import React from 'react'
 import {FaLinkedin} from 'react-icons/fa'
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackContactLinkClicked} from 'JS/analytics'
 
 const Linkedin: React.FC = () => (
     <a
@@ -9,7 +9,7 @@ const Linkedin: React.FC = () => (
         aria-label="Kennen Lawrence on LinkedIn"
         target="_blank"
         rel="noopener noreferrer"
-        onClick={() => trackEvent(ANALYTICS_EVENTS.CONTACT_LINK_CLICKED, {label: 'linkedin'})}
+        onClick={() => trackContactLinkClicked('linkedin')}
     >
         <FaLinkedin className="text-xl" aria-hidden="true" />
     </a>

@@ -1,4 +1,8 @@
-import {TAnalyticsEvent} from 'JS/analytics/contracts'
+import {
+    ANALYTICS_EVENT_NAMES,
+    TAnalyticsEvent,
+    TCanonicalPagePath,
+} from 'JS/analytics/contracts'
 import {parseAnalyticsRuntimeConfig} from 'JS/analytics/runtimeConfig'
 
 export const ANALYTICS_PREFERENCE_KEY = 'kennen.analytics-consent.v1'
@@ -66,6 +70,13 @@ const writePreference = (
         return false
     }
 }
+
+const getCanonicalPageLocation = (
+    browserWindow: Window,
+    pagePath: TCanonicalPagePath | '/',
+): string => (
+    new URL(pagePath, browserWindow.location.origin).toString()
+)
 
 export const createAnalyticsEngine = ({
     browserDocument = document,
@@ -169,12 +180,18 @@ export const createAnalyticsEngine = ({
         }
 
         try {
+            const safeRoot = getCanonicalPageLocation(browserWindow, '/')
             const gtag = getOrCreateGtag()
 
             gtag('consent', 'default', DENIED_CONSENT)
             gtag('consent', 'update', GRANTED_ANALYTICS_CONSENT)
             gtag('js', new Date())
-            gtag('config', runtimeConfig.measurement_id, {send_page_view: false})
+            gtag('config', runtimeConfig.measurement_id, {
+                ignore_referrer: true,
+                page_location: safeRoot,
+                page_referrer: safeRoot,
+                send_page_view: false,
+            })
             loadScript(runtimeConfig.measurement_id)
 
             configured = true
@@ -206,11 +223,31 @@ export const createAnalyticsEngine = ({
     }
 
     const trackEvent = (event: TAnalyticsEvent): void => {
-        if (!initialize()) {
+        const runtimeConfig = parseAnalyticsRuntimeConfig(configuration)
+
+        if (runtimeConfig === null || !initialize()) {
             return
         }
 
         try {
+            if (event.name === ANALYTICS_EVENT_NAMES.PAGE_VIEW) {
+                const safeRoot = getCanonicalPageLocation(browserWindow, '/')
+
+                browserWindow.gtag?.(
+                    'config',
+                    runtimeConfig.measurement_id,
+                    {
+                        page_location: getCanonicalPageLocation(
+                            browserWindow,
+                            event.parameters.page_path,
+                        ),
+                        page_referrer: safeRoot,
+                        send_page_view: false,
+                        update: true,
+                    },
+                )
+            }
+
             browserWindow.gtag?.('event', event.name, event.parameters)
         } catch {
             // Analytics failures must never affect the application.

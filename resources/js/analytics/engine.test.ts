@@ -55,6 +55,7 @@ afterEach(() => {
     document.getElementById('kennen-ga4-script')?.remove()
     delete window.dataLayer
     delete window.gtag
+    window.history.replaceState({}, '', '/')
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
 })
@@ -171,7 +172,12 @@ describe('analytics engine', () => {
             }],
             ['consent', 'update', {analytics_storage: 'granted'}],
             ['js', expect.any(Date)],
-            ['config', 'G-TEST1234', {send_page_view: false}],
+            ['config', 'G-TEST1234', {
+                ignore_referrer: true,
+                page_location: `${window.location.origin}/`,
+                page_referrer: `${window.location.origin}/`,
+                send_page_view: false,
+            }],
         ])
         expect(lastDataLayerCommand()).toEqual([
             'event',
@@ -196,6 +202,46 @@ describe('analytics engine', () => {
         expect(document.querySelectorAll('#kennen-ga4-script')).toHaveLength(1)
         expect(dataLayerCommands()).toHaveLength(4)
         expect(dataLayerCommands().filter(([command]) => command === 'config')).toHaveLength(1)
+    })
+
+    it('sanitizes provider page context to canonical URLs', () => {
+        window.history.replaceState(
+            {},
+            '',
+            '/experience?email=person@example.com#private',
+        )
+        const memory = createMemoryStorage('granted')
+        const engine = createAnalyticsEngine({
+            configuration: validConfig,
+            storage: memory.storage,
+            browserNavigator: createNavigator(),
+        })
+        const safeRoot = `${window.location.origin}/`
+
+        expect(engine.initialize()).toBe(true)
+        engine.trackEvent({
+            name: ANALYTICS_EVENT_NAMES.PAGE_VIEW,
+            parameters: {page_path: '/experience'},
+        })
+
+        expect(dataLayerCommands().filter(([command]) => (
+            command === 'config'
+        ))).toEqual([
+            ['config', 'G-TEST1234', {
+                ignore_referrer: true,
+                page_location: safeRoot,
+                page_referrer: safeRoot,
+                send_page_view: false,
+            }],
+            ['config', 'G-TEST1234', {
+                page_location: `${window.location.origin}/experience`,
+                page_referrer: safeRoot,
+                send_page_view: false,
+                update: true,
+            }],
+        ])
+        expect(JSON.stringify(dataLayerCommands()))
+            .not.toContain('person@example.com')
     })
 
     it('denies consent and suppresses events after explicit revocation', () => {

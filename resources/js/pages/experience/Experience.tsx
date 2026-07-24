@@ -5,6 +5,9 @@ import Card from 'Components/card/Card'
 import {SKILLS} from 'Constants/skills'
 import {TProjects} from 'Components/types/ProjectTypes'
 import {
+  PROJECT_ANALYTICS_IDS,
+} from 'JS/analytics/contracts'
+import {
   trackResumeDownloadIntent,
   RESUME_DOWNLOAD_PATH,
 } from 'JS/pages/helpers'
@@ -43,6 +46,7 @@ type TExperienceCompany = {
 const Experience: React.FC = () => {
   const projects: TProjects = [
     {
+      analyticsId: PROJECT_ANALYTICS_IDS.AKIDO_LABS,
       title: 'Akido Labs — Clinical Platform and AI-Assisted Engineering',
       description: <AkidoProjectDescription />,
       link: 'https://www.akidolabs.com/',
@@ -77,6 +81,7 @@ const Experience: React.FC = () => {
       ],
     },
     {
+      analyticsId: PROJECT_ANALYTICS_IDS.ENGRAIN,
       title: 'Engrain — CI Build-Time Reduction and AI Workflows',
       description: <EngrainProjectDescription />,
       link: 'https://www.engrain.com/',
@@ -99,6 +104,7 @@ const Experience: React.FC = () => {
       ],
     },
     {
+      analyticsId: PROJECT_ANALYTICS_IDS.AMAZON_AUTOS,
       title: 'Amazon Autos',
       description: <AmazonAutosDescription />,
       link: 'https://www.amazon.com/Amazon-Autos/b?ie=UTF8&node=10677469011',
@@ -116,6 +122,7 @@ const Experience: React.FC = () => {
       ],
     },
     {
+      analyticsId: PROJECT_ANALYTICS_IDS.A2Z_IN_STORE,
       title: 'A2Z Sync In-Store Application',
       description: <A2zInStoreDescription />,
       link: 'https://a2zsync.com/in-store/',
@@ -135,6 +142,7 @@ const Experience: React.FC = () => {
       ],
     },
     {
+      analyticsId: PROJECT_ANALYTICS_IDS.A2Z_DIGITAL_RETAIL,
       title: 'A2Z Sync Digital Retail Tool',
       description: <A2zOnlineDescription />,
       link: 'https://a2zsync.com/online/',
@@ -221,7 +229,7 @@ const Experience: React.FC = () => {
         </p>
         <a
           href={RESUME_DOWNLOAD_PATH}
-          onClick={trackResumeDownloadIntent}
+          onClick={() => trackResumeDownloadIntent('experience')}
           className="inline-flex bg-blue-600 text-white px-5 py-2.5 rounded hover:bg-blue-700 transition"
         >
           <span className="inline-flex items-center gap-2">

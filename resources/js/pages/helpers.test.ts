@@ -3,16 +3,15 @@ import {
     trackResumeDownloadIntent,
     RESUME_DOWNLOAD_PATH,
 } from 'JS/pages/helpers'
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackResumeDownloadClicked} from 'JS/analytics'
 
 vi.mock('JS/analytics', () => ({
-    ANALYTICS_EVENTS: {RESUME_DOWNLOAD: 'resume_download'},
-    trackEvent: vi.fn(),
+    trackResumeDownloadClicked: vi.fn(),
 }))
 
 describe('trackResumeDownloadIntent', () => {
     beforeEach(() => {
-        vi.mocked(trackEvent).mockReset()
+        vi.mocked(trackResumeDownloadClicked).mockReset()
     })
 
     it('exposes the same-origin download endpoint', () => {
@@ -20,8 +19,8 @@ describe('trackResumeDownloadIntent', () => {
     })
 
     it('records a resume download intent', () => {
-        trackResumeDownloadIntent()
+        trackResumeDownloadIntent('experience')
 
-        expect(trackEvent).toHaveBeenCalledWith(ANALYTICS_EVENTS.RESUME_DOWNLOAD)
+        expect(trackResumeDownloadClicked).toHaveBeenCalledWith('experience')
     })
 })

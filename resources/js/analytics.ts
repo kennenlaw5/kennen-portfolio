@@ -1,39 +1,66 @@
-export const ANALYTICS_EVENTS = {
-    CONTACT_LINK_CLICKED: 'contact_link_clicked',
-    PAGE_VIEW: 'page_view',
-    PROJECT_LINK_CLICKED: 'project_link_clicked',
-    RESUME_DOWNLOAD: 'resume_download',
-} as const
+import {
+    ANALYTICS_EVENT_NAMES,
+    TAnalyticsEvent,
+    TCanonicalPagePath,
+    TContactMethod,
+    TProjectAnalyticsId,
+    TResumePlacement,
+} from 'JS/analytics/contracts'
+import {
+    createAnalyticsEngine,
+    TAnalyticsEngine,
+} from 'JS/analytics/engine'
 
-type TAnalyticsEvent = typeof ANALYTICS_EVENTS[keyof typeof ANALYTICS_EVENTS]
+let analyticsEngine: TAnalyticsEngine | null = null
 
-type TAnalyticsMetadata = {
-    label?: string
+export const getAnalyticsEngine = (): TAnalyticsEngine => {
+    analyticsEngine ??= createAnalyticsEngine()
+
+    return analyticsEngine
 }
 
-export const trackEvent = (event: TAnalyticsEvent, metadata: TAnalyticsMetadata = {}) => {
-    if (navigator.doNotTrack === '1') {
-        return
-    }
+export const resetAnalyticsEngineForTests = (): void => {
+    analyticsEngine = null
+}
 
-    const payload = JSON.stringify({
-        event,
-        path: window.location.pathname,
-        ...metadata,
+const trackEvent = (event: TAnalyticsEvent): void => {
+    try {
+        getAnalyticsEngine().trackEvent(event)
+    } catch {
+        // Analytics failures must never affect application interactions.
+    }
+}
+
+export const trackPageView = (pagePath: TCanonicalPagePath): void => {
+    trackEvent({
+        name: ANALYTICS_EVENT_NAMES.PAGE_VIEW,
+        parameters: {page_path: pagePath},
     })
+}
 
-    if (typeof navigator.sendBeacon === 'function') {
-        const body = new Blob([payload], {type: 'application/json'})
+export const trackContactLinkClicked = (
+    contactMethod: TContactMethod,
+): void => {
+    trackEvent({
+        name: ANALYTICS_EVENT_NAMES.CONTACT_LINK_CLICKED,
+        parameters: {contact_method: contactMethod},
+    })
+}
 
-        if (navigator.sendBeacon('/api/analytics/events', body)) {
-            return
-        }
-    }
+export const trackProjectLinkClicked = (
+    projectId: TProjectAnalyticsId,
+): void => {
+    trackEvent({
+        name: ANALYTICS_EVENT_NAMES.PROJECT_LINK_CLICKED,
+        parameters: {project_id: projectId},
+    })
+}
 
-    void fetch('/api/analytics/events', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: payload,
-        keepalive: true,
-    }).catch(() => undefined)
+export const trackResumeDownloadClicked = (
+    placement: TResumePlacement,
+): void => {
+    trackEvent({
+        name: ANALYTICS_EVENT_NAMES.RESUME_DOWNLOAD_CLICKED,
+        parameters: {placement},
+    })
 }

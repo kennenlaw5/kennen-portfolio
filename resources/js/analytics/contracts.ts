@@ -13,11 +13,18 @@ export const PROJECT_ANALYTICS_IDS = {
     ENGRAIN: 'engrain',
 } as const
 
+export const CANONICAL_PAGE_PATHS = [
+    '/',
+    '/contact',
+    '/experience',
+    '/games',
+] as const
+
 type TAnalyticsEventName = typeof ANALYTICS_EVENT_NAMES[keyof typeof ANALYTICS_EVENT_NAMES]
-type TCanonicalPagePath = '/' | '/contact' | '/experience' | '/games'
-type TContactMethod = 'email' | 'github' | 'linkedin' | 'location' | 'phone'
-type TProjectAnalyticsId = typeof PROJECT_ANALYTICS_IDS[keyof typeof PROJECT_ANALYTICS_IDS]
-type TResumePlacement = 'experience' | 'home'
+export type TCanonicalPagePath = typeof CANONICAL_PAGE_PATHS[number]
+export type TContactMethod = 'email' | 'github' | 'linkedin' | 'location' | 'phone'
+export type TProjectAnalyticsId = typeof PROJECT_ANALYTICS_IDS[keyof typeof PROJECT_ANALYTICS_IDS]
+export type TResumePlacement = 'experience' | 'home'
 
 type TPageViewEvent = {
     name: typeof ANALYTICS_EVENT_NAMES.PAGE_VIEW
@@ -52,5 +59,11 @@ export type TAnalyticsEvent =
     | TContactLinkClickedEvent
     | TProjectLinkClickedEvent
     | TResumeDownloadClickedEvent
+
+export const isCanonicalPagePath = (
+    path: string,
+): path is TCanonicalPagePath => (
+    (CANONICAL_PAGE_PATHS as readonly string[]).includes(path)
+)
 
 export type {TAnalyticsEventName}

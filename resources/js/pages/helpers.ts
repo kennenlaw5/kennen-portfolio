@@ -1,7 +1,10 @@
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackResumeDownloadClicked} from 'JS/analytics'
+import {TResumePlacement} from 'JS/analytics/contracts'
 
 export const RESUME_DOWNLOAD_PATH = '/resume/download'
 
-export const trackResumeDownloadIntent = () => {
-    trackEvent(ANALYTICS_EVENTS.RESUME_DOWNLOAD)
+export const trackResumeDownloadIntent = (
+    placement: TResumePlacement,
+): void => {
+    trackResumeDownloadClicked(placement)
 }

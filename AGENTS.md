@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository. Human contributors may
 
 ## Project overview
 
-Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact configuration, logs an allowlisted set of anonymous analytics events, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
+Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, temporarily retains an unused legacy analytics endpoint, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
 
 - **Backend:** Laravel 13, PHP 8.5
 - **Frontend:** React 18, TypeScript (strict), React Router 6
@@ -64,13 +64,19 @@ This is the single most important thing to understand before changing routing or
 
 1. Laravel SPA page routes in `routes/web.php` map each page URL to a Blade view (`Route::view('/games', 'games.index')`).
 2. Every Blade view (`resources/views/**/index.blade.php`) extends `layouts/app.blade.php` and renders the exact same thing: a `<div id="root"></div>`.
-3. `layouts/app.blade.php` loads `public/css/appStyles.css` + `public/js/app.js` and injects public contact config as `window.APP_CONFIG = @js(config('app.contact'))`.
+3. `layouts/app.blade.php` loads `public/css/appStyles.css` + `public/js/app.js` and injects public contact and analytics config as `window.APP_CONFIG`.
 4. `resources/js/App.tsx` mounts React into `#root` and hands control to React Router (`BrowserRouter`), which renders the real page based on `window.location`.
 
-Separately, `routes/api.php` exposes `POST /api/analytics/events`. The browser sends
-allowlisted, anonymous interaction events there, and Laravel writes structured
-`portfolio_event` entries to the application log. The endpoint stores no visitor IDs,
-cookies, or database records and honors browser Do Not Track on the client.
+Separately, `routes/api.php` temporarily retains the legacy
+`POST /api/analytics/events` endpoint. React no longer calls it; browser telemetry flows
+through the typed, permission-gated GA4 adapter in `resources/js/analytics`. Direct
+requests to the legacy endpoint still write structured `portfolio_event` entries to the
+application log until a follow-up change removes it.
+
+The GA4 web stream must keep Enhanced Measurement's browser-history page views disabled
+before analytics is enabled. `send_page_view: false` covers tag-load behavior only;
+`PageViewTracker` is the sole application page-view source. Provider page context is
+restricted to canonical same-origin URLs with referrer attribution suppressed.
 
 `routes/web.php` also exposes the server-only `GET /resume/download` endpoint. It reads
 the upstream URL from `config/resume.php`, validates the fetched PDF, and returns an
@@ -80,21 +86,26 @@ attachment. The upstream URL must never be added to `window.APP_CONFIG`.
 - Server side: `routes/web.php` (so a hard page load / refresh on an SPA deep link returns the shell instead of a 404).
 - Client side: `resources/js/constants/routes.ts` (the `HOME_ROUTE` + `ROUTES` map that `App.tsx` and the nav bars consume).
 
-If you add a page, add it to **both**. Note the current mismatch (see Gotchas): `web.php` serves `/projects` and `/skills`, but `routes.ts` has no client route for them.
+Tracked client routes must also be added to the canonical analytics allowlist in
+`resources/js/analytics/contracts.ts`; its contract test enforces synchronization with
+the client route table. If you add a page, update all applicable locations. Note the
+current mismatch (see Gotchas): `web.php` serves `/projects` and `/skills`, but
+`routes.ts` has no client route for them.
 
 ## Directory map
 
 ```
-app/                         Laravel PHP (thin — SPA support, resume proxy + analytics logging)
+app/                         Laravel PHP (thin — SPA support, resume proxy + legacy analytics endpoint)
 config/app.php               Public 'contact' config block, populated from CONTACT_* env vars
+config/analytics.php         Public fail-closed analytics configuration
 config/resume.php            Server-only upstream resume URL
-routes/api.php               Anonymous first-party analytics endpoint
+routes/api.php               Temporarily retained legacy analytics endpoint
 routes/web.php               Blade SPA shells plus the resume download endpoint
 resources/views/             Blade shells (one per route), all extend layouts/app.blade.php
 resources/sass/              Global SCSS (app.scss) + SCSS Modules under modules/ + abstracts/
 resources/js/                THE REACT APP — most work happens here
   App.tsx                    Entry point: mounts React, sets up Router + Suspense
-  analytics.ts              Anonymous first-party event helper
+  analytics.ts              Typed browser analytics facade
   bootstrap.js               Axios global setup
   constants/routes.ts        Client-side route table (lazy-loaded page components)
   constants/                 Static data: skills.ts, certificates.ts, gameConsts.ts

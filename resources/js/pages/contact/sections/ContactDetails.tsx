@@ -15,31 +15,31 @@ const ContactDetails: React.FC = () => {
 
     const contactInfo: TContactDetail[] = [
         {
-            analyticsLabel: 'phone',
+            analyticsMethod: 'phone',
             icon: FaPhone,
             text: phone,
             link: `tel:${phone}`
         },
         {
-            analyticsLabel: 'email',
+            analyticsMethod: 'email',
             icon: FaEnvelope,
             text: email,
             link: `mailto:${email}`
         },
         {
-            analyticsLabel: 'linkedin',
+            analyticsMethod: 'linkedin',
             icon: FaLinkedin,
             text: 'LinkedIn Profile',
             link: linkedinUrl
         },
         {
-            analyticsLabel: 'github',
+            analyticsMethod: 'github',
             icon: FaGithub,
             text: 'GitHub Profile',
             link: githubUrl
         },
         {
-            analyticsLabel: 'location',
+            analyticsMethod: 'location',
             icon: FaMapMarkerAlt,
             text: `${city}, ${stateAbbreviation}`,
             link: `https://www.google.com/maps/place/${city}+${stateAbbreviation}`

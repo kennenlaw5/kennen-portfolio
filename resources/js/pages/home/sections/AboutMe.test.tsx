@@ -1,16 +1,19 @@
 import React from 'react'
 import {fireEvent, render, screen} from '@testing-library/react'
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import AboutMe from 'JS/pages/home/sections/AboutMe'
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackResumeDownloadClicked} from 'JS/analytics'
 
 vi.mock('JS/analytics', () => ({
-    ANALYTICS_EVENTS: {RESUME_DOWNLOAD: 'resume_download'},
-    trackEvent: vi.fn(),
+    trackResumeDownloadClicked: vi.fn(),
 }))
 
 describe('AboutMe resume download', () => {
-    it('uses the native resume download endpoint', () => {
+    beforeEach(() => {
+        vi.mocked(trackResumeDownloadClicked).mockReset()
+    })
+
+    it('resume_links_queue_click_intent_without_blocking_navigation', () => {
         render(<AboutMe />)
 
         const link = screen.getByRole('link', {name: 'Download My Resume'})
@@ -21,6 +24,6 @@ describe('AboutMe resume download', () => {
 
         link.addEventListener('click', event => event.preventDefault())
         fireEvent.click(link)
-        expect(trackEvent).toHaveBeenCalledWith(ANALYTICS_EVENTS.RESUME_DOWNLOAD)
+        expect(trackResumeDownloadClicked).toHaveBeenCalledWith('home')
     })
 })

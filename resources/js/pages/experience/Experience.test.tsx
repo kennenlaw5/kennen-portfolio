@@ -1,16 +1,20 @@
 import React from 'react'
 import {fireEvent, render, screen, within} from '@testing-library/react'
-import {describe, expect, it, vi} from 'vitest'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import Experience from 'JS/pages/experience/Experience'
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackResumeDownloadClicked} from 'JS/analytics'
 
 vi.mock('JS/analytics', () => ({
-    ANALYTICS_EVENTS: {RESUME_DOWNLOAD: 'resume_download'},
-    trackEvent: vi.fn(),
+    trackProjectLinkClicked: vi.fn(),
+    trackResumeDownloadClicked: vi.fn(),
 }))
 
 describe('Experience resume download', () => {
-    it('uses the native resume download endpoint', () => {
+    beforeEach(() => {
+        vi.mocked(trackResumeDownloadClicked).mockReset()
+    })
+
+    it('queues experience placement without replacing native navigation', () => {
         render(<Experience />)
 
         const link = screen.getByRole('link', {name: 'Download My Resume'})
@@ -21,7 +25,7 @@ describe('Experience resume download', () => {
 
         link.addEventListener('click', event => event.preventDefault())
         fireEvent.click(link)
-        expect(trackEvent).toHaveBeenCalledWith(ANALYTICS_EVENTS.RESUME_DOWNLOAD)
+        expect(trackResumeDownloadClicked).toHaveBeenCalledWith('experience')
     })
 })
 

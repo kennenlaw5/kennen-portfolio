@@ -32,11 +32,16 @@ SPA page routes are declared in both of these files and must remain synchronized
 - `routes/web.php` handles direct requests and browser refreshes for SPA pages.
 - `resources/js/constants/routes.ts` controls client-side rendering and navigation.
 
+Tracked client routes must also be present in the canonical analytics allowlist in
+`resources/js/analytics/contracts.ts`. A contract test enforces synchronization between
+the client route table and that allowlist.
+
 Blade views are mount shells only. Visible page content belongs in `resources/js`, not in the route-specific Blade files.
 
-The only JSON API endpoint is `POST /api/analytics/events`. It accepts a small allowlist
-of anonymous interaction events and writes structured `portfolio_event` entries to
-the application log; it does not use cookies, visitor identifiers, or the database.
+The only JSON API endpoint is `POST /api/analytics/events`. It is temporarily retained
+for compatibility, but the React application no longer calls it; direct requests still
+write allowlisted `portfolio_event` entries to the application log until the endpoint
+is removed in a follow-up change.
 
 `GET /resume/download` is a server-only file endpoint. It retrieves the configured
 resume from its upstream source and returns it as a same-origin attachment; it is not
@@ -199,19 +204,28 @@ minute. Both values are environment-configurable. The global bucket bounds upstr
 when callers rotate genuine addresses. Limiter state uses Laravel's configured cache; keep
 that cache shared if the service is scaled to multiple instances.
 
-## First-party analytics
+## Browser analytics
 
-The React application records page views, resume-download requests, project-link clicks,
-and contact-link clicks through the first-party analytics endpoint. Payloads
-contain only the event name, current path, and an optional non-personal label. Browsers
-with Do Not Track enabled do not send events.
+The React application routes page views, resume-download clicks, project-link clicks,
+and contact-link clicks through a typed GA4 adapter. Events use closed, non-personal
+parameters: canonical page paths, contact methods, stable project IDs, and the home or
+experience resume placement.
 
-The `resume_download` event represents click intent, not confirmation that the browser
-saved the response.
+The adapter stays inert unless analytics is configured and the visitor has granted
+permission. Do Not Track and Global Privacy Control prevent analytics from becoming
+active, and GA4 automatic page views are disabled so React Router remains the page-view
+authority. Analytics failures are isolated from the underlying navigation and download
+interactions.
 
-On Render, filter the application logs for `portfolio_event` to inspect these events.
-This intentionally provides lightweight operational visibility rather than a visitor
-profile or full analytics dashboard.
+The `resume_download_clicked` event represents click intent, not confirmation that the
+browser saved the response. The legacy first-party endpoint remains registered but is
+not used by the browser analytics flow.
+
+Before enabling analytics, the GA4 web stream must also disable Enhanced Measurement's
+**Page changes based on browser history events** option. `send_page_view: false` disables
+the tag-load page view but does not disable that property-level history listener. The
+adapter supplies only canonical same-origin page context and suppresses referrer
+attribution so query strings, fragments, and external referrer details are not sent.
 
 ## Frontend commands
 
@@ -299,8 +313,9 @@ from entering the Docker build context.
 ## Repository structure
 
 ```text
-app/                         Thin Laravel layer, including resume proxying and analytics logging
+app/                         Thin Laravel layer, including resume proxying and a legacy analytics endpoint
 config/app.php               Application and public contact configuration
+config/analytics.php         Public fail-closed analytics configuration
 config/resume.php            Server-only upstream resume configuration
 docker/                      nginx, PHP, and MySQL configuration
 .github/workflows/           CI checks and the approved Render deployment workflow
@@ -310,7 +325,7 @@ resources/js/constants/      Routes and static domain data
 resources/js/pages/          Top-level route components
 resources/sass/              Global styles and SCSS Modules
 resources/views/             Blade shells for the React application
-routes/api.php               First-party analytics event endpoint
+routes/api.php               Temporarily retained legacy analytics event endpoint
 routes/web.php               Server-side SPA routes and the resume download endpoint
 tests/                       PHPUnit feature and unit tests
 vitest.config.ts             Frontend unit and component test configuration

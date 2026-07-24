@@ -9,6 +9,10 @@ import {
 } from 'Components/analytics/AnalyticsPreferencesContext'
 import Footer from 'Components/layout/Footer'
 import Layout from 'Components/layout/Layout'
+import {
+    resetAnalyticsEngineForTests,
+    trackPageView,
+} from 'JS/analytics'
 import {ANALYTICS_PREFERENCE_KEY} from 'JS/analytics/engine'
 
 vi.mock('Components/analytics/PageViewTracker', () => ({
@@ -46,6 +50,7 @@ const setPrivacySignal = (
 }
 
 afterEach(() => {
+    resetAnalyticsEngineForTests()
     window.APP_CONFIG.analytics = defaultConfiguration
     window.localStorage.clear()
     setPrivacySignal('doNotTrack', null)
@@ -230,6 +235,28 @@ describe('analytics preferences', () => {
         )
     })
 
+    it('shares one configured engine with application event callers', () => {
+        window.APP_CONFIG.analytics = validConfiguration
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'granted')
+        const gtag = vi.fn()
+        window.gtag = gtag
+
+        renderPreferences()
+        trackPageView('/')
+
+        expect(gtag.mock.calls.filter((
+            [command, _measurementId, parameters],
+        ) => (
+            command === 'config'
+            && !(parameters as {update?: boolean}).update
+        ))).toHaveLength(1)
+        expect(gtag).toHaveBeenCalledWith(
+            'event',
+            'page_view',
+            {page_path: '/'},
+        )
+    })
+
     it('reopened_preferences_can_close_without_changing_the_saved_choice', async () => {
         const user = userEvent.setup()
         window.APP_CONFIG.analytics = validConfiguration
@@ -291,6 +318,31 @@ describe('analytics preferences', () => {
             setItem.mockRestore()
         },
     )
+
+    it('keeps events off for the page when denial cannot be stored', async () => {
+        const user = userEvent.setup()
+        window.APP_CONFIG.analytics = validConfiguration
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'granted')
+        const gtag = vi.fn()
+        window.gtag = gtag
+
+        renderPreferences()
+        await user.click(screen.getByRole('button', {
+            name: 'Analytics preferences',
+        }))
+        const setItem = vi.spyOn(Storage.prototype, 'setItem')
+            .mockImplementation(() => {
+                throw new Error('Storage is unavailable')
+            })
+
+        await user.click(screen.getByRole('button', {name: 'No thanks'}))
+        gtag.mockClear()
+        trackPageView('/')
+
+        expect(gtag).not.toHaveBeenCalled()
+
+        setItem.mockRestore()
+    })
 
     it('disabled_analytics_configuration_is_visually_and_network_inert', () => {
         const fetchMock = vi.fn()

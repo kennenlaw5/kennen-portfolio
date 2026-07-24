@@ -7,7 +7,7 @@ import Card from 'Components/card/Card'
 import Tooltip from 'Components/tooltip/Tooltip'
 import TooltipTrigger from 'Components/tooltip/TooltipTrigger'
 import TooltipText from 'Components/tooltip/TooltipText'
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackProjectLinkClicked} from 'JS/analytics'
 
 type TProjectProps = {
     defaultOpen?: boolean
@@ -16,7 +16,7 @@ type TProjectProps = {
 }
 
 const Project: React.FC<TProjectProps> = ({project, defaultOpen = false, isDropDown = false}) => {
-    const {className, company, dateRange, description, link, role, technologies, title} = project
+    const {className, company, dateRange, description, role, technologies, title} = project
     const cardHeader = !title ? role : null
     const subText = `at ${company} (${dateRange})`
 
@@ -29,15 +29,15 @@ const Project: React.FC<TProjectProps> = ({project, defaultOpen = false, isDropD
             defaultOpen,
         }}>
             <h4 className="font-semibold mb-2">
-                {link ? (
+                {project.link ? (
                     <a
-                        href={link}
+                        href={project.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="link inline-flex text-gray-700"
-                        onClick={() => trackEvent(ANALYTICS_EVENTS.PROJECT_LINK_CLICKED, {
-                            label: title || role || 'Untitled project',
-                        })}
+                        onClick={() => trackProjectLinkClicked(
+                            project.analyticsId,
+                        )}
                     >
                         {title}
                         <FaExternalLinkAlt className='my-auto ml-2' aria-hidden="true" />

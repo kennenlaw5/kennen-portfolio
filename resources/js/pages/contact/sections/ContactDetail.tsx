@@ -1,6 +1,6 @@
 import React from 'react'
 import {TContactDetail} from 'JS/pages/contact/types/ContactDetailTypes'
-import {ANALYTICS_EVENTS, trackEvent} from 'JS/analytics'
+import {trackContactLinkClicked} from 'JS/analytics'
 
 type TContactDetailProps = {
     item: TContactDetail
@@ -13,9 +13,7 @@ const ContactDetail: React.FC<TContactDetailProps> = ({item}) => (
             className="link ml-3 text-gray-700"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => trackEvent(ANALYTICS_EVENTS.CONTACT_LINK_CLICKED, {
-                label: item.analyticsLabel,
-            })}
+            onClick={() => trackContactLinkClicked(item.analyticsMethod)}
         >
             {item.text}
         </a>

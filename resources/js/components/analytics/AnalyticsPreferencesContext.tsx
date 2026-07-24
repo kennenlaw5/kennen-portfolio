@@ -8,9 +8,9 @@ import React, {
     useState,
 } from 'react'
 import {
-    createAnalyticsEngine,
     TAnalyticsPreference,
 } from 'JS/analytics/engine'
+import {getAnalyticsEngine} from 'JS/analytics'
 import {parseAnalyticsRuntimeConfig} from 'JS/analytics/runtimeConfig'
 
 type TAnalyticsPreferencesContext = {
@@ -53,7 +53,7 @@ const AnalyticsPreferencesContext = createContext(defaultContext)
 export const AnalyticsPreferencesProvider: React.FC<
     TAnalyticsPreferencesProviderProps
 > = ({children}) => {
-    const engine = useMemo(() => createAnalyticsEngine(), [])
+    const engine = useMemo(getAnalyticsEngine, [])
     const returnFocusElement = useRef<HTMLElement | null>(null)
     const focusMainAfterChoice = useRef(false)
     const isAvailable = parseAnalyticsRuntimeConfig(

@@ -1,11 +1,24 @@
 import {describe, expect, it} from 'vitest'
 import {
     ANALYTICS_EVENT_NAMES,
+    CANONICAL_PAGE_PATHS,
     PROJECT_ANALYTICS_IDS,
     type TAnalyticsEvent,
 } from 'JS/analytics/contracts'
+import {HOME_ROUTE, ROUTES} from 'Constants/routes'
 
 describe('analytics event contract', () => {
+    it('keeps canonical analytics paths synchronized with client routes', () => {
+        const clientPaths = [
+            HOME_ROUTE.path,
+            ...Object.values(ROUTES).map(({path}) => (
+                path.startsWith('/') ? path : `/${path}`
+            )),
+        ].sort()
+
+        expect([...CANONICAL_PAGE_PATHS].sort()).toEqual(clientPaths)
+    })
+
     it('is limited to closed event names and parameter values', () => {
         const supportedEvents: TAnalyticsEvent[] = [
             {
