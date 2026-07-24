@@ -2,7 +2,7 @@
 
 **Status:** Proposed; requires explicit approval before implementation
 **Phase:** 1 of 3
-**Depends on:** The current Laravel 13 + React 18 portfolio
+**Depends on:** The current Laravel 13 + React 19 portfolio
 **Precedes:** Phase 2 polyglot services and Phase 3 Engineering Lab accessibility remediation
 
 ## Summary

@@ -1,5 +1,5 @@
 import React from 'react'
-import {Outlet} from 'react-router-dom'
+import {Outlet} from 'react-router'
 import Footer from 'Components/layout/Footer'
 import PageViewTracker from 'Components/analytics/PageViewTracker'
 import AnalyticsConsent from 'Components/analytics/AnalyticsConsent'

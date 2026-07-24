@@ -25,7 +25,7 @@ const Skills: React.FC = () => {
                 {Object.values(SKILLS).map(({name, type}) => {
                     const shouldShow = selectedSkillType === SKILL_TYPES.ALL || selectedSkillType === type
 
-                    return <Skill {...{shouldShow, key: name, name, type}} />
+                    return <Skill key={name} {...{shouldShow, name, type}} />
                 })}
             </div>
       </Section>

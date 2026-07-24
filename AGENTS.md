@@ -4,10 +4,10 @@ Guidance for AI coding agents working in this repository. Human contributors may
 
 ## Project overview
 
-Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, reports backend exceptions through a privacy-sanitized dormant Sentry Error Monitoring integration, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
+Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 19 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, reports backend exceptions through a privacy-sanitized dormant Sentry Error Monitoring integration, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
 
 - **Backend:** Laravel 13, PHP 8.5
-- **Frontend:** React 18, TypeScript (strict), React Router 6
+- **Frontend:** React 19, TypeScript (strict), React Router 8
 - **Build:** Webpack 5 (via `package.json` scripts) with `ts-loader`
 - **Frontend tests:** Vitest + jsdom + React Testing Library
 - **Styling:** Tailwind CSS 3 (utility classes in JSX) + SCSS Modules (`*.module.scss`) for game/component-specific styles

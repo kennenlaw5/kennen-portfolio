@@ -1,6 +1,6 @@
 import {ROUTES} from 'Constants/routes'
 import React from 'react'
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router'
 import Skills from 'JS/pages/home/sections/Skills'
 import AboutMe from 'JS/pages/home/sections/AboutMe'
 import Certificates from 'Components/Certificates'

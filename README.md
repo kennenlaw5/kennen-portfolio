@@ -7,8 +7,8 @@ The project uses Laravel as a thin server-side shell for a React single-page app
 ## Tech stack
 
 - Laravel 13 and PHP 8.5
-- React 18 and TypeScript in strict mode
-- React Router 6
+- React 19 and TypeScript in strict mode
+- React Router 8
 - Vitest, jsdom, and React Testing Library
 - Webpack 5 with `ts-loader`
 - Tailwind CSS 3 and SCSS Modules

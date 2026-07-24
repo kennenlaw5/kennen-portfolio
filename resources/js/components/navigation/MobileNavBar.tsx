@@ -1,5 +1,5 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router'
 import {HOME_ROUTE, ROUTES} from 'Constants/routes'
 import classNames from 'classnames'
 

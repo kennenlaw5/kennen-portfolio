@@ -1,7 +1,7 @@
 import './bootstrap'
 import React, {Suspense} from 'react'
 import {createRoot} from 'react-dom/client'
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Routes, Route} from 'react-router'
 import {HOME_ROUTE, ROUTES} from 'Constants/routes'
 import Layout from 'Components/layout/Layout'
 import Loading from 'Components/layout/Loading'
@@ -28,4 +28,3 @@ if (container) {
   const root = createRoot(container)
   root.render(<App />)
 }
-

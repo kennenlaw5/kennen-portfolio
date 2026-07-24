@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react'
-import {useLocation} from 'react-router-dom'
+import {useLocation} from 'react-router'
 import {useAnalyticsPreferences} from 'Components/analytics/AnalyticsPreferencesContext'
 import {trackPageView} from 'JS/analytics'
 import {isCanonicalPagePath} from 'JS/analytics/contracts'

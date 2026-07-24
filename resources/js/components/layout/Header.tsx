@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Link} from 'react-router-dom'
+import {Link} from 'react-router'
 import {HOME_ROUTE} from 'Constants/routes'
 import DesktopNavBar from 'Components/navigation/DesktopNavBar'
 import MobileNavBar from 'Components/navigation/MobileNavBar'

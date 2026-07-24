@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import {fireEvent, render, screen, waitFor} from '@testing-library/react'
-import {MemoryRouter, useNavigate} from 'react-router-dom'
+import {MemoryRouter, useNavigate} from 'react-router'
 import {beforeEach, describe, expect, it, vi} from 'vitest'
 import PageViewTracker from 'Components/analytics/PageViewTracker'
 import {trackPageView} from 'JS/analytics'
