@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository. Human contributors may
 
 ## Project overview
 
-Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
+Kennen Lawrence's personal portfolio site. It is a **Laravel 13 backend that serves a single-page React 18 + TypeScript application**. Laravel returns HTML shells, exposes a small block of public contact and analytics configuration, reports backend exceptions through a privacy-sanitized dormant Sentry Error Monitoring integration, and proxies the configured resume through a same-origin download endpoint; virtually all UI, routing, analytics, and game logic lives in the React app under `resources/js`. There is no meaningful database usage — the site is effectively static content plus two interactive browser games.
 
 - **Backend:** Laravel 13, PHP 8.5
 - **Frontend:** React 18, TypeScript (strict), React Router 6
@@ -74,6 +74,29 @@ must define its own explicit origin, schema, validation, and rate-limit boundari
 GA data remains forgeable, best-effort, browser-reported directional telemetry rather
 than proof of a human visitor or an auditable ledger.
 
+Backend exceptions continue through Laravel's normal reporting pipeline and the
+server-only Sentry integration. `config/sentry.php` registers
+`SentryTelemetrySanitizer::beforeSend` as the single total Error-event privacy boundary.
+It rebuilds an allowlisted event, preserving safe generic messages, exception types,
+file/line frames, environment, full release, and grouping evidence while removing
+request/user/breadcrumb/extra context, OS/runtime context bags, frame variables, and
+inbound trace/baggage data. Configured URLs/DSNs/contact values, absolute URLs, emails,
+and credential patterns are redacted from retained strings.
+
+Only the locked Laravel/Guzzle request and connection exception families and
+`QueryException`/`PDOException` receive code-owned replacement messages; do not expand
+that list or parse arbitrary messages into tags or fingerprints without a new privacy
+decision and final-envelope tests. The adapter catches every internal `Throwable`,
+performs no recursive logging, and returns `null` to drop only that remote event.
+Application code must keep using Laravel `report()` rather than direct Sentry calls.
+
+Both Sentry DSN names remain blank until the explicit release gate. Structured Logs,
+tracing, profiling, metrics, browser Sentry, replay, feedback, attachments, automatic
+request integrations, and breadcrumbs remain disabled where the SDK permits it. Context
+added by mandatory Laravel integrations is removed at the final sanitizer boundary. The
+dormant `sentry_logs` channel stays outside the active stack; Render stderr remains the
+independent fallback.
+
 The GA4 web stream must keep Enhanced Measurement's browser-history page views disabled
 before analytics is enabled. `send_page_view: false` covers tag-load behavior only;
 `PageViewTracker` is the sole application page-view source. Provider page context is
@@ -96,10 +119,12 @@ current mismatch (see Gotchas): `web.php` serves `/projects` and `/skills`, but
 ## Directory map
 
 ```
-app/                         Laravel PHP (thin — SPA support and resume proxy)
+app/                         Laravel PHP (thin — SPA support, sanitized error reporting, resume proxy)
+  Services/Observability/    Final Sentry Error-event privacy boundary
 config/app.php               Public 'contact' config block, populated from CONTACT_* env vars
 config/analytics.php         Public fail-closed analytics configuration
 config/resume.php            Server-only upstream resume URL
+config/sentry.php            Server-only, fail-closed Sentry Error Monitoring configuration
 routes/api.php               Empty route file reserved for explicitly designed future APIs
 routes/web.php               Blade SPA shells plus the resume download endpoint
 resources/views/             Blade shells (one per route), all extend layouts/app.blade.php

@@ -51,6 +51,8 @@ class SentryConfigurationTest extends TestCase
             'SENTRY_ENABLE_METRICS' => '(false)',
             'SENTRY_SEND_DEFAULT_PII' => '(false)',
             'SENTRY_MAX_REQUEST_BODY_SIZE' => 'none',
+            'SENTRY_DEFAULT_INTEGRATIONS' => '(false)',
+            'SENTRY_MAX_BREADCRUMBS' => '0',
             'SENTRY_TRACES_SAMPLE_RATE' => '0',
             'SENTRY_PROFILES_SAMPLE_RATE' => '0',
         ];
@@ -69,6 +71,8 @@ class SentryConfigurationTest extends TestCase
             'SENTRY_ENABLE_METRICS' => 'false',
             'SENTRY_SEND_DEFAULT_PII' => 'false',
             'SENTRY_MAX_REQUEST_BODY_SIZE' => 'none',
+            'SENTRY_DEFAULT_INTEGRATIONS' => 'false',
+            'SENTRY_MAX_BREADCRUMBS' => '0',
             'SENTRY_TRACES_SAMPLE_RATE' => '0',
             'SENTRY_PROFILES_SAMPLE_RATE' => '0',
         ];
@@ -85,6 +89,8 @@ class SentryConfigurationTest extends TestCase
         $this->assertSame(0.0, config('sentry.profiles_sample_rate'));
         $this->assertFalse(config('sentry.send_default_pii'));
         $this->assertSame('none', config('sentry.max_request_body_size'));
+        $this->assertFalse(config('sentry.default_integrations'));
+        $this->assertSame(0, config('sentry.max_breadcrumbs'));
     }
 
     /**
@@ -97,6 +103,10 @@ class SentryConfigurationTest extends TestCase
             'SENTRY_ENABLE_METRICS' => 'true',
             'SENTRY_SEND_DEFAULT_PII' => 'true',
             'SENTRY_MAX_REQUEST_BODY_SIZE' => 'always',
+            'SENTRY_DEFAULT_INTEGRATIONS' => 'true',
+            'SENTRY_MAX_BREADCRUMBS' => '25',
+            'SENTRY_BREADCRUMBS_LOGS_ENABLED' => 'true',
+            'SENTRY_TRACE_HTTP_CLIENT_REQUESTS_ENABLED' => 'true',
             'SENTRY_TRACES_SAMPLE_RATE' => '0.25',
             'SENTRY_PROFILES_SAMPLE_RATE' => '0.5',
         ]);
@@ -105,6 +115,10 @@ class SentryConfigurationTest extends TestCase
         $this->assertTrue($config['enable_metrics']);
         $this->assertTrue($config['send_default_pii']);
         $this->assertSame('always', $config['max_request_body_size']);
+        $this->assertTrue($config['default_integrations']);
+        $this->assertSame(25, $config['max_breadcrumbs']);
+        $this->assertTrue($config['breadcrumbs_logs']);
+        $this->assertTrue($config['tracing_http_client_requests']);
         $this->assertSame(0.25, $config['traces_sample_rate']);
         $this->assertSame(0.5, $config['profiles_sample_rate']);
     }
@@ -202,10 +216,14 @@ class SentryConfigurationTest extends TestCase
         $phpConfiguration = file_get_contents(base_path('docker/php/php.ini'));
         $dockerfile = file_get_contents(base_path('docker/php/Dockerfile'));
         $dockerIgnore = file_get_contents(base_path('.dockerignore'));
+        $productionVerification = file_get_contents(
+            base_path('docker/php/verify-production-config.php'),
+        );
 
         $this->assertIsString($phpConfiguration);
         $this->assertIsString($dockerfile);
         $this->assertIsString($dockerIgnore);
+        $this->assertIsString($productionVerification);
         $this->assertMatchesRegularExpression(
             '/^zend\.exception_ignore_args\s*=\s*On$/m',
             $phpConfiguration,
@@ -218,6 +236,14 @@ class SentryConfigurationTest extends TestCase
         $this->assertStringContainsString(
             'RUN php docker/php/verify-production-config.php',
             $dockerfile,
+        );
+        $this->assertStringContainsString(
+            "'sentry_unsafe_collectors_disabled'",
+            $productionVerification,
+        );
+        $this->assertStringContainsString(
+            "'sentry_total_sanitizer_configured'",
+            $productionVerification,
         );
     }
 
@@ -292,6 +318,10 @@ class SentryConfigurationTest extends TestCase
      *     enable_metrics: bool,
      *     send_default_pii: bool,
      *     max_request_body_size: string,
+     *     default_integrations: bool,
+     *     max_breadcrumbs: int,
+     *     breadcrumbs_logs: bool,
+     *     tracing_http_client_requests: bool,
      *     traces_sample_rate: ?float,
      *     profiles_sample_rate: ?float
      * }     */
@@ -310,6 +340,10 @@ echo json_encode([
     'enable_metrics' => $config->get('sentry.enable_metrics'),
     'send_default_pii' => $config->get('sentry.send_default_pii'),
     'max_request_body_size' => $config->get('sentry.max_request_body_size'),
+    'default_integrations' => $config->get('sentry.default_integrations'),
+    'max_breadcrumbs' => $config->get('sentry.max_breadcrumbs'),
+    'breadcrumbs_logs' => $config->get('sentry.breadcrumbs.logs'),
+    'tracing_http_client_requests' => $config->get('sentry.tracing.http_client_requests'),
     'traces_sample_rate' => $config->get('sentry.traces_sample_rate'),
     'profiles_sample_rate' => $config->get('sentry.profiles_sample_rate'),
 ], JSON_THROW_ON_ERROR);
@@ -333,6 +367,10 @@ PHP;
          *     enable_metrics: bool,
          *     send_default_pii: bool,
          *     max_request_body_size: string,
+         *     default_integrations: bool,
+         *     max_breadcrumbs: int,
+         *     breadcrumbs_logs: bool,
+         *     tracing_http_client_requests: bool,
          *     traces_sample_rate: ?float,
          *     profiles_sample_rate: ?float
          * } $config

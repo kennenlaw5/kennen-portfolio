@@ -36,6 +36,8 @@
         <env name="SENTRY_ENABLE_METRICS" value="(false)" force="true"/>
         <env name="SENTRY_SEND_DEFAULT_PII" value="(false)" force="true"/>
         <env name="SENTRY_MAX_REQUEST_BODY_SIZE" value="none" force="true"/>
+        <env name="SENTRY_DEFAULT_INTEGRATIONS" value="(false)" force="true"/>
+        <env name="SENTRY_MAX_BREADCRUMBS" value="0" force="true"/>
         <env name="SENTRY_TRACES_SAMPLE_RATE" value="0" force="true"/>
         <env name="SENTRY_PROFILES_SAMPLE_RATE" value="0" force="true"/>
         <env name="SESSION_DRIVER" value="array"/>

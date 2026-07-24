@@ -229,6 +229,37 @@ the tag-load page view but does not disable that property-level history listener
 adapter supplies only canonical same-origin page context and suppresses referrer
 attribution so query strings, fragments, and external referrer details are not sent.
 
+## Backend error monitoring
+
+Laravel exceptions flow through the installed Sentry Error Monitoring integration, but
+transport remains off until a server-side `SENTRY_LARAVEL_DSN` or `SENTRY_DSN` is
+deliberately configured. Structured Logs, tracing, profiling, metrics, browser Sentry,
+replay, user feedback, and attachments remain outside this phase. The dormant
+`sentry_logs` channel is not part of the active logging stack; Render stderr remains the
+independent framework, startup, and provider-outage fallback.
+
+`SentryTelemetrySanitizer` is the single final `before_send` boundary for Error events.
+It constructs a new allowlisted event that preserves environment, full release, exception
+type, safe file/line frames, safe generic messages, and normal grouping evidence. It
+removes request URLs and queries, bodies, headers, cookies, user/contact fields, IPs,
+referrers, user agents, breadcrumbs, arbitrary extra/context objects, frame variables,
+OS/runtime context bags, and inbound trace or baggage context. Known configured URLs,
+DSNs, contact values, absolute URLs, email addresses, and credential/token patterns are
+redacted from retained strings.
+
+Generic exception messages remain diagnostic by default. The locked Laravel/Guzzle
+request and connection exception families use the code-owned message
+`An outbound HTTP request failed.` because their native messages may embed URLs,
+credentials, or response bodies. Laravel `QueryException` and `PDOException` use
+`A database operation failed.` because their native messages may embed SQL, bindings,
+or connection details. These are explicit type checks; the application does not parse
+arbitrary messages into tags, fingerprints, or product meaning.
+
+The total adapter catches every internal `Throwable`, performs no recursive logging, and
+returns `null` so only the affected remote event is dropped. Laravel's later report
+callbacks, normal HTTP handling, and stderr fallback continue. Automated tests use a
+synthetic in-memory transport and never a real DSN.
+
 ## Frontend commands
 
 ```bash

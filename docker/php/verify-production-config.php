@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Services\Observability\SentryTelemetrySanitizer;
 use Illuminate\Contracts\Console\Kernel;
 
 require __DIR__.'/../../vendor/autoload.php';
@@ -30,6 +31,14 @@ $checks = [
     ),
     'sentry_pii_disabled' => config('sentry.send_default_pii') === false
         && config('sentry.max_request_body_size') === 'none',
+    'sentry_unsafe_collectors_disabled' => config('sentry.default_integrations') === false
+        && config('sentry.max_breadcrumbs') === 0
+        && ! in_array(true, config('sentry.breadcrumbs'), true)
+        && ! in_array(true, config('sentry.tracing'), true),
+    'sentry_total_sanitizer_configured' => config('sentry.before_send') === [
+        SentryTelemetrySanitizer::class,
+        'beforeSend',
+    ] && is_callable(config('sentry.before_send')),
     'stderr_stack_active' => config('logging.default') === 'stack'
         && config('logging.channels.stack.channels') === ['stderr'],
 ];
