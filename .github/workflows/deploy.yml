@@ -43,7 +43,7 @@ jobs:
     name: Approve, deploy, and monitor
     needs: verify-ci
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     environment:
       name: production
       url: https://kennen.dev
@@ -120,6 +120,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Wait for Render to report success
+        timeout-minutes: 30
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ steps.trigger_render_deploy.outputs.service_id }}
@@ -187,3 +188,93 @@ jobs:
 
             sleep 10
           done
+
+      - name: Verify live resume download
+        timeout-minutes: 3
+        env:
+          RENDER_DEPLOY_URL: ${{ steps.trigger_render_deploy.outputs.deploy_url }}
+          RESUME_URL: https://www.kennen.dev/resume/download
+        run: |
+          max_attempts=3
+          backoff_seconds=5
+          connect_timeout_seconds=5
+          attempt_timeout_seconds=25
+          runbook_url="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/docs/runbooks/resume-download.md"
+          last_status='request_failed'
+          last_content_type_state='missing'
+          last_disposition_state='missing'
+
+          for (( attempt=1; attempt<=max_attempts; attempt++ )); do
+            response_file=$(mktemp)
+            http_status='request_failed'
+            content_type=''
+            content_disposition=''
+
+            if curl --silent --show-error --location --head \
+              --output /dev/null \
+              --write-out '%{http_code}\n%{content_type}\n%header{content-disposition}\n' \
+              --connect-timeout "$connect_timeout_seconds" \
+              --max-time "$attempt_timeout_seconds" \
+              "$RESUME_URL" > "$response_file"; then
+              http_status=$(sed -n '1p' "$response_file")
+              content_type=$(sed -n '2p' "$response_file")
+              content_disposition=$(sed -n '3p' "$response_file")
+              http_status="${http_status:-missing}"
+            fi
+
+            rm -f "$response_file"
+
+            content_type_state='missing'
+            disposition_state='missing'
+
+            if [ "$http_status" != "request_failed" ]; then
+              if [ -n "$content_type" ]; then
+                content_type_state='mismatch'
+                if [ "$content_type" = "application/octet-stream" ]; then
+                  content_type_state='ok'
+                fi
+              fi
+
+              if [ -n "$content_disposition" ]; then
+                disposition_state='mismatch'
+                disposition_lower=$(printf '%s' "$content_disposition" | tr '[:upper:]' '[:lower:]')
+                if [[ "$disposition_lower" =~ ^attachment[[:space:]]*(\;.*)?$ ]]; then
+                  disposition_state='ok'
+                fi
+              fi
+            fi
+
+            last_status="$http_status"
+            last_content_type_state="$content_type_state"
+            last_disposition_state="$disposition_state"
+
+            if [ "$http_status" = "200" ] \
+              && [ "$content_type_state" = "ok" ] \
+              && [ "$disposition_state" = "ok" ]; then
+              echo "::notice::The live resume download passed its post-deployment contract."
+              {
+                echo "### Resume post-live smoke passed"
+                echo "- Deploy: [Render deployment](${RENDER_DEPLOY_URL})"
+                echo "- Contract: HTTP 200 with the expected attachment headers."
+                echo "- Reference: [resume download runbook](${runbook_url}) for investigation and manual rollback."
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+
+            echo "Resume smoke attempt ${attempt}/${max_attempts} failed: status=${http_status}; content_type=${content_type_state}; content_disposition=${disposition_state}."
+
+            if [ "$attempt" -lt "$max_attempts" ]; then
+              sleep "$backoff_seconds"
+            fi
+          done
+
+          echo "::error::The live resume download failed its post-deployment contract."
+          {
+            echo "### Resume post-live smoke failed"
+            echo "- Status: production is already live for this deployment."
+            echo "- No automatic rollback occurred."
+            echo "- Deploy: [Render deployment](${RENDER_DEPLOY_URL})"
+            echo "- Observed contract failure: \`status=${last_status}; content_type=${last_content_type_state}; content_disposition=${last_disposition_state}\`"
+            echo "- Action: follow the [resume download runbook](${runbook_url}) for investigation and manual rollback."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1

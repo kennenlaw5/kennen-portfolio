@@ -345,6 +345,9 @@ Merging to `main` does not deploy automatically. Production releases use the man
 4. GitHub calls the Render deploy hook with that exact commit SHA.
 5. GitHub monitors that specific Render deploy until Render reports it as `live` or
    reports a terminal failure.
+6. After Render reports `live`, the same deploy job makes at most three bounded `HEAD`
+   requests to the public resume endpoint and requires status `200`, exact
+   `application/octet-stream` content type, and an attachment disposition.
 
 The GitHub `production` environment is restricted to `main` and protects the
 `RENDER_DEPLOY_HOOK_URL` and `RENDER_API_KEY` secrets behind required approval. Keep
@@ -356,8 +359,11 @@ repository.
 
 This flow allows multiple changes to accumulate on `main` before intentionally
 releasing the latest validated commit. Wait for the automatic CI run to succeed before
-starting a deployment. If a release needs to be reverted, use Render's rollback action
-and then deploy the corrective commit through the same workflow.
+starting a deployment. The resume smoke is detective: a failure happens after the
+release is already live, does not trigger an automatic rollback, and links the
+[resume-download runbook](docs/runbooks/resume-download.md). If a release needs to be
+reverted, use Render's rollback action and then deploy the corrective commit through
+the same workflow.
 
 Render supplies application secrets and contact configuration at runtime. `.dockerignore`
 prevents local `.env` files, dependencies, generated assets, and repository metadata
