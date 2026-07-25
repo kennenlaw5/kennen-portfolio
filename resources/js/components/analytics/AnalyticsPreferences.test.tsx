@@ -1,5 +1,5 @@
 import React from 'react'
-import {render, screen} from '@testing-library/react'
+import {fireEvent, render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {MemoryRouter, Route, Routes} from 'react-router'
 import {afterEach, describe, expect, it, vi} from 'vitest'
@@ -47,6 +47,26 @@ const setPrivacySignal = (
         configurable: true,
         value,
     })
+}
+
+const dispatchStorageChange = ({
+    key,
+    newValue,
+    oldValue,
+    storageArea = window.localStorage,
+}: {
+    key: string | null
+    newValue: string | null
+    oldValue: string | null
+    storageArea?: Storage
+}): void => {
+    fireEvent(window, new StorageEvent('storage', {
+        key,
+        newValue,
+        oldValue,
+        storageArea,
+        url: window.location.href,
+    }))
 }
 
 afterEach(() => {
@@ -234,6 +254,445 @@ describe('analytics preferences', () => {
             expect.objectContaining({analytics_storage: 'granted'}),
         )
     })
+
+    it('cross_tab_denial_updates_preferences_and_suppresses_events', async () => {
+        const user = userEvent.setup()
+        window.APP_CONFIG.analytics = validConfiguration
+        const gtag = vi.fn()
+        window.gtag = gtag
+
+        renderPreferences()
+        await user.click(screen.getByRole('button', {
+            name: 'Allow analytics',
+        }))
+        gtag.mockClear()
+
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'denied')
+        dispatchStorageChange({
+            key: ANALYTICS_PREFERENCE_KEY,
+            newValue: 'denied',
+            oldValue: 'granted',
+        })
+
+        expect(gtag).toHaveBeenCalledWith(
+            'consent',
+            'update',
+            expect.objectContaining({analytics_storage: 'denied'}),
+        )
+
+        await user.click(screen.getByRole('button', {
+            name: 'Analytics preferences',
+        }))
+
+        expect(screen.queryByText(
+            /selecting no thanks turns off analytics/i,
+        )).not.toBeInTheDocument()
+
+        gtag.mockClear()
+        trackPageView('/')
+
+        expect(gtag).not.toHaveBeenCalled()
+    })
+
+    it.each([
+        ['preference removal', ANALYTICS_PREFERENCE_KEY],
+        ['storage clear', null],
+    ] as const)(
+        'cross_tab_%s_reopens_the_initial_choice',
+        (_description, key) => {
+            window.APP_CONFIG.analytics = validConfiguration
+            window.localStorage.setItem(
+                ANALYTICS_PREFERENCE_KEY,
+                'granted',
+            )
+            const gtag = vi.fn()
+            window.gtag = gtag
+
+            renderPreferences()
+            gtag.mockClear()
+
+            window.localStorage.removeItem(ANALYTICS_PREFERENCE_KEY)
+            dispatchStorageChange({
+                key,
+                newValue: null,
+                oldValue: key === null ? null : 'granted',
+            })
+
+            expect(screen.getByRole('region', {
+                name: 'Analytics preferences',
+            })).toBeInTheDocument()
+            expect(screen.queryByRole('button', {
+                name: 'Analytics preferences',
+            })).not.toBeInTheDocument()
+            expect(screen.queryByRole('button', {name: 'Close'}))
+                .not.toBeInTheDocument()
+            expect(gtag).toHaveBeenCalledWith(
+                'consent',
+                'update',
+                expect.objectContaining({analytics_storage: 'denied'}),
+            )
+
+            gtag.mockClear()
+            trackPageView('/')
+
+            expect(gtag).not.toHaveBeenCalled()
+        },
+    )
+
+    it('cross_tab_grant_closes_the_initial_choice_and_initializes', () => {
+        window.APP_CONFIG.analytics = validConfiguration
+        const gtag = vi.fn()
+        window.gtag = gtag
+
+        renderPreferences()
+
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'granted')
+        dispatchStorageChange({
+            key: ANALYTICS_PREFERENCE_KEY,
+            newValue: 'granted',
+            oldValue: null,
+        })
+
+        expect(screen.queryByRole('region', {
+            name: 'Analytics preferences',
+        })).not.toBeInTheDocument()
+        expect(screen.getByRole('button', {
+            name: 'Analytics preferences',
+        })).toBeInTheDocument()
+        expect(gtag).toHaveBeenCalledWith(
+            'consent',
+            'update',
+            expect.objectContaining({analytics_storage: 'granted'}),
+        )
+    })
+
+    it('uses_the_current_stored_denial_instead_of_a_stale_grant_event', async () => {
+        const user = userEvent.setup()
+        window.APP_CONFIG.analytics = validConfiguration
+        const gtag = vi.fn()
+        window.gtag = gtag
+
+        renderPreferences()
+        await user.click(screen.getByRole('button', {
+            name: 'Allow analytics',
+        }))
+        await user.click(screen.getByRole('button', {
+            name: 'Analytics preferences',
+        }))
+        await user.click(screen.getByRole('button', {name: 'No thanks'}))
+        gtag.mockClear()
+
+        expect(window.localStorage.getItem(ANALYTICS_PREFERENCE_KEY))
+            .toBe('denied')
+
+        const getItem = vi.spyOn(Storage.prototype, 'getItem')
+
+        dispatchStorageChange({
+            key: ANALYTICS_PREFERENCE_KEY,
+            newValue: 'granted',
+            oldValue: null,
+        })
+        expect(getItem).toHaveBeenCalledOnce()
+        expect(getItem).toHaveBeenCalledWith(ANALYTICS_PREFERENCE_KEY)
+        getItem.mockRestore()
+
+        trackPageView('/')
+
+        expect(gtag).not.toHaveBeenCalled()
+
+        await user.click(screen.getByRole('button', {
+            name: 'Analytics preferences',
+        }))
+        expect(screen.queryByText(
+            /selecting no thanks turns off analytics/i,
+        )).not.toBeInTheDocument()
+    })
+
+    it.each([
+        ['denial event', ANALYTICS_PREFERENCE_KEY, 'denied'],
+        ['clear event', null, null],
+    ] as const)(
+        'uses_a_newer_stored_grant_instead_of_a_stale_%s',
+        async (_description, key, newValue) => {
+            const user = userEvent.setup()
+            window.APP_CONFIG.analytics = validConfiguration
+            const gtag = vi.fn()
+            window.gtag = gtag
+
+            renderPreferences()
+            await user.click(screen.getByRole('button', {
+                name: 'Allow analytics',
+            }))
+            gtag.mockClear()
+
+            const getItem = vi.spyOn(Storage.prototype, 'getItem')
+
+            dispatchStorageChange({
+                key,
+                newValue,
+                oldValue: 'granted',
+            })
+            expect(getItem).toHaveBeenCalledOnce()
+            expect(getItem).toHaveBeenCalledWith(
+                ANALYTICS_PREFERENCE_KEY,
+            )
+            getItem.mockRestore()
+
+            trackPageView('/')
+
+            expect(gtag).not.toHaveBeenCalledWith(
+                'consent',
+                'update',
+                expect.objectContaining({analytics_storage: 'denied'}),
+            )
+            expect(gtag).toHaveBeenCalledWith(
+                'event',
+                'page_view',
+                {page_path: '/'},
+            )
+        },
+    )
+
+    it('keeps_a_failed_local_denial_off_during_storage_synchronization', async () => {
+        const user = userEvent.setup()
+        window.APP_CONFIG.analytics = validConfiguration
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'granted')
+        const gtag = vi.fn()
+        window.gtag = gtag
+
+        renderPreferences()
+        await user.click(screen.getByRole('button', {
+            name: 'Analytics preferences',
+        }))
+        const setItem = vi.spyOn(Storage.prototype, 'setItem')
+            .mockImplementation(() => {
+                throw new Error('Storage is unavailable')
+            })
+
+        await user.click(screen.getByRole('button', {name: 'No thanks'}))
+        setItem.mockRestore()
+        gtag.mockClear()
+
+        const getItem = vi.spyOn(Storage.prototype, 'getItem')
+
+        dispatchStorageChange({
+            key: ANALYTICS_PREFERENCE_KEY,
+            newValue: 'granted',
+            oldValue: null,
+        })
+        expect(getItem).toHaveBeenCalledOnce()
+        expect(getItem).toHaveBeenCalledWith(ANALYTICS_PREFERENCE_KEY)
+        getItem.mockRestore()
+
+        trackPageView('/')
+
+        expect(gtag).not.toHaveBeenCalled()
+        expect(screen.getByRole('status')).toHaveTextContent(
+            /could not save your choice/i,
+        )
+    })
+
+    it('fails_closed_when_the_subscription_reconciliation_read_throws', () => {
+        window.APP_CONFIG.analytics = validConfiguration
+        const gtag = vi.fn()
+        window.gtag = gtag
+        const getItem = vi.spyOn(Storage.prototype, 'getItem')
+            .mockImplementation(() => {
+                throw new Error('Storage unavailable')
+            })
+
+        renderPreferences()
+
+        const initialReads = getItem.mock.calls.length
+
+        expect(screen.getByRole('region', {
+            name: 'Analytics preferences',
+        })).toBeInTheDocument()
+        expect(gtag).not.toHaveBeenCalled()
+        expect(document.getElementById('kennen-ga4-script')).toBeNull()
+
+        dispatchStorageChange({
+            key: ANALYTICS_PREFERENCE_KEY,
+            newValue: 'granted',
+            oldValue: null,
+        })
+        expect(getItem).toHaveBeenCalledTimes(initialReads + 1)
+
+        getItem.mockRestore()
+    })
+
+    it('fails_closed_when_accessing_subscription_storage_throws', () => {
+        window.APP_CONFIG.analytics = validConfiguration
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'granted')
+        const preferenceStorage = window.localStorage
+        const gtag = vi.fn()
+        window.gtag = gtag
+        const localStorage = vi.spyOn(window, 'localStorage', 'get')
+            .mockReturnValueOnce(preferenceStorage)
+            .mockImplementation(() => {
+                throw new Error('Storage unavailable')
+            })
+
+        try {
+            renderPreferences()
+
+            expect(screen.queryByRole('region', {
+                name: 'Analytics preferences',
+            })).not.toBeInTheDocument()
+            expect(screen.queryByRole('button', {
+                name: 'Analytics preferences',
+            })).not.toBeInTheDocument()
+            trackPageView('/')
+            expect(gtag).not.toHaveBeenCalled()
+            expect(document.getElementById('kennen-ga4-script')).toBeNull()
+        } finally {
+            localStorage.mockRestore()
+        }
+    })
+
+    it.each([
+        ['preference removal', ANALYTICS_PREFERENCE_KEY],
+        ['storage clear', null],
+    ] as const)(
+        'cross_tab_%s_resets_reopened_preferences_to_a_required_choice',
+        async (_description, key) => {
+            const user = userEvent.setup()
+            window.APP_CONFIG.analytics = validConfiguration
+            window.localStorage.setItem(
+                ANALYTICS_PREFERENCE_KEY,
+                'granted',
+            )
+
+            renderPreferences()
+            await user.click(screen.getByRole('button', {
+                name: 'Analytics preferences',
+            }))
+            expect(screen.getByRole('button', {name: 'Close'}))
+                .toBeInTheDocument()
+
+            window.localStorage.removeItem(ANALYTICS_PREFERENCE_KEY)
+            dispatchStorageChange({
+                key,
+                newValue: null,
+                oldValue: key === null ? null : 'granted',
+            })
+
+            expect(screen.getByRole('region', {
+                name: 'Analytics preferences',
+            })).toBeInTheDocument()
+            expect(screen.queryByRole('button', {name: 'Close'}))
+                .not.toBeInTheDocument()
+            expect(screen.queryByRole('button', {
+                name: 'Analytics preferences',
+            })).not.toBeInTheDocument()
+        },
+    )
+
+    it.each([
+        ['grant', 'granted'],
+        ['denial', 'denied'],
+    ] as const)(
+        'cross_tab_%s_restores_focus_when_the_initial_choice_closes',
+        (_description, preference) => {
+            window.APP_CONFIG.analytics = validConfiguration
+
+            renderPreferences()
+
+            const allowButton = screen.getByRole('button', {
+                name: 'Allow analytics',
+            })
+            allowButton.focus()
+
+            window.localStorage.setItem(
+                ANALYTICS_PREFERENCE_KEY,
+                preference,
+            )
+            dispatchStorageChange({
+                key: ANALYTICS_PREFERENCE_KEY,
+                newValue: preference,
+                oldValue: null,
+            })
+
+            expect(screen.getByRole('main')).toHaveFocus()
+        },
+    )
+
+    it('cross_tab_removal_restores_focus_when_the_footer_control_disappears', () => {
+        window.APP_CONFIG.analytics = validConfiguration
+        window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, 'granted')
+
+        renderPreferences()
+
+        const preferencesButton = screen.getByRole('button', {
+            name: 'Analytics preferences',
+        })
+        preferencesButton.focus()
+
+        window.localStorage.removeItem(ANALYTICS_PREFERENCE_KEY)
+        dispatchStorageChange({
+            key: ANALYTICS_PREFERENCE_KEY,
+            newValue: null,
+            oldValue: 'granted',
+        })
+
+        expect(screen.getByRole('main')).toHaveFocus()
+    })
+
+    it.each([
+        ['another local-storage key', 'unrelated', window.localStorage],
+        [
+            'the same session-storage key',
+            ANALYTICS_PREFERENCE_KEY,
+            window.sessionStorage,
+        ],
+    ] as const)(
+        'ignores %s while still observing the preference key',
+        async (_description, unrelatedKey, storageArea) => {
+            const user = userEvent.setup()
+            window.APP_CONFIG.analytics = validConfiguration
+            const gtag = vi.fn()
+            window.gtag = gtag
+
+            renderPreferences()
+            await user.click(screen.getByRole('button', {
+                name: 'Allow analytics',
+            }))
+            gtag.mockClear()
+
+            dispatchStorageChange({
+                key: unrelatedKey,
+                newValue: 'denied',
+                oldValue: null,
+                storageArea,
+            })
+            trackPageView('/')
+
+            expect(gtag).toHaveBeenCalledWith(
+                'event',
+                'page_view',
+                {page_path: '/'},
+            )
+
+            gtag.mockClear()
+            window.localStorage.setItem(
+                ANALYTICS_PREFERENCE_KEY,
+                'denied',
+            )
+            dispatchStorageChange({
+                key: ANALYTICS_PREFERENCE_KEY,
+                newValue: 'denied',
+                oldValue: 'granted',
+            })
+            trackPageView('/')
+
+            expect(gtag).toHaveBeenCalledTimes(1)
+            expect(gtag).toHaveBeenCalledWith(
+                'consent',
+                'update',
+                expect.objectContaining({analytics_storage: 'denied'}),
+            )
+        },
+    )
 
     it('shares one configured engine with application event callers', () => {
         window.APP_CONFIG.analytics = validConfiguration

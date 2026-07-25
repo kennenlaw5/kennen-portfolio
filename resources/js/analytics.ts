@@ -14,7 +14,9 @@ import {
 let analyticsEngine: TAnalyticsEngine | null = null
 
 export const getAnalyticsEngine = (): TAnalyticsEngine => {
-    analyticsEngine ??= createAnalyticsEngine()
+    analyticsEngine ??= createAnalyticsEngine({
+        requirePreferenceSynchronization: true,
+    })
 
     return analyticsEngine
 }

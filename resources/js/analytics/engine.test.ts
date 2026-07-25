@@ -276,6 +276,66 @@ describe('analytics engine', () => {
         expect(dataLayerCommands()).toHaveLength(commandCountAfterDenial)
     })
 
+    it.each([
+        ['stored denial', 'denied', 'denied'],
+        ['preference removal', null, null],
+        ['invalid stored preference', 'unexpected', null],
+    ] as const)(
+        'fails closed after synchronizing %s',
+        (_description, storedPreference, expectedPreference) => {
+            const memory = createMemoryStorage('granted')
+            const engine = createAnalyticsEngine({
+                configuration: validConfig,
+                storage: memory.storage,
+                browserNavigator: createNavigator(),
+            })
+
+            expect(engine.initialize()).toBe(true)
+            expect(engine.synchronizePreference(storedPreference))
+                .toBe(expectedPreference)
+            expect(engine.getPreference()).toBe(expectedPreference)
+
+            const commandCountAfterSynchronization = dataLayerCommands().length
+            expect(lastDataLayerCommand()).toEqual([
+                'consent',
+                'update',
+                {
+                    ad_personalization: 'denied',
+                    ad_storage: 'denied',
+                    ad_user_data: 'denied',
+                    analytics_storage: 'denied',
+                },
+            ])
+
+            engine.trackEvent({
+                name: ANALYTICS_EVENT_NAMES.PAGE_VIEW,
+                parameters: {page_path: '/'},
+            })
+
+            expect(dataLayerCommands())
+                .toHaveLength(commandCountAfterSynchronization)
+        },
+    )
+
+    it('activates after synchronizing a stored grant', () => {
+        const memory = createMemoryStorage('denied')
+        const engine = createAnalyticsEngine({
+            configuration: validConfig,
+            storage: memory.storage,
+            browserNavigator: createNavigator(),
+        })
+
+        expect(engine.initialize()).toBe(false)
+        expect(engine.synchronizePreference('granted')).toBe('granted')
+        expect(engine.getPreference()).toBe('granted')
+        expect(document.getElementById('kennen-ga4-script')).not.toBeNull()
+        expect(dataLayerCommands()).toContainEqual([
+            'consent',
+            'update',
+            {analytics_storage: 'granted'},
+        ])
+    })
+
     it('honors a new browser override without overwriting a stored grant', () => {
         const memory = createMemoryStorage('granted')
         const browserNavigator = createNavigator()
@@ -354,6 +414,43 @@ describe('analytics engine', () => {
 
         expect(dataLayerCommands()).toHaveLength(commandCountAfterDenial)
         expect(lastDataLayerCommand()?.[1]).toBe('update')
+    })
+
+    it('keeps_a_failed_local_denial_locked_during_synchronization', () => {
+        const storage = {
+            getItem: vi.fn(() => 'granted'),
+            setItem: vi.fn(() => {
+                throw new Error('Storage unavailable')
+            }),
+        }
+        const engine = createAnalyticsEngine({
+            configuration: validConfig,
+            storage,
+            browserNavigator: createNavigator(),
+        })
+
+        expect(engine.initialize()).toBe(true)
+        expect(engine.setPreference('denied')).toBe(false)
+        expect(engine.synchronizePreference('granted')).toBe('denied')
+
+        const commandCountAfterSynchronization = dataLayerCommands().length
+        engine.trackEvent({
+            name: ANALYTICS_EVENT_NAMES.PAGE_VIEW,
+            parameters: {page_path: '/'},
+        })
+
+        expect(dataLayerCommands())
+            .toHaveLength(commandCountAfterSynchronization)
+        expect(lastDataLayerCommand()).toEqual([
+            'consent',
+            'update',
+            {
+                ad_personalization: 'denied',
+                ad_storage: 'denied',
+                ad_user_data: 'denied',
+                analytics_storage: 'denied',
+            },
+        ])
     })
 
     it('queues each closed event shape through one adapter', () => {

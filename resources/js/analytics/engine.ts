@@ -29,6 +29,7 @@ type TAnalyticsEngineOptions = {
     browserNavigator?: Navigator
     browserWindow?: Window
     configuration?: unknown
+    requirePreferenceSynchronization?: boolean
     storage?: TPreferenceStorage
 }
 
@@ -37,18 +38,27 @@ export type TAnalyticsEngine = {
     hasEffectivePermission: () => boolean
     initialize: () => boolean
     setPreference: (preference: TAnalyticsPreference) => boolean
+    synchronizePreference: (
+        preference: string | null,
+    ) => TAnalyticsPreference | null
     trackEvent: (event: TAnalyticsEvent) => void
 }
+
+const parsePreference = (
+    preference: string | null | undefined,
+): TAnalyticsPreference | null => (
+    preference === 'denied' || preference === 'granted'
+        ? preference
+        : null
+)
 
 const readPreference = (
     storage: TPreferenceStorage | null,
 ): TAnalyticsPreference | null => {
     try {
-        const preference = storage?.getItem(ANALYTICS_PREFERENCE_KEY)
-
-        return preference === 'denied' || preference === 'granted'
-            ? preference
-            : null
+        return parsePreference(
+            storage?.getItem(ANALYTICS_PREFERENCE_KEY),
+        )
     } catch {
         return null
     }
@@ -83,11 +93,14 @@ export const createAnalyticsEngine = ({
     browserNavigator = navigator,
     browserWindow = window,
     configuration = window.APP_CONFIG.analytics,
+    requirePreferenceSynchronization = false,
     storage,
 }: TAnalyticsEngineOptions = {}): TAnalyticsEngine => {
     let active = false
     let configured = false
     let currentPreference: TAnalyticsPreference | null = null
+    let hasCurrentPreference = requirePreferenceSynchronization
+    let failClosedPreferenceLocked = false
     const preferenceStorage = (() => {
         if (storage !== undefined) {
             return storage
@@ -101,7 +114,9 @@ export const createAnalyticsEngine = ({
     })()
 
     const getPreference = (): TAnalyticsPreference | null => (
-        currentPreference ?? readPreference(preferenceStorage)
+        hasCurrentPreference
+            ? currentPreference
+            : readPreference(preferenceStorage)
     )
 
     const hasEffectivePermission = (): boolean => (
@@ -210,6 +225,8 @@ export const createAnalyticsEngine = ({
         currentPreference = preference === 'denied' || !stored
             ? 'denied'
             : 'granted'
+        hasCurrentPreference = true
+        failClosedPreferenceLocked = !stored
 
         if (preference === 'denied' || !stored) {
             denyActiveAnalytics()
@@ -220,6 +237,29 @@ export const createAnalyticsEngine = ({
         initialize()
 
         return true
+    }
+
+    const synchronizePreference = (
+        preference: string | null,
+    ): TAnalyticsPreference | null => {
+        if (failClosedPreferenceLocked) {
+            denyActiveAnalytics()
+
+            return currentPreference
+        }
+
+        currentPreference = parsePreference(preference)
+        hasCurrentPreference = true
+
+        if (currentPreference !== 'granted') {
+            denyActiveAnalytics()
+
+            return currentPreference
+        }
+
+        initialize()
+
+        return currentPreference
     }
 
     const trackEvent = (event: TAnalyticsEvent): void => {
@@ -259,6 +299,7 @@ export const createAnalyticsEngine = ({
         hasEffectivePermission,
         initialize,
         setPreference,
+        synchronizePreference,
         trackEvent,
     }
 }
