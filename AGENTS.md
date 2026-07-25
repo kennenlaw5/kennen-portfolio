@@ -122,6 +122,37 @@ before analytics is enabled. `send_page_view: false` covers tag-load behavior on
 `PageViewTracker` is the sole application page-view source. Provider page context is
 restricted to canonical same-origin URLs with referrer attribution suppressed.
 
+Signal ownership must remain explicit in code and documentation:
+
+- GA4 owns browser-reported intent after effective permission; its events remain
+  forgeable, best-effort directional telemetry.
+- Sentry Error Monitoring owns Laravel exceptions and grouping after the final privacy
+  sanitizer.
+- Render owns deployment, container, bootstrap, and stderr evidence, including the
+  independent fallback when Laravel or Sentry is unavailable.
+- The Sentry uptime monitor owns sustained end-to-end resume availability after its
+  separate activation gate.
+
+No browser event proves humanity, authorization, or a completed device save. Laravel
+continues to own application behavior, PDF validation, typed failures, and the closed
+operational vocabulary. The post-live deploy smoke is detective; the recurring monitor
+detects later drift.
+
+Sentry remains Error Monitoring only. Keep the dormant `sentry_logs` channel outside
+the active stack and keep `LOG_CHANNEL=stack` plus `LOG_STACK=stderr`. Structured Logs
+requires a fresh Logs/cost/privacy activation decision only after the Square Off
+operational catalog contains several meaningful non-exception event types. That later
+decision must revalidate price, privacy, transport, and quota instead of treating the
+generated channel as prior approval.
+
+Provider activation and rollback are owner-controlled operational gates, never normal
+repository implementation steps. Deploy compatible code with GA4 disabled and both
+Sentry DSNs blank, prove behavior in non-production, and obtain separate approval before
+enabling a provider. Before incompatible rollback, disable the applicable environment
+flags and pause provider alerts/monitoring. Agents must not mutate GA4, Sentry, Render,
+or production state while implementing documentation or application tickets unless the
+owner explicitly places that external state in scope.
+
 `routes/web.php` also exposes the server-only `GET`/`HEAD /resume/download` endpoint.
 It reads the upstream URL from `config/resume.php`, validates the fetched PDF, and
 returns attachment metadata (plus the body for `GET`). The upstream URL must never be

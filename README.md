@@ -280,6 +280,200 @@ requests, responses, URLs, bodies, headers, content types, and upstream exceptio
 not retained or chained. If reporting or logging fails, the existing controlled HTTP
 response remains authoritative.
 
+## Telemetry ownership and activation readiness
+
+### Signal ownership and trust
+
+Each signal has one primary question and an independent failure boundary:
+
+- GA4 owns browser-reported intent after effective analytics permission. It provides
+  commodity browser analytics—durable event collection, navigation reports, and
+  provider-side filtering—that the portfolio should not rebuild as a partial custom
+  platform. Its public events remain forgeable, best-effort directional telemetry.
+- Sentry Error Monitoring owns Laravel exceptions. It groups application failures and
+  preserves safe diagnostic evidence after the final sanitizer.
+- Render owns deployment, container, bootstrap, and stderr evidence. It remains
+  authoritative when a failure happens before Laravel starts or while Sentry is
+  unavailable.
+- The Sentry uptime monitor owns sustained end-to-end resume availability after its
+  separate activation gate. It calls the real route, which makes Laravel fetch and
+  validate the complete upstream PDF.
+
+No browser event proves humanity, authorization, or a completed device save. Laravel
+still owns application behavior, authorization boundaries, upstream PDF validation,
+typed failures, and the closed operational vocabulary. Sentry cannot replace
+pre-bootstrap or platform evidence because its SDK runs inside Laravel.
+
+The post-live smoke is detective: Render has already made the release live when the
+check runs. The recurring monitor detects later drift between deployments. Neither
+signal gates traffic or triggers an automatic rollback.
+
+The current Sentry phase is Error Monitoring only. The generated `sentry_logs` channel
+stays available but outside the active stack, with `LOG_STACK=stderr` preserving the
+independent Render fallback. Structured Logs remains deferred until the Square Off
+operational catalog contains several meaningful non-exception events. That later phase
+must make a fresh price, privacy, transport, and quota decision instead of inheriting
+this dormant channel as approval.
+
+### Safe configuration matrix
+
+These are sanitized names and repository defaults or production rules, not live
+provider values:
+
+| Variable | Default or production rule | Purpose |
+|---|---|---|
+| `ANALYTICS_ENABLED` | `false` | Master GA4 activation boundary |
+| `GOOGLE_ANALYTICS_MEASUREMENT_ID` | blank | Public stream identifier; add while analytics remains off |
+| `SENTRY_LARAVEL_DSN` / `SENTRY_DSN` | blank | Server-only Error Monitoring transport boundary |
+| `SENTRY_RELEASE` | blank | Falls back to the full `RENDER_GIT_COMMIT` |
+| `SENTRY_ENABLE_LOGS` | `false` | Keeps Structured Logs disabled |
+| `SENTRY_ENABLE_METRICS` | `false` | Keeps Application Metrics disabled |
+| `SENTRY_SEND_DEFAULT_PII` | `false` | Prevents default PII collection |
+| `SENTRY_MAX_REQUEST_BODY_SIZE` | `none` | Prevents request-body capture |
+| `SENTRY_DEFAULT_INTEGRATIONS` | `false` | Keeps unsafe automatic integrations off |
+| `SENTRY_MAX_BREADCRUMBS` | `0` | Keeps breadcrumbs out of Error events |
+| `SENTRY_TRACES_SAMPLE_RATE` | `0` | Keeps tracing disabled |
+| `SENTRY_PROFILES_SAMPLE_RATE` | `0` | Keeps profiling disabled |
+| `LOG_CHANNEL` | `stack` | Uses Laravel's normal logging stack |
+| `LOG_STACK` | `stderr` | Keeps Render stderr independent from Sentry |
+| `CONTACT_RESUME_URL` | required in production; blank is the fail-closed default | Server-only upstream PDF export URL; never publish its value |
+
+The production image also enforces `zend.exception_ignore_args=On`; stack frames retain
+safe file and line evidence without serializing argument values.
+
+### GA4 activation gate
+
+1. Deploy the compatible commit with both providers off. Keep
+   `ANALYTICS_ENABLED=false` while adding the public measurement ID.
+2. Create the production Web stream for `https://www.kennen.dev` and, when the account
+   structure permits it, a separate non-production stream. Keep Google Signals,
+   advertising personalization, unnecessary Enhanced Measurement events, and
+   **Page changes based on browser history events** disabled.
+3. Choose the event-level retention deliberately and record the account choice. Register
+   a closed custom parameter only when a report actually requires it.
+4. In a non-production stream, use browser Network inspection and Tag Assistant to prove
+   no Google request occurs before effective permission; all four Basic Consent Mode v2
+   defaults are denied before configuration; only `analytics_storage` becomes granted;
+   and automatic page views remain off. Then confirm the closed events in DebugView.
+   Never send automated tests to the production stream.
+5. Obtain separate owner approval, set `ANALYTICS_ENABLED=true`, redeploy the compatible
+   commit, and repeat the production Network/Tag Assistant checks without synthetic
+   events. DNT or detected GPC continues to override a stored grant without erasing it.
+
+This is Basic Consent Mode v2: denied visitors send no pre-consent or cookieless Google
+pings because the tag is not loaded. Advertising-related consent remains denied.
+
+### Sentry activation gate
+
+1. Deploy the compatible commit with both DSNs blank, `SENTRY_ENABLE_LOGS=false`,
+   `LOG_CHANNEL=stack`, and `LOG_STACK=stderr`.
+2. Verify Composer still locks `sentry/sentry-laravel` `4.27.0` and `sentry/sentry`
+   `4.29.0`, and confirm those versions remain compatible with Laravel 13 before
+   activation.
+3. Revalidate the actual account entitlements and usage. As checked against Sentry's
+   published Developer pricing on 2026-07-24, the working assumptions are 5,000
+   errors/month, one uptime monitor, and 30-day retention. Confirm paid overage is
+   disabled. If any entitlement differs, keep both DSNs blank and require a new
+   plan/owner decision. No-cost quota exhaustion can drop later Error events and owner
+   emails for the rest of the billing period. Confirm from the current account
+   entitlements or provider documentation whether uptime checks, issue lifecycle, and
+   owner-email delivery remain available when Error quota is exhausted. Review usage
+   after spikes and never treat Error-email delivery as guaranteed. Treat Render stderr
+   as the unconditional fallback and uptime as an independent fallback only after that
+   confirmation.
+4. Enable Spike Protection and its owner notification when the account exposes them.
+   Treat Spike Protection as adaptive defense-in-depth, never as a configurable hard
+   quota.
+5. In non-production only, configure the DSN and run `php artisan sentry:test` without
+   `--transaction`. Treat that command as transport proof only; it does not prove the
+   application's final sanitizer. Separately exercise an application-generated safe generic
+   exception, seeded-risky generic exceptions, and every typed resume reason:
+   `missing_url`, `invalid_url`, `upstream_unavailable`, `upstream_response`, and
+   `invalid_pdf`.
+6. Use those application-generated events to verify environment, full release,
+   final-envelope privacy, safe-message retention, targeted replacement/redaction, closed
+   resume fields sourced from exception getters, normal grouping without message-derived
+   fingerprints, reportable-callback order, and transport/sanitizer failure isolation.
+7. After that proof and separate owner approval, configure only the server-side DSN and
+   redeploy the same compatible commit. Keep repository integration, release uploads,
+   Structured Logs, tracing, profiling, metrics, browser Sentry, replay, feedback, and
+   attachments disabled.
+
+### Resume alert and monitor gate
+
+Release Gate 2 is complete only after the compatible release is deployed, the non-production
+Sentry envelope checks pass, account entitlements are revalidated, and the deployed full-path
+`HEAD` verification succeeds. Then configure the two production signals:
+
+- Create one production issue notification for a new or regressed
+  `feature=resume_download` and `environment=production` Error Monitoring issue. Send
+  one owner email; do not notify on every occurrence.
+- Create one owner-email alert workflow for uptime issues and attach it to the account's
+  one uptime monitor. The eventual Production configuration uses
+  `HEAD https://www.kennen.dev/resume/download` every 30 minutes, harmless fixed user
+  agent `kennen-resume-uptime/1.0` when configurable, and expected status `200`. Open
+  after two consecutive failures and resolve after two consecutive successful checks.
+- Keep paid overage disabled and create no third log alert. The Error Monitoring alert
+  represents the triggering application exception; the uptime issue represents a
+  sustained end-to-end outage.
+
+Release Gate 3 proves the hosted lifecycle without buying or creating a second monitor.
+Before production cutover, create the one monitor and keep it disabled while pointing it at an
+isolated, owner-controlled non-production target. The URL must be unauthenticated, query- and
+credential-free, return only fixed non-sensitive headers/body, and support deterministic
+failure and recovery at the same unchanged URL without a third-party request catcher. If no
+such target is available, stop the gate with the monitor disabled. Configure the same method,
+interval, thresholds, user agent, and owner-email workflow; enable it; and prove that one
+failure creates no issue or email, two consecutive failures create one uptime issue and one
+owner email, and two consecutive successful checks resolve the issue without changing the
+monitor configuration. Disable the monitor before retargeting it to the Production URL and
+environment, then enable it and confirm a successful production check plus the attached
+owner-email workflow. This consumes one entitlement; production coverage begins only after the
+transition, so lifecycle proof does not interrupt an existing production monitor. Repository
+tests do not claim to exercise Sentry's hosted alert service.
+
+### Provider rollback order
+
+For an incompatible target—or a provider-caused incident that requires transport
+shutdown—stage steps 1–4 without saving intermediate environment states. For a
+compatible rollback unrelated to a provider incident, skip steps 1, 2, and 4; perform
+step 3 only while the monitored route may be unavailable, then continue with step 6.
+
+1. Stage `ANALYTICS_ENABLED=false`.
+2. Stage removal of `SENTRY_LARAVEL_DSN` and `SENTRY_DSN` to stop Error Monitoring
+   transport while preserving Render stderr.
+3. Pause the Sentry issue notification and uptime monitor while the provider or monitored
+   route is intentionally unavailable, and disable the uptime owner-email workflow.
+4. Stage `SENTRY_ENABLE_LOGS=false`, ensure no active log stack names `sentry_logs`, and
+   stage removal of
+   `GOOGLE_ANALYTICS_MEASUREMENT_ID`.
+5. Save the staged provider settings together through exactly one compatible
+   environment-change deployment and wait until it is live before starting an incompatible
+   rollback. Do not trigger an additional concurrent deploy. Do not change
+   `CONTACT_RESUME_URL`.
+6. Roll back manually, verify `/up`, run the bounded resume `HEAD` check, and restore
+   provider settings only after the compatible release and separate approval return.
+7. Restore only provider settings and signals that had separate approval and were enabled
+   before the rollback. After the compatible release and renewed approval are in place,
+   explicitly re-enable only the resume issue notification, uptime owner-email workflow, and
+   Production monitor that were paused. Leave absent or pre-gate signals disabled. Confirm the
+   intended owner recipient, one successful live check, and the normal two-success recovery
+   before treating alerting as restored.
+
+Never store or publish a Sentry DSN, API key, deploy-hook secret,
+`CONTACT_RESUME_URL`, PDF contents, seeded sensitive values, raw exception, response
+body, raw response headers, or unclassified provider payload in tests, screenshots,
+tickets, workflow summaries, or review artifacts. Safe evidence is limited to time,
+environment, full release, closed failure category, normalized status/header state, safe
+provider or Render links, and pass/fail results.
+
+Provider references:
+
+- [Sentry pricing](https://sentry.io/pricing/)—recheck the actual account before activation.
+- [Google Basic versus advanced Consent Mode](https://developers.google.com/tag-platform/security/concepts/consent-mode).
+- [Google Consent Mode setup and Tag Assistant verification](https://developers.google.com/tag-platform/security/guides/consent).
+- [GA4 data retention controls](https://support.google.com/analytics/answer/7667196).
+
 ## Frontend commands
 
 ```bash
