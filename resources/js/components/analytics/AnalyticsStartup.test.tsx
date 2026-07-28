@@ -1,14 +1,14 @@
 import React from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import {MemoryRouter} from 'react-router'
+import {MemoryRouter, Route, Routes} from 'react-router'
 import {afterEach, describe, expect, it, vi} from 'vitest'
-import AnalyticsConsent from 'Components/analytics/AnalyticsConsent'
 import PageViewTracker from 'Components/analytics/PageViewTracker'
 import {
     AnalyticsPreferencesProvider,
     useAnalyticsPreferences,
 } from 'Components/analytics/AnalyticsPreferencesContext'
+import Layout from 'Components/layout/Layout'
 import {resetAnalyticsEngineForTests} from 'JS/analytics'
 import {ANALYTICS_PREFERENCE_KEY} from 'JS/analytics/engine'
 
@@ -43,8 +43,21 @@ const PreferenceSnapshot: React.FC<{
         preference,
     })
 
-    return <AnalyticsConsent />
+    return <a href="/games">Open games</a>
 }
+
+const renderLayout = (snapshots: TPreferenceSnapshot[]) => render(
+    <MemoryRouter>
+        <Routes>
+            <Route element={<Layout />}>
+                <Route
+                    index
+                    element={<PreferenceSnapshot snapshots={snapshots} />}
+                />
+            </Route>
+        </Routes>
+    </MemoryRouter>,
+)
 
 afterEach(() => {
     resetAnalyticsEngineForTests()
@@ -62,14 +75,7 @@ describe('analytics startup', () => {
         window.APP_CONFIG.analytics = validConfiguration
         const snapshots: TPreferenceSnapshot[] = []
 
-        render(
-            <AnalyticsPreferencesProvider>
-                <PreferenceSnapshot snapshots={snapshots} />
-                <main tabIndex={-1}>
-                    <a href="/games">Open games</a>
-                </main>
-            </AnalyticsPreferencesProvider>,
-        )
+        renderLayout(snapshots)
 
         expect(snapshots[0]).toEqual({
             isAvailable: false,
@@ -87,6 +93,16 @@ describe('analytics startup', () => {
         expect(screen.getByRole('button', {
             name: 'Allow analytics',
         })).toHaveFocus()
+
+        await user.tab()
+        expect(screen.getByRole('button', {
+            name: 'No thanks',
+        })).toHaveFocus()
+
+        await user.tab()
+        expect(screen.getByRole('link', {
+            name: 'Open games',
+        })).toHaveFocus()
     })
 
     it.each(['granted', 'denied'] as const)(
@@ -99,11 +115,7 @@ describe('analytics startup', () => {
             )
             const snapshots: TPreferenceSnapshot[] = []
 
-            render(
-                <AnalyticsPreferencesProvider>
-                    <PreferenceSnapshot snapshots={snapshots} />
-                </AnalyticsPreferencesProvider>,
-            )
+            renderLayout(snapshots)
 
             expect(snapshots[0]).toEqual({
                 isAvailable: false,

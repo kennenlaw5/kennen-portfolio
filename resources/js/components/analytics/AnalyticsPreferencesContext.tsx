@@ -2,10 +2,8 @@ import React, {
     createContext,
     ReactNode,
     useContext,
-    useEffect,
     useLayoutEffect,
     useMemo,
-    useRef,
     useState,
 } from 'react'
 import {
@@ -15,13 +13,27 @@ import {
 import {getAnalyticsEngine} from 'JS/analytics'
 import {parseAnalyticsRuntimeConfig} from 'JS/analytics/runtimeConfig'
 
+export type TAnalyticsSynchronizedFocusRequest = {
+    target: HTMLElement | null
+}
+
+type TAnalyticsCloseRequest = {
+    focusTarget: HTMLElement | null
+}
+
 type TAnalyticsPreferencesContext = {
     isAvailable: boolean
     isOpen: boolean
     preference: TAnalyticsPreference | null
     failedPreference: TAnalyticsPreference | null
     privacySignalActive: boolean
+    shouldFocusHeading: boolean
     shouldFocusPreferences: boolean
+    synchronizedFocusRequest:
+        TAnalyticsSynchronizedFocusRequest | null
+    consumeSynchronizedFocus: (
+        request: TAnalyticsSynchronizedFocusRequest,
+    ) => void
     openPreferences: (opener?: HTMLElement) => void
     closePreferences: () => void
     setPreference: (preference: TAnalyticsPreference) => boolean
@@ -36,7 +48,12 @@ type TAnalyticsPreferencesState = {
     isSynchronized: boolean
     preference: TAnalyticsPreference | null
     failedPreference: TAnalyticsPreference | null
+    shouldFocusHeading: boolean
     shouldFocusPreferences: boolean
+    synchronizedFocusRequest:
+        TAnalyticsSynchronizedFocusRequest | null
+    returnFocusTarget: HTMLElement | null
+    closeRequest: TAnalyticsCloseRequest | null
 }
 
 const defaultContext: TAnalyticsPreferencesContext = {
@@ -45,7 +62,10 @@ const defaultContext: TAnalyticsPreferencesContext = {
     preference: null,
     failedPreference: null,
     privacySignalActive: false,
+    shouldFocusHeading: false,
     shouldFocusPreferences: false,
+    synchronizedFocusRequest: null,
+    consumeSynchronizedFocus: () => undefined,
     openPreferences: () => undefined,
     closePreferences: () => undefined,
     setPreference: () => false,
@@ -53,19 +73,10 @@ const defaultContext: TAnalyticsPreferencesContext = {
 
 const AnalyticsPreferencesContext = createContext(defaultContext)
 
-const shallowEqual = <T extends object>(left: T, right: T): boolean => (
-    (Object.keys(left) as Array<keyof T>).every(
-        (key) => left[key] === right[key],
-    )
-)
-
 export const AnalyticsPreferencesProvider: React.FC<
     TAnalyticsPreferencesProviderProps
 > = ({children}) => {
     const engine = useMemo(getAnalyticsEngine, [])
-    const returnFocusElement = useRef<HTMLElement | null>(null)
-    const focusMainAfterChoice = useRef(false)
-    const synchronizedFocusElement = useRef<HTMLElement | null>(null)
     const isAvailable = parseAnalyticsRuntimeConfig(
         window.APP_CONFIG.analytics,
     ) !== null
@@ -76,7 +87,11 @@ export const AnalyticsPreferencesProvider: React.FC<
         isSynchronized: false,
         preference: null,
         failedPreference: null,
+        shouldFocusHeading: false,
         shouldFocusPreferences: false,
+        synchronizedFocusRequest: null,
+        returnFocusTarget: null,
+        closeRequest: null,
     })
 
     useLayoutEffect(() => {
@@ -94,32 +109,46 @@ export const AnalyticsPreferencesProvider: React.FC<
                 : null
             const preference = engine.synchronizePreference(storedPreference)
 
-            if (preference === null) {
-                returnFocusElement.current = null
-            }
-
             setState((currentState) => {
-                if (currentState.failedPreference !== null) {
+                if (
+                    currentState.failedPreference !== null
+                    || (
+                        currentState.isSynchronized
+                        && currentState.preference === preference
+                    )
+                ) {
                     return currentState
                 }
 
-                const nextState: TAnalyticsPreferencesState = {
+                const shouldRestoreReopenFocus =
+                    restoreFocusIfRemoved
+                    && preference !== null
+                    && currentState.isOpen
+                    && currentState.shouldFocusPreferences
+
+                return {
                     isOpen: preference === null,
                     isSynchronized: true,
                     preference,
                     failedPreference: null,
-                    shouldFocusPreferences: false,
+                    shouldFocusHeading: preference === null
+                        && !restoreFocusIfRemoved,
+                    shouldFocusPreferences:
+                        preference !== null
+                        && currentState.shouldFocusPreferences,
+                    synchronizedFocusRequest:
+                        restoreFocusIfRemoved
+                        && !shouldRestoreReopenFocus
+                        ? {target: activeElement}
+                        : null,
+                    returnFocusTarget: null,
+                    closeRequest: shouldRestoreReopenFocus
+                        ? {
+                            focusTarget:
+                                currentState.returnFocusTarget,
+                        }
+                        : null,
                 }
-                const stateChanged = !shallowEqual(
-                    currentState,
-                    nextState,
-                )
-
-                synchronizedFocusElement.current = stateChanged
-                    ? activeElement
-                    : null
-
-                return stateChanged ? nextState : currentState
             })
         }
 
@@ -174,53 +203,65 @@ export const AnalyticsPreferencesProvider: React.FC<
         }
     }, [engine, isAvailable])
 
-    useEffect(() => {
-        const synchronizedElement = synchronizedFocusElement.current
-        synchronizedFocusElement.current = null
+    useLayoutEffect(() => {
+        const closeRequest = state.closeRequest
 
-        if (!state.isOpen && returnFocusElement.current !== null) {
-            returnFocusElement.current.focus()
-            returnFocusElement.current = null
-
+        if (closeRequest === null) {
             return
         }
 
-        if (!state.isOpen && focusMainAfterChoice.current) {
-            document.querySelector<HTMLElement>('main')?.focus()
-            focusMainAfterChoice.current = false
+        const focusTarget = closeRequest.focusTarget?.isConnected
+            ? closeRequest.focusTarget
+            : document.querySelector<HTMLElement>('main')
 
-            return
-        }
+        focusTarget?.focus({preventScroll: true})
 
-        if (
-            synchronizedElement !== null
-            && !synchronizedElement.isConnected
-        ) {
-            document.querySelector<HTMLElement>('main')?.focus()
-        }
-    }, [
-        state.isOpen,
-        state.preference,
-        state.shouldFocusPreferences,
-    ])
+        setState((currentState) => (
+            currentState.closeRequest === closeRequest
+                ? {
+                    ...currentState,
+                    closeRequest: null,
+                    returnFocusTarget: null,
+                }
+                : currentState
+        ))
+    }, [state.closeRequest])
+
+    const consumeSynchronizedFocus = (
+        request: TAnalyticsSynchronizedFocusRequest,
+    ): void => {
+        setState((currentState) => (
+            currentState.synchronizedFocusRequest === request
+                ? {
+                    ...currentState,
+                    synchronizedFocusRequest: null,
+                }
+                : currentState
+        ))
+    }
 
     const openPreferences = (opener?: HTMLElement): void => {
-        if (
-            !isAvailable
-            || !state.isSynchronized
-            || state.isOpen
-            || state.preference === null
-        ) {
-            return
-        }
+        setState((currentState) => {
+            if (
+                !isAvailable
+                || !currentState.isSynchronized
+                || currentState.isOpen
+                || currentState.preference === null
+            ) {
+                return currentState
+            }
 
-        returnFocusElement.current = opener ?? null
-        setState((currentState) => ({
-            ...currentState,
-            isOpen: true,
-            failedPreference: null,
-            shouldFocusPreferences: opener !== undefined,
-        }))
+            return {
+                ...currentState,
+                isOpen: true,
+                failedPreference: null,
+                shouldFocusHeading: true,
+                shouldFocusPreferences: opener !== undefined,
+                synchronizedFocusRequest: null,
+                returnFocusTarget: opener ?? null,
+                closeRequest: null,
+            }
+        })
     }
 
     const closePreferences = (): void => {
@@ -233,6 +274,11 @@ export const AnalyticsPreferencesProvider: React.FC<
                 ...currentState,
                 isOpen: false,
                 failedPreference: null,
+                shouldFocusHeading: false,
+                synchronizedFocusRequest: null,
+                closeRequest: {
+                    focusTarget: currentState.returnFocusTarget,
+                },
             }
         })
     }
@@ -249,16 +295,19 @@ export const AnalyticsPreferencesProvider: React.FC<
 
         const stored = engine.setPreference(preference)
 
-        if (stored && returnFocusElement.current === null) {
-            focusMainAfterChoice.current = true
-        }
-
         setState((currentState) => ({
+            ...currentState,
             isOpen: !stored,
             isSynchronized: true,
             preference: engine.getPreference(),
             failedPreference: stored ? null : preference,
-            shouldFocusPreferences: currentState.shouldFocusPreferences,
+            shouldFocusHeading: false,
+            synchronizedFocusRequest: null,
+            closeRequest: stored
+                ? {
+                    focusTarget: currentState.returnFocusTarget,
+                }
+                : null,
         }))
 
         return stored
@@ -271,7 +320,10 @@ export const AnalyticsPreferencesProvider: React.FC<
             preference: state.preference,
             failedPreference: state.failedPreference,
             privacySignalActive,
+            shouldFocusHeading: state.shouldFocusHeading,
             shouldFocusPreferences: state.shouldFocusPreferences,
+            synchronizedFocusRequest: state.synchronizedFocusRequest,
+            consumeSynchronizedFocus,
             openPreferences,
             closePreferences,
             setPreference,

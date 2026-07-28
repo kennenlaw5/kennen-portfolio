@@ -225,6 +225,8 @@ Example: `import Section from 'Components/Section'`, `import styles from 'Sass/m
 
 **Components:** PascalCase file names, `React.FC` function components, `export default` one component per file. Feature areas are self-contained folders bundling the component with its own `constants/`, `context/`, `types/`, and `helpers.ts`.
 
+**Readability and file size:** Keep components and their supporting files focused enough to understand in one pass. Treat 100 lines as a soft component-file goal, not a rigid limit: exceeding it should trigger an explicit check for separable rendering, state, effects, and domain logic. Do not game the goal with dense formatting or arbitrary fragments, and remain alert to cognitive complexity even when every individual mechanism is locally correct.
+
 **Styling is a hybrid:**
 - Prefer **Tailwind utility classes** directly in JSX for layout/spacing/color (see `Home.tsx`, `Layout.tsx`).
 - Use **SCSS Modules** (`resources/sass/modules/*.module.scss`) for anything component-specific/stateful, imported as `styles` and applied via `classNames(styles.foo, ...)`. Local class names are camelCase (configured in webpack). Combine conditional classes with the `classnames` package.

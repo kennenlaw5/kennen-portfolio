@@ -1,129 +1,102 @@
-import React, {useEffect, useRef} from 'react'
+import React from 'react'
 import classNames from 'classnames'
+import AnalyticsConsentActions
+    from 'Components/analytics/AnalyticsConsentActions'
+import AnalyticsConsentContent, {
+    ANALYTICS_CONSENT_HEADING_ID,
+} from 'Components/analytics/AnalyticsConsentContent'
+import {
+    ANALYTICS_CONSENT_PHASES,
+} from 'Components/analytics/analyticsConsentPhase'
+import {
+    useAnalyticsConsentLayout,
+} from 'Components/analytics/AnalyticsConsentLayoutContext'
 import {
     useAnalyticsPreferences,
 } from 'Components/analytics/AnalyticsPreferencesContext'
 import styles from 'Sass/modules/AnalyticsConsent.module.scss'
 
-const HEADING_ID = 'analytics-preferences-heading'
-const PRIVACY_SIGNAL_DESCRIPTION_ID = 'analytics-privacy-signal-description'
-
 const AnalyticsConsent: React.FC = () => {
     const {
-        isAvailable,
-        isOpen,
-        preference,
-        failedPreference,
-        privacySignalActive,
+        completeTransition,
+        phase,
+        registerHeading,
+        registerPanel,
+    } = useAnalyticsConsentLayout()
+    const {
         closePreferences,
+        failedPreference,
+        isAvailable,
+        preference,
+        privacySignalActive,
         setPreference,
         shouldFocusPreferences,
     } = useAnalyticsPreferences()
-    const heading = useRef<HTMLHeadingElement>(null)
+    const isHidden =
+        phase === ANALYTICS_CONSENT_PHASES.CLOSED
+        || phase === ANALYTICS_CONSENT_PHASES.CLOSING
 
-    useEffect(() => {
-        if (isOpen && shouldFocusPreferences) {
-            heading.current?.focus()
+    const finishTransition = (
+        event: React.TransitionEvent<HTMLElement>,
+    ): void => {
+        if (
+            event.currentTarget === event.target
+            && event.propertyName === 'transform'
+        ) {
+            completeTransition()
         }
-    }, [isOpen, shouldFocusPreferences])
+    }
 
-    if (!isAvailable || !isOpen) {
+    if (!isAvailable) {
         return null
     }
 
     return (
         <section
-            aria-labelledby={HEADING_ID}
-            className="border-y border-gray-300 bg-white shadow-lg"
+            aria-hidden={isHidden || undefined}
+            aria-labelledby={ANALYTICS_CONSENT_HEADING_ID}
+            className={classNames(
+                styles.analyticsConsentPanel,
+                {
+                    [styles.analyticsConsentPanelClosed]:
+                        phase === ANALYTICS_CONSENT_PHASES.CLOSED,
+                    [styles.analyticsConsentPanelOpening]:
+                        phase === ANALYTICS_CONSENT_PHASES.OPENING,
+                    [styles.analyticsConsentPanelClosing]:
+                        phase === ANALYTICS_CONSENT_PHASES.CLOSING,
+                },
+                'fixed inset-x-0 bottom-0 z-40 overflow-y-auto',
+                'border-t border-gray-300',
+                'bg-white pb-[env(safe-area-inset-bottom)] shadow-lg',
+            )}
+            data-testid="analytics-consent-panel"
+            inert={isHidden || undefined}
+            onTransitionEnd={finishTransition}
+            ref={registerPanel}
             role="region"
         >
             <div className="container mx-auto flex flex-col gap-4 px-4 py-5 sm:px-6">
-                <div>
-                    <h2
-                        className="mb-2 text-2xl"
-                        id={HEADING_ID}
-                        ref={heading}
-                        tabIndex={shouldFocusPreferences ? -1 : undefined}
-                    >
-                        Analytics preferences
-                    </h2>
-                    <p className="mb-2">
-                        Google Analytics helps me understand broad, directional
-                        patterns across page visits and clicks on contact,
-                        project, and resume links. I do not treat these signals
-                        as exact human counts or proof that an action completed.
-                    </p>
-                    <p className="mb-0">
-                        Your choice is stored only in this browser. No contact
-                        details are included in these events.
-                    </p>
-                    {preference === 'granted' && (
-                        <p className="mb-0 mt-2">
-                            Selecting No thanks turns off analytics for future
-                            activity. It does not delete information Google may
-                            already retain.
-                        </p>
-                    )}
-                    {privacySignalActive && (
-                        <p
-                            className="mb-0 mt-2 border-l-4 border-blue-500 bg-blue-50 px-3 py-2"
-                            id={PRIVACY_SIGNAL_DESCRIPTION_ID}
-                        >
-                            A browser privacy signal keeps analytics disabled.
-                            Your saved preference is not changed.
-                        </p>
-                    )}
-                    <div role="status">
-                        {failedPreference !== null && (
-                            <p className="mb-0 mt-2 border-l-4 border-red-500 bg-red-50 px-3 py-2">
-                                This browser could not save your choice.
-                                Analytics is off for this page. {
-                                    failedPreference === 'denied'
-                                        ? 'Please try No thanks again to keep it off after you reload.'
-                                        : 'Please try Allow analytics again if you want to enable it after you reload.'
-                                }
-                            </p>
-                        )}
-                    </div>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                    <button
-                        aria-describedby={privacySignalActive
-                            ? PRIVACY_SIGNAL_DESCRIPTION_ID
-                            : undefined}
-                        aria-disabled={privacySignalActive || undefined}
-                        className={classNames(
-                            styles.analyticsConsentButton,
-                            styles.analyticsConsentButtonPrimary,
-                        )}
-                        onClick={() => setPreference('granted')}
-                        type="button"
-                    >
-                        Allow analytics
-                    </button>
-                    <button
-                        className={classNames(
-                            styles.analyticsConsentButton,
-                            styles.analyticsConsentButtonPrimary,
-                        )}
-                        onClick={() => setPreference('denied')}
-                        type="button"
-                    >
-                        No thanks
-                    </button>
-                    {shouldFocusPreferences && (
-                        <button
-                            className={classNames(
-                                styles.analyticsConsentButton,
-                                styles.analyticsConsentButtonSecondary,
-                            )}
-                            onClick={closePreferences}
-                            type="button"
-                        >
-                            Close
-                        </button>
-                    )}
-                </div>
+                <AnalyticsConsentContent
+                    failedPreference={failedPreference}
+                    preference={preference}
+                    privacySignalActive={privacySignalActive}
+                    registerHeading={registerHeading}
+                />
+                <AnalyticsConsentActions
+                    closePreferences={closePreferences}
+                    isInteractive={
+                        phase === ANALYTICS_CONSENT_PHASES.OPEN
+                    }
+                    privacySignalActive={privacySignalActive}
+                    setPreference={setPreference}
+                    showClose={
+                        shouldFocusPreferences
+                        || (
+                            phase === ANALYTICS_CONSENT_PHASES.CLOSED
+                            && preference !== null
+                        )
+                    }
+                />
             </div>
         </section>
     )

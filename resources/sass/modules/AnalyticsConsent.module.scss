@@ -1,4 +1,40 @@
 .analyticsConsent {
+  &__page {
+    &--opening {
+      animation: analytics-consent-page-enter 250ms ease-in-out;
+    }
+  }
+
+  &__panel {
+    max-height: 80vh;
+    transform: translateY(0);
+
+    @supports (height: 100dvh) {
+      max-height: 80dvh;
+    }
+
+    &--opening,
+    &--closing {
+      transition: transform 250ms ease-in-out;
+    }
+
+    &--closed,
+    &--closing {
+      transform: translateY(100%);
+      pointer-events: none;
+    }
+
+    &--closed {
+      visibility: hidden;
+    }
+  }
+
+  &__spacer {
+    &--closing {
+      transition: height 250ms ease-in-out;
+    }
+  }
+
   &__button {
     @apply inline-flex min-w-40 items-center justify-center rounded-md px-4 py-2
       font-semibold shadow-sm transition-colors focus-visible:outline-none
@@ -14,5 +50,27 @@
     &--secondary {
       @apply border border-gray-500 bg-white text-gray-800 hover:bg-gray-100;
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__page--opening {
+      animation: none;
+    }
+
+    &__panel--opening,
+    &__panel--closing,
+    &__spacer--closing {
+      transition: none;
+    }
+  }
+}
+
+@keyframes analytics-consent-page-enter {
+  from {
+    transform: translateY(var(--analytics-consent-panel-height));
+  }
+
+  to {
+    transform: translateY(0);
   }
 }
