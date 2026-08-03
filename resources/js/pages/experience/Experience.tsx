@@ -26,10 +26,6 @@ import {
   SeniorEngineerDescription
 } from 'Components/ExperienceDescriptions'
 
-interface integrationProps {
-    name: string
-}
-
 type TExperienceRole = {
     dateRange: string
     description: React.ReactNode
@@ -214,12 +210,6 @@ const Experience: React.FC = () => {
       ],
     },
   ]
-    const integrations: integrationProps[] = [
-        {name: 'Integration 1'},
-        {name: 'Integration 2'},
-        {name: 'Integration 3'}
-    ]
-
   return (
     <>
       <Section header="Projects & Experience">

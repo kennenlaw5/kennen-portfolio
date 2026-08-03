@@ -19,7 +19,6 @@ import {
     THandleStrategicTrap,
     THandleTakeover,
     THandleTrap,
-    TMoveData,
     TSetComputerSquare,
     TSetSquareAction
 } from 'Components/go/types/GoGameTypes'

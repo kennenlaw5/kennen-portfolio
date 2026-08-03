@@ -19,8 +19,9 @@ const ModeSelect: React.FC = () => {
     return (
         <div className="grid grid-cols-1 xs:grid-cols-2 text-center mb-6 gap-1">
         <div className="pb-2 xs:pb-0">
-          <label className="mr-2 font-medium">Player Vs:</label>
+          <label className="mr-2 font-medium" htmlFor="tic-tac-toe-game-mode">Player Vs:</label>
           <select
+            id="tic-tac-toe-game-mode"
             value={gameMode}
             onChange={({target: {value}}) => updateGameMode(value)}
             className="border p-1 rounded"
@@ -35,8 +36,9 @@ const ModeSelect: React.FC = () => {
         </div>
         {gameMode === GAME_MODES.COMPUTER ? (
           <div>
-            <label className="mr-2 font-medium">Difficulty:</label>
+            <label className="mr-2 font-medium" htmlFor="tic-tac-toe-difficulty">Difficulty:</label>
             <select
+              id="tic-tac-toe-difficulty"
               value={difficulty}
               onChange={({target: {value}}) => setDifficulty(value)}
               className="border p-1 rounded"

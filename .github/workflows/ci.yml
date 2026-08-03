@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   php:
-    name: PHP — Pint + PHPUnit
+    name: PHP — Pint + PHPCS + PHPUnit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
@@ -32,11 +32,14 @@ jobs:
       - name: Pint
         run: ./vendor/bin/pint --test
 
+      - name: PHP_CodeSniffer
+        run: composer lint:php
+
       - name: PHPUnit
         run: php artisan test
 
   js:
-    name: JS — styles + types + tests + production build
+    name: JS — lint + styles + types + tests + production build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
@@ -47,6 +50,9 @@ jobs:
           cache: yarn
 
       - run: yarn install --frozen-lockfile --non-interactive
+
+      - name: ESLint
+        run: yarn lint
 
       - name: Stylelint
         run: yarn lint:styles

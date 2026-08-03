@@ -1,6 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
-import {FaChevronCircleDown, FaChevronDown, FaChevronUp} from 'react-icons/fa'
+import {FaChevronDown} from 'react-icons/fa'
 import styles from 'Sass/modules/Card.module.scss'
 
 type TCardHeaderIconProps = {

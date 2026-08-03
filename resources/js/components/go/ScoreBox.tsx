@@ -12,8 +12,12 @@ const ScoreBox: React.FC = () => {
     return (
         <div className={classNames(styles.gameBox, styles.gameBoxScore)}>
             <BoardStatus />
-            <div className="my-auto"><b>{capitalize(COLORS.BLUE)} Score: </b>{scores[COLORS.BLUE]}</div>
-            <div className="my-auto"><b>{capitalize(COLORS.RED)} Score:</b> {scores[COLORS.RED]}</div>
+            <div className="my-auto">
+                <strong>{capitalize(COLORS.BLUE)} Score:</strong> {scores[COLORS.BLUE]}
+            </div>
+            <div className="my-auto">
+                <strong>{capitalize(COLORS.RED)} Score:</strong> {scores[COLORS.RED]}
+            </div>
         </div>
     )
 }

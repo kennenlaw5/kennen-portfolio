@@ -10,9 +10,8 @@ type TBoardRowProps = {
 const BoardRow: React.FC<TBoardRowProps> = ({rowIndex}) => {
     const {state: {squares}} = useGoGameContext()
 
-    
     return (
-        <div className={styles.gameBoardRow}>
+        <div className={styles.gameBoardRow} role="row" aria-rowindex={rowIndex + 1}>
             {squares[rowIndex].map((_, columnIndex) => (
                 <Square
                     rowIndex={rowIndex}

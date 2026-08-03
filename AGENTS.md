@@ -51,11 +51,13 @@ yarn test:watch           # Vitest watch mode
 Lint / format:
 
 ```bash
-./vendor/bin/pint                        # PHP formatting (Laravel Pint)
+./vendor/bin/pint                        # PHP formatting (Laravel Pint remains authoritative)
+composer lint:php                        # PHP_CodeSniffer check (Pint-compatible PSR-12 rules)
+yarn lint                                # ESLint for JavaScript, TypeScript, React, and JSX accessibility
+yarn format                              # Prettier write pass for frontend JavaScript and TypeScript
 yarn lint:styles                         # SCSS linting (config in .stylelintrc.json)
 yarn typecheck                           # strict TypeScript check without output
 # TypeScript is type-checked at build time by ts-loader; `strict` is on in tsconfig.json.
-# There is no ESLint or Prettier config — match the style of surrounding code.
 ```
 
 ## Architecture: how a page renders
@@ -257,5 +259,5 @@ Both games follow the same **`useReducer` + Context** state pattern. When touchi
 - **Production deployment is deliberately manual.** Render auto-deploy must remain off. `.github/workflows/deploy.yml` requires a successful automatic `main` CI run for the exact commit, waits for approval from the protected GitHub `production` environment, triggers a commit-specific Render deploy through the environment-scoped `RENDER_DEPLOY_HOOK_URL` secret, and runs the bounded resume smoke in the same job only after Render reports `live`. The smoke is detective: failure means production is already live and requires the manual response in `docs/runbooks/resume-download.md`; it never rolls back automatically. Do not add automatic push-based deployment behavior, another approval/job/deploy trigger, or a full CI rerun to the deployment workflow.
 - **Render readiness uses Laravel's `/up` route.** Keep the Render service health check path set to `/up` so a new instance does not receive traffic until Laravel is responding.
 - **Render proxy trust is intentional.** `bootstrap/app.php` trusts forwarded headers because the production container receives public traffic through Render's load balancer. The resume throttle depends on that configuration to limit originating clients independently.
-- **Vitest covers focused frontend behavior.** Keep component interactions, shared helpers, analytics, routing behavior, and pure game reducers covered as those areas change. There is no ESLint configuration, so match surrounding TypeScript style.
+- **Vitest covers focused frontend behavior.** Keep component interactions, shared helpers, analytics, routing behavior, and pure game reducers covered as those areas change. ESLint handles correctness and accessibility diagnostics; Prettier handles frontend formatting when explicitly invoked.
 - **`.env` is gitignored.** Keep real application keys, contact data, and Render secrets out of commits and Docker build contexts; `.env.example` is the sanitized template.

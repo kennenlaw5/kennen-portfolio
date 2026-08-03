@@ -2,7 +2,7 @@ import React from 'react'
 import {useTicTacToeContext} from 'Components/TicTacToe/context/TicTacToeContext'
 
 const TurnTracker: React.FC = () => {
-    const {state, dispatch} = useTicTacToeContext()
+    const {state} = useTicTacToeContext()
     const {isGameActive, winner, isBoardFull, currentTurn} = state
 
     return isGameActive && !isBoardFull && !winner ? (

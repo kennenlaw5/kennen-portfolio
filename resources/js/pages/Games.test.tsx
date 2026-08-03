@@ -69,4 +69,39 @@ describe('Engineering Lab', () => {
 
         expect(rulesSummary.compareDocumentPosition(versusSelect) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     })
+
+    it('establishes Square Off focus without changing Tic Tac Toe focus', async () => {
+        const user = userEvent.setup()
+
+        render(
+            <Suspense fallback={<div>Loading experiment</div>}>
+                <Games />
+            </Suspense>
+        )
+
+        const openButton = screen.getByRole('button', {name: 'Open Square Off Pro experiment'})
+
+        await user.click(openButton)
+
+        expect(await screen.findByRole('heading', {name: 'Square Off Pro', level: 2})).toHaveFocus()
+
+        await user.click(screen.getByRole('button', {name: 'Back to experiments'}))
+
+        expect(screen.getByRole('button', {name: 'Open Square Off Pro experiment'})).toHaveFocus()
+
+        await user.click(screen.getByRole('button', {name: 'Open Tic Tac Toe experiment'}))
+
+        const heading = await screen.findByRole('heading', {
+            name: 'Tic Tac Toe',
+            level: 2,
+        })
+
+        expect(heading).not.toHaveFocus()
+
+        await user.click(screen.getByRole('button', {name: 'Back to experiments'}))
+
+        expect(screen.getByRole('button', {
+            name: 'Open Tic Tac Toe experiment',
+        })).not.toHaveFocus()
+    })
 })

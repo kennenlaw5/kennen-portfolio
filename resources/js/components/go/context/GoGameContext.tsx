@@ -11,24 +11,24 @@ import {
 } from 'Components/go/types/GoGameTypes'
 
 export const initialState: TGameState = {
-  squares: Array(BOARD_DIMENSIONS.ROWS).fill(null).map(() => Array(BOARD_DIMENSIONS.COLS).fill(null)),
-  previousMoves: {
-    locations: [],
-    moves: [],
-  },
-  currentMove: 0,
-  maxMoves: BOARD_DIMENSIONS.COLS * BOARD_DIMENSIONS.ROWS,
-  nextColor: COLORS.RED,
-  previousColor: COLORS.BLUE,
-  isPlayerTurn: true,
-  previousMoveOffset: 1,
-  scores: {
-    [COLORS.RED]: 0,
-    [COLORS.BLUE]: 0,
-  },
-  versus: GAME_MODES.PERSON,
-  difficulty: DIFFICULTIES.NORMAL,
-  winner: null,
+    squares: Array(BOARD_DIMENSIONS.ROWS).fill(null).map(() => Array(BOARD_DIMENSIONS.COLS).fill(null)),
+    previousMoves: {
+        locations: [],
+        moves: [],
+    },
+    currentMove: 0,
+    maxMoves: BOARD_DIMENSIONS.COLS * BOARD_DIMENSIONS.ROWS,
+    nextColor: COLORS.RED,
+    previousColor: COLORS.BLUE,
+    isPlayerTurn: true,
+    previousMoveOffset: 1,
+    scores: {
+        [COLORS.RED]: 0,
+        [COLORS.BLUE]: 0,
+    },
+    versus: GAME_MODES.PERSON,
+    difficulty: DIFFICULTIES.NORMAL,
+    winner: null,
 }
 
 export const reducer = (state: TGameState, action: TReducerAction): TGameState => {
@@ -66,21 +66,21 @@ export const reducer = (state: TGameState, action: TReducerAction): TGameState =
 const GoGameContext = createContext<TGoGameContextProps | undefined>(undefined)
 
 export const useGoGameContext = (): TGoGameContextProps => {
-  const context = useContext(GoGameContext)
+    const context = useContext(GoGameContext)
 
-  if (!context) {
-    throw new Error('useGoGameContext must be used within a TicTacToeProvider')
-  }
+    if (!context) {
+        throw new Error('useGoGameContext must be used within a GoGameContextProvider')
+    }
 
-  return context
+    return context
 }
 
 export const GoGameContextProvider: React.FC<TGoGameContextProviderProps> = ({children}) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
+    const [state, dispatch] = useReducer(reducer, initialState)
 
-  return (
-    <GoGameContext.Provider value={{state, dispatch}}>
-      {children}
-    </GoGameContext.Provider>
-  )
+    return (
+        <GoGameContext.Provider value={{state, dispatch}}>
+            {children}
+        </GoGameContext.Provider>
+    )
 }

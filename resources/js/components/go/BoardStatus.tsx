@@ -1,9 +1,10 @@
 import React, {useMemo} from 'react'
 import styles from 'Sass/modules/GoGame.module.scss'
 import classNames from 'classnames'
-import {BOARD_DIMENSIONS, COLORS} from 'Components/go/constants/GoGameConsts'
+import {BOARD_STATUS_ID, COLORS} from 'Components/go/constants/GoGameConsts'
 import {useGoGameContext} from 'Components/go/context/GoGameContext'
 import {TPlayerColor} from 'Components/go/types/GoGameTypes'
+import {capitalize} from 'JS/helpers'
 
 type TCurrentPlayerBoxProps = {
     color: TPlayerColor
@@ -26,14 +27,28 @@ const BoardStatus: React.FC = () => {
         }
     } = useGoGameContext()
     const isGameOver = winner || currentMove === maxMoves
-    const winnerText = useMemo(() => winner ? 'Winner:' : 'Tied game!', [winner])
+    const statusText = useMemo(() => {
+        if (!isGameOver) {
+            return `Next player: ${capitalize(nextColor)}`
+        }
+
+        return winner ? `Winner: ${capitalize(winner)}` : 'Tied game!'
+    }, [isGameOver, nextColor, winner])
 
     return (
-        <div className='inline-flex justify-center'>
-            <div className={classNames('my-auto', {'font-bold': isGameOver})}>
-                {isGameOver ? winnerText : 'Next Player:'}&nbsp;
-            </div>
-            {!isGameOver || winner ? <CurrentPlayerBox color={winner || nextColor} /> : null}
+        <div
+            id={BOARD_STATUS_ID}
+            className={classNames(
+                styles.gameStatus,
+                'inline-flex items-center justify-center gap-2'
+            )}
+        >
+            <span className={classNames({'font-bold': isGameOver})}>{statusText}</span>
+            {!isGameOver || winner ? (
+                <span aria-hidden="true">
+                    <CurrentPlayerBox color={winner || nextColor} />
+                </span>
+            ) : null}
         </div>
     )
 }

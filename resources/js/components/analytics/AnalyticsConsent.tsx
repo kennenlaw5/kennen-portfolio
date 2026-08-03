@@ -73,7 +73,6 @@ const AnalyticsConsent: React.FC = () => {
             inert={isHidden || undefined}
             onTransitionEnd={finishTransition}
             ref={registerPanel}
-            role="region"
         >
             <div className="container mx-auto flex flex-col gap-4 px-4 py-5 sm:px-6">
                 <AnalyticsConsentContent

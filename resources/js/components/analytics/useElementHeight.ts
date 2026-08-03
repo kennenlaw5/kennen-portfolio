@@ -6,6 +6,8 @@ const useElementHeight = (
 ): number => {
     const [height, setHeight] = useState(0)
 
+    // Without ResizeObserver, remeasure after every render so content-only height changes are seen.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useLayoutEffect(() => {
         if (
             element === null

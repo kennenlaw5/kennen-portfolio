@@ -483,7 +483,9 @@ yarn prod         # minified production build
 yarn typecheck    # strict TypeScript check without emitting assets
 yarn test         # run the frontend test suite once
 yarn test:watch   # run frontend tests in watch mode
+yarn lint         # lint JavaScript, TypeScript, React, and JSX accessibility
 yarn lint:styles  # lint SCSS and SCSS Modules
+yarn format       # format frontend JavaScript and TypeScript with Prettier
 ```
 
 ## Tests and formatting
@@ -501,8 +503,17 @@ Format PHP code with Laravel Pint:
 ./vendor/bin/pint
 ```
 
-TypeScript is checked by `ts-loader` during every frontend build. Vitest runs the
-TypeScript unit and component tests in jsdom. There is no ESLint configuration.
+Check PHP code independently with the Pint-compatible PHP_CodeSniffer ruleset:
+
+```bash
+composer lint:php
+```
+
+TypeScript is checked by `ts-loader` during every frontend build. ESLint checks
+JavaScript, TypeScript, React Hooks, and JSX accessibility. Vitest runs the TypeScript
+unit and component tests in jsdom. Prettier is configured for frontend source, but the
+existing frontend has not been bulk-reformatted; `yarn format` is an explicit write
+operation rather than a current CI gate.
 
 Audit the locked dependencies:
 
@@ -516,8 +527,8 @@ yarn audit --groups dependencies
 `.github/workflows/ci.yml` follows the production toolchain and runs on pull requests
 and pushes to `main`:
 
-- PHP 8.5, Pint, and PHPUnit
-- Node.js 24, Stylelint, strict TypeScript, Vitest, and a production Webpack build
+- PHP 8.5, Pint, PHP_CodeSniffer, and PHPUnit
+- Node.js 24, ESLint, Stylelint, strict TypeScript, Vitest, and a production Webpack build
 - Composer and production JavaScript dependency audits
 - A BuildKit build of the Docker `production` target without pushing an image
 
@@ -594,6 +605,6 @@ webpack.config.js            Active frontend build configuration
 - Prefer Tailwind utilities for layout and SCSS Modules for component-specific or stateful styles.
 - Preserve distinct project entries and their external links unless a content change explicitly calls for consolidation.
 - Use Yarn for JavaScript dependencies; `yarn.lock` is the tracked deployment lockfile.
-- Run `yarn lint:styles`, `yarn typecheck`, `yarn test`, and `yarn prod` before submitting frontend changes.
+- Run `yarn lint`, `yarn lint:styles`, `yarn typecheck`, `yarn test`, and `yarn prod` before submitting frontend changes.
 
 The `/projects` and `/skills` Laravel routes currently have no corresponding client routes. Project and skill content is presented through the existing home and experience pages.

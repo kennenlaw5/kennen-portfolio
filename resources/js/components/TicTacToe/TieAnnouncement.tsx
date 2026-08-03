@@ -2,7 +2,7 @@ import React from 'react'
 import {useTicTacToeContext} from 'Components/TicTacToe/context/TicTacToeContext'
 
 const TieAnnouncement: React.FC = () => {
-    const {state, dispatch} = useTicTacToeContext()
+    const {state} = useTicTacToeContext()
     const {winner, isBoardFull} = state
 
     return !winner && isBoardFull ? (

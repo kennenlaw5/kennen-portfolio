@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router'
-import { FaBars, FaTimes } from 'react-icons/fa'
 import { HOME_ROUTE, ROUTES } from 'Constants/routes'
 
 const DesktopNavBar = () => (
