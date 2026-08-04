@@ -2,6 +2,7 @@ import React, {Suspense} from 'react'
 import {render, screen} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {describe, expect, it, vi} from 'vitest'
+import {MemoryRouter, Route, Routes} from 'react-router'
 import Games from 'JS/pages/Games'
 
 vi.mock('Components/go/Go', () => new Promise(() => {}))
@@ -12,9 +13,18 @@ describe('Engineering Lab loading state', () => {
         const user = userEvent.setup()
 
         const {unmount} = render(
-            <Suspense fallback={<div role="alert">Loading the route</div>}>
-                <Games />
-            </Suspense>
+            <MemoryRouter initialEntries={['/games']}>
+                <Routes>
+                    <Route
+                        path="games"
+                        element={(
+                            <Suspense fallback={<div role="alert">Loading the route</div>}>
+                                <Games />
+                            </Suspense>
+                        )}
+                    />
+                </Routes>
+            </MemoryRouter>
         )
 
         await user.click(screen.getByRole('button', {name: 'Open Square Off Pro experiment'}))
@@ -35,9 +45,18 @@ describe('Engineering Lab loading state', () => {
         unmount()
 
         render(
-            <Suspense fallback={<div role="alert">Loading the route</div>}>
-                <Games />
-            </Suspense>
+            <MemoryRouter initialEntries={['/games']}>
+                <Routes>
+                    <Route
+                        path="games"
+                        element={(
+                            <Suspense fallback={<div role="alert">Loading the route</div>}>
+                                <Games />
+                            </Suspense>
+                        )}
+                    />
+                </Routes>
+            </MemoryRouter>
         )
 
         await user.click(screen.getByRole('button', {

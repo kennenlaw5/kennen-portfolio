@@ -10,9 +10,9 @@ const DesktopNavBar = () => (
                 {HOME_ROUTE.name}
             </Link>
         </li>
-        {Object.values(ROUTES).map(({name: routeName, path}) => (
+        {Object.values(ROUTES).map(({name: routeName, path, state}) => (
             <li key={routeName}>
-                <Link to={path} className="hover:underline">{routeName}</Link>
+                <Link to={path} state={state} className="hover:underline">{routeName}</Link>
             </li>
         ))}
     </ul>

@@ -9,6 +9,7 @@ type TRoute = {
   path: string
   name: string
   component: React.LazyExoticComponent<React.FC>
+  state?: Record<string, unknown>
 }
 type TRoutes = {
   [key: string]: TRoute
@@ -25,6 +26,7 @@ export const ROUTES: TRoutes = {
       path: 'games',
       name: 'Engineering Lab',
       component: Games,
+      state: {showingExperiment: false},
     },
     EXPERIENCE: {
       path: 'experience',

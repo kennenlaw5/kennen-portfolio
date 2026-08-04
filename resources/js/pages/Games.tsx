@@ -1,4 +1,5 @@
 import React, {lazy, Suspense, useEffect, useRef, useState} from 'react'
+import {useLocation, useNavigate} from 'react-router'
 import Section from 'Components/Section'
 import ExperimentCard from 'Components/games/ExperimentCard'
 import LoadingIndicator from 'Components/layout/LoadingIndicator'
@@ -15,6 +16,10 @@ type TExperiment = {
     concepts: string[]
 }
 
+type TGamesLocationState = {
+    showingExperiment?: unknown
+}
+
 const EXPERIMENTS: Record<TGames, TExperiment> = {
     [GAMES.TIC_TAC_TOE]: {
         description: 'A compact state-modeling exercise built around typed reducer actions and Context. Turn sequencing, win detection, player configuration, and difficulty-based computer choices are separated from presentation for focused tests.',
@@ -27,11 +32,28 @@ const EXPERIMENTS: Record<TGames, TExperiment> = {
 }
 
 const Games: React.FC = () => {
+    const location = useLocation()
+    const navigate = useNavigate()
     const [selectedGame, setSelectedGame] = useState<TGames | null>(null)
     const experimentHeading = useRef<HTMLHeadingElement>(null)
     const experimentButtons = useRef<Partial<Record<TGames, HTMLButtonElement | null>>>({})
     const focusReturnTarget = useRef<TGames | null>(null)
+    const previousLocation = useRef(location)
+    const locationState = location.state as TGamesLocationState | null
     const selectedExperiment = selectedGame ? EXPERIMENTS[selectedGame] : null
+
+    useEffect(() => {
+        if (previousLocation.current === location) {
+            return
+        }
+
+        previousLocation.current = location
+
+        if (selectedGame !== null && locationState?.showingExperiment !== true) {
+            focusReturnTarget.current = null
+            setSelectedGame(null)
+        }
+    }, [location, locationState?.showingExperiment, selectedGame])
 
     useEffect(() => {
         if (selectedGame === GAMES.SQUARE_OFF_PRO) {
@@ -48,10 +70,15 @@ const Games: React.FC = () => {
     const handleOpen = (game: TGames) => {
         focusReturnTarget.current = game === GAMES.SQUARE_OFF_PRO ? game : null
         setSelectedGame(game)
+        navigate(location.pathname, {
+            replace: true,
+            state: {showingExperiment: true},
+        })
     }
 
     const handleBack = () => {
         setSelectedGame(null)
+        navigate(location.pathname, {replace: true})
     }
 
     return selectedGame ? (

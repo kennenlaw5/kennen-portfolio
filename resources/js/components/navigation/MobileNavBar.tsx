@@ -25,10 +25,11 @@ const MobileNavBar: React.FC<TMobileNavBarProps> = ({isOpen, closeMenu}) => (
                     {HOME_ROUTE.name}
                 </Link>
             </li>
-            {Object.values(ROUTES).map(({name: routeName, path}) => (
+            {Object.values(ROUTES).map(({name: routeName, path, state}) => (
                 <li key={routeName} className="border-t border-blue-600">
                     <Link
                         to={path}
+                        state={state}
                         onClick={closeMenu}
                         className="block text-center py-3 transition hover:bg-blue-600"
                     >
