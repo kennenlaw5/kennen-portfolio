@@ -23,6 +23,7 @@ import {
   EngineerDescription,
   HelpDeskDescription,
   JuniorEngineerDescription,
+  SchompProjectDescription,
   SeniorEngineerDescription
 } from 'Components/ExperienceDescriptions'
 
@@ -41,6 +42,12 @@ type TExperienceCompany = {
 
 const Experience: React.FC = () => {
   const projects: TProjects = [
+    {
+      title: 'Schomp Automotive — Custom Business Solutions & Automation',
+      description: <SchompProjectDescription />,
+      className: 'col-span-full',
+      technologies: [],
+    },
     {
       analyticsId: PROJECT_ANALYTICS_IDS.AKIDO_LABS,
       title: 'Akido Labs — Clinical Platform and AI-Assisted Engineering',
@@ -216,6 +223,11 @@ const Experience: React.FC = () => {
         <p className="mb-4 text-gray-600 text-xl">
           Senior full-stack engineer with 7+ years in software-development roles
           and more than eight years on software-product teams.
+        </p>
+        <p className="mb-4 text-gray-600 text-lg">
+          My work connects business needs with hands-on engineering: custom solutions,
+          data automation, and AI adoption that fits existing systems and workflows.
+          I bring security, reliability, and operating cost into those decisions from the start.
         </p>
         <a
           href={RESUME_DOWNLOAD_PATH}

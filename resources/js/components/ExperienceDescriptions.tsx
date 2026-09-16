@@ -1,14 +1,39 @@
 import React from 'react'
 
-export const AkidoProjectDescription: React.FC = () => (
+export const SchompProjectDescription: React.FC = () => (
     <p>
-        Built TypeScript features across a multi-repository, FHIR-based clinical
-        platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.
-        Used Codex alongside Claude Code CLI configured through Amazon Bedrock, with MCP
-        integrations, to create reusable skills and multi-step agent workflows with
-        validation and retry loops while controlling context and token usage to
-        minimize overhead.
+        Developed custom business solutions for Schomp Automotive, using scripting to automate
+        data ingestion and analysis. Translated operational needs into practical
+        tools that reduced manual data work and made information easier to use.
+        This work grounded my approach to engineering in understanding a business
+        problem and building software that fits the people and processes around it.
     </p>
+)
+
+export const AkidoProjectDescription: React.FC = () => (
+    <div className="space-y-3">
+        <p>
+            As Akido Labs worked toward becoming an AI-first organization, I helped
+            guide adoption decisions and build a practical foundation for the
+            engineering team. Created custom AI skills and tools that helped
+            engineers get more accurate, reliable, and useful output with more
+            cost-effective AI usage.
+        </p>
+        <p>
+            Built TypeScript features across a multi-repository, FHIR-based clinical
+            platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.
+            Used Codex alongside Claude Code CLI configured through Amazon Bedrock, with MCP
+            integrations, to create reusable skills and multi-step agent workflows with
+            validation and retry loops while controlling context and token usage to
+            minimize overhead. My adoption approach also considered data access and security.
+        </p>
+        <p>
+            Kept the approach agent agnostic so the workflows could evolve with AI
+            tooling without depending on a single agent. Plans included extending
+            the approach beyond engineering to teams such as Product, building on
+            the foundation established with engineers.
+        </p>
+    </div>
 )
 
 export const EngrainProjectDescription: React.FC = () => (
@@ -95,6 +120,10 @@ export const AkidoDescription: React.FC = () => (
         skills and multi-step agent workflows for code changes and debugging. Applied
         validation and retry loops when consistency mattered and kept AI usage lean
         through deliberate context and token control.
+        Helped guide AI adoption decisions and built custom skills and tools that
+        made engineering output more reliable, useful, and cost-effective, with
+        security informing the approach. Kept the approach agent agnostic, with
+        plans to extend it to other teams, including Product.
     </p>
 )
 
