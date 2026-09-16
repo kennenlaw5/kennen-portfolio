@@ -5,6 +5,13 @@ import Card from 'Components/card/Card'
 const FeaturedExperiences: React.FC = () => (
     <Section header="Featured Experience">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card header="Custom Business Solutions for Schomp Automotive" className="col-span-full">
+                <p>
+                    Developed custom scripting solutions for Schomp Automotive to automate
+                    data ingestion and analysis, translating business needs into practical
+                    tools for day-to-day operations.
+                </p>
+            </Card>
             <Card header="Akido Labs Clinical Platform">
                 <p>
                     {'At '}
@@ -19,10 +26,12 @@ const FeaturedExperiences: React.FC = () => (
                     {', built TypeScript features across a multi-repository, FHIR-based clinical platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.'}
                 </p>
             </Card>
-            <Card header="AI-Assisted Engineering">
+            <Card header="AI Adoption at Akido Labs">
                 <p>
-                    Create reusable prompts, skills, and multi-step agent flows with
-                    validation and retry loops, while keeping context and token usage lean.
+                    Helped guide AI adoption and built custom skills and tools for
+                    more reliable, useful, and cost-effective engineering output.
+                    Kept the approach agent agnostic, with plans to expand to teams
+                    such as Product and preserve flexibility as AI tooling evolves.
                 </p>
             </Card>
             <Card header="57% Faster CI at Engrain">

@@ -18,6 +18,10 @@ const Home: React.FC = () => {
               supporting software products. My work spans clinical platforms, high-performance web products,
               and practical AI-assisted engineering workflows.
           </p>
+          <p className="text-lg text-gray-700 mb-6">
+              I turn business needs into custom software and automation, and help teams
+              adopt AI within their existing systems with security, reliability, and cost in mind.
+          </p>
           <Link to={ROUTES.EXPERIENCE.path} className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition">
             View My Work
           </Link>
