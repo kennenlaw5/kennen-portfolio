@@ -341,6 +341,12 @@ provider values:
 The production image also enforces `zend.exception_ignore_args=On`; stack frames retain
 safe file and line evidence without serializing argument values.
 
+The production build refuses any base image older than PHP 8.5.12, the release that fixes
+PHP2Shell (CVE-2026-109618, CVE-2026-109619). It also disables
+`session.upload_progress.enabled` and `fatal_error_backtraces` as defense in depth. Raise
+the version floor whenever a later PHP security release must be guaranteed. Then deploy
+so Render rebuilds on the updated `php:8.5-fpm-bookworm` base.
+
 ### GA4 activation gate
 
 1. Deploy the compatible commit with both providers off. Keep
