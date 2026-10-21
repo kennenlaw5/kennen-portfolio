@@ -17,6 +17,16 @@ $app->make(Kernel::class)->bootstrap();
  */
 $checks = [
     'php_exception_arguments_hidden' => ini_get('zend.exception_ignore_args') === '1',
+    'php_upload_progress_disabled' => in_array(
+        ini_get('session.upload_progress.enabled'),
+        ['', '0'],
+        true,
+    ),
+    'php_fatal_error_backtraces_disabled' => in_array(
+        ini_get('fatal_error_backtraces'),
+        ['', '0'],
+        true,
+    ),
     'sentry_logs_disabled' => config('sentry.enable_logs') === false,
     'sentry_metrics_disabled' => config('sentry.enable_metrics') === false,
     'sentry_tracing_disabled' => in_array(

@@ -47,6 +47,9 @@ FROM php:8.5-fpm-bookworm AS production
 
 WORKDIR /var/www
 
+# Refuse a stale base image that predates the PHP2Shell fixes (CVE-2026-109618, CVE-2026-109619).
+RUN php -r 'if (version_compare(PHP_VERSION, "8.5.12", "<")) { fwrite(STDERR, "PHP ".PHP_VERSION." predates the required 8.5.12 security release.\n"); exit(1); }'
+
 RUN mkdir -p /usr/share/man/man1
 
 # Install system dependencies (minimal set, including git)
