@@ -30,10 +30,17 @@ const Header: React.FC<THeaderProps> = ({isLoading = false}) => {
   const closeMenu = () => setIsOpen(false)
 
   return (
-    <header className="relative bg-blue-600 text-white shadow-md">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/70 text-white backdrop-blur-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <h3 className="font-bold">
-          <Link to={HOME_ROUTE.path} onClick={closeMenu}>Kennen Lawrence</Link>
+        <h3 className="text-xl font-semibold tracking-tight">
+          <Link
+            to={HOME_ROUTE.path}
+            onClick={closeMenu}
+            className="inline-flex items-center gap-2 rounded-md text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+          >
+            <span aria-hidden="true" className="font-mono text-cyan-400">&gt;_</span>
+            Kennen Lawrence
+          </Link>
         </h3>
         {!isLoading ? (
           <>

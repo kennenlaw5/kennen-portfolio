@@ -17,6 +17,8 @@ const Skill: React.FC<TSkillProps> = ({name, shouldShow = true, type}) => (
             styles[`skill${capitalize(type)}`],
             {'hidden': !shouldShow}
         )}
+        data-label={name}
+        data-spotlight
     >
         {name}
     </span>

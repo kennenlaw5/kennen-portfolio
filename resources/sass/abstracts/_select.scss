@@ -1,0 +1,14 @@
+// Replaces the native select arrow, which sits against the right border, with an inset chevron.
+@mixin chevron {
+    @apply appearance-none bg-no-repeat pr-9;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2394a3b8' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.625rem center;
+    background-size: 1rem;
+}
+
+// Restores the system arrow inside a forced-colors query so it follows the user's palette.
+@mixin native-arrow {
+    appearance: auto;
+    background-image: none;
+}

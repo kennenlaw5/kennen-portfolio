@@ -19,14 +19,14 @@ const BoardHelper: React.FC = () => {
                     </span>
                     <button
                         onClick={() => dispatch({type: 'MAKE_COMPUTER_MOVE'})}
-                        className="bg-blue-500 text-white px-3 py-1 rounded mt-2 hover:bg-blue-600 transition-colors"
+                        className="button button-primary mt-2 px-4 py-1.5 text-sm"
                     >
                         Start
                     </button>
                 </>
             ) : null}
             {!isGameActive && gameMode !== GAME_MODES.COMPUTER ? (
-                <span className="text-gray-400 text-sm text-center">Awaiting game...</span>
+                <span className="text-slate-400 text-sm text-center">Awaiting game...</span>
             ) : null}
         </div>
     )

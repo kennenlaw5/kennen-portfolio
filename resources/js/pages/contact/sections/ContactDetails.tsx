@@ -47,7 +47,7 @@ const ContactDetails: React.FC = () => {
     ]
 
     return (
-        <div>
+        <div className="surface p-6">
             <h4 className="font-bold mb-4">Contact Details</h4>
             <ul className="space-y-4">
                 {contactInfo.map((item, index) => <ContactDetail key={index} item={item} />)}

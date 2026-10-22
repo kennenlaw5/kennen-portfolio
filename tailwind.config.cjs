@@ -12,6 +12,15 @@ module.exports = {
       scale: {
         '115': '1.15',
       },
+      keyframes: {
+        blink: {
+          '0%, 100%': {opacity: '1'},
+          '50%': {opacity: '0'},
+        },
+      },
+      animation: {
+        blink: 'blink 1.1s steps(1) infinite',
+      },
     }
   },
   plugins: [],

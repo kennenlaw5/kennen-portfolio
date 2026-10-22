@@ -34,7 +34,7 @@ const Project: React.FC<TProjectProps> = ({project, defaultOpen = false, isDropD
                         href={project.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="link inline-flex text-gray-700"
+                        className="link inline-flex text-slate-100"
                         onClick={() => trackProjectLinkClicked(
                             project.analyticsId,
                         )}
@@ -44,10 +44,10 @@ const Project: React.FC<TProjectProps> = ({project, defaultOpen = false, isDropD
                     </a>
                 ) : title}
             </h4>
-            <div className="text-gray-600 mb-2">{description}</div>
+            <div className="mb-4">{description}</div>
             {technologies.length ? (
                 <>
-                    <Tooltip className='mb-2 text-gray-600'>
+                    <Tooltip className='mb-2 text-slate-300'>
                         <TooltipTrigger>
                             <span className='inline-flex font-semibold'>
                                 Highlighted Skills&nbsp;

@@ -9,12 +9,20 @@ type TCard = {
 }
 
 const Section: React.FC<TCard> = ({children, className, header, subHeader}) => (
-    <section className={classNames('mb-8', className)}>
+    <section className={classNames('mb-12 md:mb-16', className)}>
         {header || subHeader ? (
-            <div className='md:flex md:flex-wrap mb-4'>
-                {header ? <h2>{header}</h2> : null}
+            <div className='md:flex md:flex-wrap md:items-center mb-6'>
+                {header ? (
+                    <h2 className="flex items-center gap-3">
+                        <span
+                            aria-hidden="true"
+                            className="h-7 w-1 rounded-full bg-gradient-to-b from-cyan-400 to-violet-500"
+                        />
+                        {header}
+                    </h2>
+                ) : null}
                 {subHeader ? (
-                    <h3 className="text-gray-500 mt-2 md:mt-auto md:inline-flex">
+                    <h3 className="text-slate-400 mt-2 md:mt-auto md:inline-flex">
                         <span className="hidden md:inline-block">&nbsp;-&nbsp;</span>
                         {subHeader}
                     </h3>

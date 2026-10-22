@@ -24,7 +24,7 @@ const ModeSelect: React.FC = () => {
             id="tic-tac-toe-game-mode"
             value={gameMode}
             onChange={({target: {value}}) => updateGameMode(value)}
-            className="border p-1 rounded"
+            className="field-select"
             disabled={isGameActive}
           >
             {Object.values(GAME_MODES).map((mode) => (
@@ -41,7 +41,7 @@ const ModeSelect: React.FC = () => {
               id="tic-tac-toe-difficulty"
               value={difficulty}
               onChange={({target: {value}}) => setDifficulty(value)}
-              className="border p-1 rounded"
+              className="field-select"
               disabled={isGameActive}
             >
               {Object.values(DIFFICULTIES).map((difficulty) => (

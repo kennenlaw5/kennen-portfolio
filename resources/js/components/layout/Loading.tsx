@@ -6,8 +6,8 @@ const Loading: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
         <Header isLoading />
-        <div className="flex items-center justify-center h-screen w-full bg-gray-100">
-            <FaSpinner className="animate-spin text-blue-600 text-4xl mb-4" />
+        <div className="flex items-center justify-center h-screen w-full">
+            <FaSpinner className="animate-spin text-cyan-400 text-4xl mb-4 motion-reduce:animate-none" />
         </div>
     </div>
   )

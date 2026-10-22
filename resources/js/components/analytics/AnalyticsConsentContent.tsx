@@ -49,7 +49,7 @@ const AnalyticsConsentContent: React.FC<
         )}
         {privacySignalActive && (
             <p
-                className="mb-0 mt-2 border-l-4 border-blue-500 bg-blue-50 px-3 py-2"
+                className="mb-0 mt-2 rounded-r-md border-l-4 border-cyan-400 bg-cyan-400/10 px-3 py-2"
                 id={PRIVACY_SIGNAL_DESCRIPTION_ID}
             >
                 A browser privacy signal keeps analytics disabled.
@@ -58,7 +58,7 @@ const AnalyticsConsentContent: React.FC<
         )}
         <div role="status">
             {failedPreference !== null && (
-                <p className="mb-0 mt-2 border-l-4 border-red-500 bg-red-50 px-3 py-2">
+                <p className="mb-0 mt-2 rounded-r-md border-l-4 border-rose-400 bg-rose-400/10 px-3 py-2">
                     This browser could not save your choice. Analytics
                     is off for this page. {
                         failedPreference === 'denied'

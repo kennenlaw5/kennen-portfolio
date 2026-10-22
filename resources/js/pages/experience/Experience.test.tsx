@@ -34,7 +34,7 @@ describe('Experience highlighted skills', () => {
         render(<Experience />)
 
         const akidoProject = screen
-            .getByRole('link', {name: 'Akido Labs — Clinical Platform and AI-Assisted Engineering'})
+            .getByRole('link', {name: 'Akido Labs — AI Adoption and AI-Assisted Engineering'})
             .closest('div')
         const amazonAutosProject = screen
             .getByRole('link', {name: 'Amazon Autos'})

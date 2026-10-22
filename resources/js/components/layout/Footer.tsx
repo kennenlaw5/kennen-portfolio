@@ -14,16 +14,16 @@ const Footer: React.FC = () => {
     } = useAnalyticsPreferences()
 
     return (
-        <footer className="bg-gray-800 text-gray-300 py-4">
+        <footer className="mt-8 border-t border-white/10 bg-slate-950/60 py-6 text-sm text-slate-400 backdrop-blur">
             <div className="container mx-auto text-center">
-                <div className='flex justify-center items-center space-x-4 mt-2'>
+                <div className='flex justify-center items-center space-x-4 mt-2 text-slate-300'>
                     <Email />
-                    <span className='cursor-default select-none'>|</span>
+                    <span className='cursor-default select-none text-slate-600'>|</span>
                     <Linkedin />
                 </div>
                 {isAvailable && (!isOpen || shouldFocusPreferences) && (
                     <button
-                        className="mt-2 text-sm underline decoration-gray-500 underline-offset-4 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800"
+                        className="mt-3 underline decoration-slate-600 underline-offset-4 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
                         onClick={(event) => openPreferences(
                             event.currentTarget,
                         )}
@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
                         Analytics preferences
                     </button>
                 )}
-                <p>&copy; {(new Date()).getFullYear()} Kennen Lawrence. All rights reserved.</p>
+                <p className="mt-3">&copy; {(new Date()).getFullYear()} Kennen Lawrence. All rights reserved.</p>
             </div>
         </footer>
     )

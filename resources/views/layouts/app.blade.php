@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#2563EB">
+  <meta name="theme-color" content="#020617">
   <title>@yield('title', 'Kennen Lawrence Portfolio')</title>
   <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="32x32">
   <link rel="icon" href="{{ asset('favicon-32x32.png') }}" type="image/png" sizes="32x32">
@@ -18,7 +18,7 @@
     ]);
   </script>
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-slate-950 text-slate-300 antialiased">
   @yield('content')
   <script src="{{ asset('js/app.js') }}"></script>
 </body>

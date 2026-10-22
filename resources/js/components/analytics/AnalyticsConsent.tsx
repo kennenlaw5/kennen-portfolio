@@ -66,8 +66,8 @@ const AnalyticsConsent: React.FC = () => {
                         phase === ANALYTICS_CONSENT_PHASES.CLOSING,
                 },
                 'fixed inset-x-0 bottom-0 z-40 overflow-y-auto',
-                'border-t border-gray-300',
-                'bg-white pb-[env(safe-area-inset-bottom)] shadow-lg',
+                'border-t border-white/10',
+                'bg-slate-950/95 pb-[env(safe-area-inset-bottom)] shadow-2xl shadow-black/50 backdrop-blur-md',
             )}
             data-testid="analytics-consent-panel"
             inert={isHidden || undefined}

@@ -1,0 +1,74 @@
+// Cursor-follow glow confined to an element's edge and text. Mark the element with data-spotlight
+// so SpotlightTracker supplies --spotlight-x and --spotlight-y relative to it. Elements can tune
+// the glow with --glow-edge-color, --glow-edge-radius, --glow-edge-width, --glow-text-color and
+// --glow-text-radius.
+
+@mixin -layer {
+    @apply pointer-events-none absolute opacity-0 transition-opacity duration-300;
+
+    content: '';
+}
+
+// Reveals the layer for a hovering mouse, either over the element or over a spotlight around it.
+@mixin -reveal($pseudo) {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover::#{$pseudo},
+        [data-spotlight]:hover &::#{$pseudo} {
+            @apply opacity-100;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &::#{$pseudo} {
+            display: none;
+        }
+    }
+}
+
+// Lights a ring along the element's edge, brightest at the cursor. $outset is the element's own
+// border width, so the ring sits on that border rather than just inside it.
+@mixin edge($color, $radius: 2.5rem, $outset: 0, $pseudo: after) {
+    @apply relative;
+
+    &::#{$pseudo} {
+        @include -layer;
+
+        inset: -1 * $outset;
+        padding: var(--glow-edge-width, 1px);
+        border-radius: inherit;
+        background-image: radial-gradient(
+            circle var(--glow-edge-radius, #{$radius}) at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+            var(--glow-edge-color, #{$color}),
+            transparent 75%
+        );
+        mask:
+            linear-gradient(#000 0 0) content-box exclude,
+            linear-gradient(#000 0 0);
+    }
+
+    @include -reveal($pseudo);
+}
+
+// Lights the letters nearest the cursor with a transparent copy of the label drawn over it. The
+// element must contain only its text and repeat it in data-label; the copy's empty alternative
+// text keeps assistive technology from reading the label twice.
+@mixin text($color, $radius: 1.75rem, $pseudo: before) {
+    @apply relative;
+
+    &::#{$pseudo} {
+        @include -layer;
+        @apply inset-0 bg-clip-text;
+
+        padding: inherit;
+        color: transparent;
+        white-space: nowrap;
+        content: attr(data-label) / '';
+        background-image: radial-gradient(
+            circle var(--glow-text-radius, #{$radius}) at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+            var(--glow-text-color, #{$color}),
+            transparent 75%
+        );
+    }
+
+    @include -reveal($pseudo);
+}

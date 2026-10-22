@@ -52,7 +52,9 @@ const CardTitle: React.FC<TCardTitleProps> = (props) => {
             type="button"
             aria-controls={contentId}
             aria-expanded={isOpen}
-            className={classNames(styles.cardHeader, styles.cardHeaderIconClickable)}
+            className={classNames(styles.cardHeader, styles.cardHeaderIconClickable, {
+                [styles.cardHeaderIconClickableExpanded]: isOpen,
+            })}
             onClick={toggleDropDown}
         >
             {titleContent}

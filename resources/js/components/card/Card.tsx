@@ -66,7 +66,9 @@ const Card: React.FC<TCardProps> = (props) => {
                     [styles.cardContentWrapperClipped]: !isContentOverflowVisible,
                     [styles.cardContentWrapperOverflowVisible]: isContentOverflowVisible,
                 })}>
-                    {children}
+                    <div className={styles.cardContentBody}>
+                        {children}
+                    </div>
                 </div>
             </div>
         </div>
