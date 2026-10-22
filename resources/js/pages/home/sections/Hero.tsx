@@ -7,7 +7,7 @@ import HeroProfileWindow from './HeroProfileWindow'
 
 const Hero: React.FC = () => (
     <Section className="pt-6 pb-4 lg:pt-14">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_1fr]">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
             <div>
                 <p className="eyebrow mb-6">
                     <span aria-hidden="true" className="relative flex h-2 w-2">

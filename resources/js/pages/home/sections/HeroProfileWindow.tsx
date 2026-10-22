@@ -33,7 +33,7 @@ const HeroProfileWindow: React.FC = () => (
                 <span className="h-3 w-3 rounded-full bg-emerald-400/80" />
                 <span className="ml-3 font-mono text-xs text-slate-400">profile.ts</span>
             </div>
-            <pre className="p-5 font-mono text-xs leading-relaxed text-slate-300 sm:text-sm">
+            <pre className="whitespace-pre-wrap break-words p-5 font-mono text-xs leading-relaxed text-slate-300 sm:text-sm">
                 <code>
                     <span className="text-violet-300">const</span> <span className="text-sky-300">engineer</span>
                     <Punctuation>{' = {'}</Punctuation>{'\n'}
