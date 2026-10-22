@@ -16,7 +16,7 @@ const Home: React.FC = () => {
           <p className="text-xl text-gray-700 mb-6">
               7+ years in software development roles and more than eight years building and
               supporting software products. My work spans clinical platforms, high-performance web products,
-              and practical AI-assisted engineering workflows.
+              and practical AI-assisted workflows.
           </p>
           <p className="text-lg text-gray-700 mb-6">
               I turn business needs into custom software and automation, and help teams
