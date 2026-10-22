@@ -7,10 +7,12 @@ type TContactDetailProps = {
 }
 const ContactDetail: React.FC<TContactDetailProps> = ({item}) => (
     <li className="flex items-center">
-        <span className="text-blue-500">{<item.icon aria-hidden="true" />}</span>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+            {<item.icon aria-hidden="true" />}
+        </span>
         <a
             href={item.link}
-            className="link ml-3 text-gray-700"
+            className="link ml-4 break-all text-slate-200"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackContactLinkClicked(item.analyticsMethod)}

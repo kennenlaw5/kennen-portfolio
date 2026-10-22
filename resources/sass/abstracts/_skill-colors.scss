@@ -2,18 +2,18 @@
 
 $skill-colors: (
   ai: "amber",
-  frontend: "green",
-  backend: "blue",
+  frontend: "emerald",
+  backend: "indigo",
   cloud: "fuchsia",
   tooling: "cyan",
-  all: "red",
+  all: "slate",
 );
 
 @mixin skill-colors($type) {
     $color: map.get($skill-colors, $type);
 
     @if $color {
-        @apply bg-#{$color}-100 text-#{$color}-800 border-#{$color}-300;
+        @apply border bg-#{$color}-400/10 text-#{$color}-300 border-#{$color}-400/25;
     }
 }
 
@@ -21,12 +21,12 @@ $skill-colors: (
     $color: map.get($skill-colors, $type);
 
     @if $color {
-        @apply shadow
-            bg-#{$color}-100
-            text-#{$color}-800
-            border-#{$color}-300
-            hover:bg-#{$color}-200
-            hover:shadow-none;
+        @apply border
+            bg-#{$color}-400/5
+            text-#{$color}-300
+            border-#{$color}-400/20
+            hover:bg-#{$color}-400/15
+            hover:border-#{$color}-400/40;
     }
 }
 
@@ -34,10 +34,11 @@ $skill-colors: (
     $color: map.get($skill-colors, $type);
 
     @if $color {
-        @apply bg-white
-            border
-            text-#{$color}-800
-            border-#{$color}-300
-            hover:bg-#{$color}-200;
+        @apply border
+            bg-#{$color}-400/20
+            text-#{$color}-100
+            border-#{$color}-300/70
+            shadow-lg
+            shadow-#{$color}-500/20;
     }
 }

@@ -50,7 +50,7 @@ const Experience: React.FC = () => {
     },
     {
       analyticsId: PROJECT_ANALYTICS_IDS.AKIDO_LABS,
-      title: 'Akido Labs — Clinical Platform and AI-Assisted Engineering',
+      title: 'Akido Labs — AI Adoption and AI-Assisted Engineering',
       description: <AkidoProjectDescription />,
       link: 'https://www.akidolabs.com/',
       company: 'Akido Labs',
@@ -220,11 +220,12 @@ const Experience: React.FC = () => {
   return (
     <>
       <Section header="Projects & Experience">
-        <p className="mb-4 text-gray-600 text-xl">
+        <p className="mb-4 text-slate-300 text-xl">
           Senior full-stack engineer with 7+ years in software-development roles
-          and more than eight years on software-product teams.
+          and more than eight years on software-product teams, most of them at
+          A2Z Sync building automotive digital-retail software.
         </p>
-        <p className="mb-4 text-gray-600 text-lg">
+        <p className="mb-8 text-slate-400 text-lg">
           My work connects business needs with hands-on engineering: custom solutions,
           data automation, and AI adoption that fits existing systems and workflows.
           I bring security, reliability, and operating cost into those decisions from the start.
@@ -232,10 +233,11 @@ const Experience: React.FC = () => {
         <a
           href={RESUME_DOWNLOAD_PATH}
           onClick={() => trackResumeDownloadIntent('experience')}
-          className="inline-flex bg-blue-600 text-white px-5 py-2.5 rounded hover:bg-blue-700 transition"
+          className="button button-secondary glow-border"
+          data-spotlight
         >
-          <span className="inline-flex items-center gap-2">
-            <FaDownload aria-hidden="true" />
+          <FaDownload aria-hidden="true" />
+          <span className="glow-text" data-label="Download My Resume" data-spotlight>
             Download My Resume
           </span>
         </a>
@@ -268,15 +270,15 @@ const Experience: React.FC = () => {
                 {roles.map((role, index) => (
                   <div
                     key={`${company}-${role.title}`}
-                    className={index ? 'border-t border-gray-200 pt-6' : ''}
+                    className={index ? 'border-t border-white/10 pt-6' : ''}
                   >
                     <div className="sm:flex sm:items-baseline sm:justify-between sm:gap-4">
-                      <h5 className="font-semibold text-gray-800">{role.title}</h5>
+                      <h5 className="font-semibold text-slate-100">{role.title}</h5>
                       {roles.length > 1 ? (
-                        <p className="text-sm text-gray-500 whitespace-nowrap">{role.dateRange}</p>
+                        <p className="font-mono text-xs text-cyan-300/80 whitespace-nowrap">{role.dateRange}</p>
                       ) : null}
                     </div>
-                    <div className="text-gray-600 mt-2">{role.description}</div>
+                    <div className="mt-2">{role.description}</div>
                   </div>
                 ))}
               </div>

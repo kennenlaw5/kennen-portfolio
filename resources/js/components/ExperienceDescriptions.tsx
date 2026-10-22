@@ -20,12 +20,12 @@ export const AkidoProjectDescription: React.FC = () => (
             cost-effective AI usage.
         </p>
         <p>
-            Built TypeScript features across a multi-repository, FHIR-based clinical
-            platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.
             Used Codex alongside Claude Code CLI configured through Amazon Bedrock, with MCP
             integrations, to create reusable skills and multi-step agent workflows with
             validation and retry loops while controlling context and token usage to
             minimize overhead. My adoption approach also considered data access and security.
+            Day to day, I shipped TypeScript features across the company's platform with
+            Next.js, NestJS, GraphQL, and PostgreSQL.
         </p>
         <p>
             Kept the approach agent agnostic so the workflows could evolve with AI
@@ -113,17 +113,14 @@ export const A2zOnlineDescription: React.FC = () => (
 
 export const AkidoDescription: React.FC = () => (
     <p>
-        Worked across a multi-repository, FHIR-based clinical platform, building
-        TypeScript features in Next.js and React and in NestJS and Node.js services
-        backed by GraphQL, PostgreSQL, and Kafka. Used Codex alongside Claude Code CLI
-        configured through Amazon Bedrock, with MCP integrations, to build reusable
-        skills and multi-step agent workflows for code changes and debugging. Applied
-        validation and retry loops when consistency mattered and kept AI usage lean
-        through deliberate context and token control.
         Helped guide AI adoption decisions and built custom skills and tools that
         made engineering output more reliable, useful, and cost-effective, with
-        security informing the approach. Kept the approach agent agnostic, with
-        plans to extend it to other teams, including Product.
+        security informing the approach. Used Codex alongside Claude Code CLI
+        configured through Amazon Bedrock, with MCP integrations, to build reusable
+        skills and multi-step agent workflows with validation and retry loops and
+        deliberate context and token control. Kept the approach agent agnostic, with
+        plans to extend it to other teams, including Product. Also shipped TypeScript
+        features with Next.js, NestJS, GraphQL, and PostgreSQL.
     </p>
 )
 

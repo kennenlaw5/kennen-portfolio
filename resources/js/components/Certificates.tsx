@@ -10,10 +10,15 @@ const Certificates: React.FC = () => {
             {RECREATIONAL_CERTIFICATES.map((certificate) => (
                 <Card key={certificate.text} header={certificate.text}>
                     <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <a href={certificate.link} target="_blank" rel="noopener noreferrer">
-                            <img src={certificate.image} alt={certificate.alt} className="w-24 h-24 object-contain" />
+                        <a
+                            href={certificate.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 rounded-xl bg-white/90 p-2 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
+                        >
+                            <img src={certificate.image} alt={certificate.alt} className="w-20 h-20 object-contain" />
                         </a>
-                        <p className="text-gray-700">{certificate.description}</p>
+                        <p>{certificate.description}</p>
                     </div>
                 </Card>
             ))}

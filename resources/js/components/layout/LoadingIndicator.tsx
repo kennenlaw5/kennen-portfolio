@@ -14,7 +14,7 @@ const LoadingIndicator: React.FC<TLoadingIndicatorProps> = ({label, className}) 
     >
         <FaSpinner
             aria-hidden="true"
-            className="animate-spin text-blue-600 text-4xl mb-4 motion-reduce:animate-none"
+            className="animate-spin text-cyan-400 text-4xl mb-4 motion-reduce:animate-none"
         />
         <span className="sr-only">{label}</span>
     </div>

@@ -12,26 +12,60 @@ const FeaturedExperiences: React.FC = () => (
                     tools for day-to-day operations.
                 </p>
             </Card>
-            <Card header="Akido Labs Clinical Platform">
+            <Card header="Amazon Autos at A2Z Sync">
                 <p>
-                    {'At '}
+                    {'Built inventory syndication and pricing integrations for the historical '}
                     <a
-                        href="https://www.akidolabs.com/"
+                        href="https://www.amazon.com/Amazon-Autos/b?ie=UTF8&node=10677469011"
                         className="underline link"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Akido Labs
+                        Amazon Autos
                     </a>
-                    {', built TypeScript features across a multi-repository, FHIR-based clinical platform using Next.js, React, NestJS, Node.js, GraphQL, PostgreSQL, and Kafka.'}
+                    {' launch, keeping vehicle and pricing data accurate for thousands of vehicles across hundreds of dealerships.'}
                 </p>
             </Card>
-            <Card header="AI Adoption at Akido Labs">
+            <Card header="A2Z In-Store Platform">
                 <p>
-                    Helped guide AI adoption and built custom skills and tools for
-                    more reliable, useful, and cost-effective engineering output.
-                    Kept the approach agent agnostic, with plans to expand to teams
-                    such as Product and preserve flexibility as AI tooling evolves.
+                    {'Built and optimized React experiences for the '}
+                    <a
+                        href="https://a2zsync.com/in-store/"
+                        className="underline link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        A2Z Sync in-store platform
+                    </a>
+                    {', including shared component libraries and CRM integrations, as it grew from seven dealership rooftops to hundreds nationwide.'}
+                </p>
+            </Card>
+            <Card header="A2Z Online Digital Retail">
+                <p>
+                    {'Owned credit-application integrations with multiple bureaus and lending providers for the '}
+                    <a
+                        href="https://a2zsync.com/online/"
+                        className="underline link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        A2Z Sync online platform
+                    </a>
+                    {', which became a Mazda Digital Certified Retail provider.'}
+                </p>
+            </Card>
+            <Card header="Help Desk to Senior Engineer">
+                <p>
+                    {'Spent seven years at '}
+                    <a
+                        href="https://www.a2zsync.com"
+                        className="underline link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        A2Z Sync
+                    </a>
+                    {' and was promoted three times, improving React UI load times by up to 50% and mentoring teammates through pairing and code reviews.'}
                 </p>
             </Card>
             <Card header="57% Faster CI at Engrain">
@@ -48,55 +82,18 @@ const FeaturedExperiences: React.FC = () => (
                     {', reduced CI build time from 46 minutes to 20 minutes by changing the test strategy and allocating build resources more efficiently.'}
                 </p>
             </Card>
-            <Card header="Amazon Autos at A2Z Sync">
+            <Card header="AI Adoption at Akido Labs">
                 <p>
-                    {'Built inventory syndication and pricing integrations for the historical '}
+                    {'At '}
                     <a
-                        href="https://www.amazon.com/Amazon-Autos/b?ie=UTF8&node=10677469011"
+                        href="https://www.akidolabs.com/"
                         className="underline link"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        Amazon Autos
+                        Akido Labs
                     </a>
-                    {' launch while serving as a senior engineer at '}
-                    <a
-                        href="https://www.a2zsync.com"
-                        className="underline link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        A2Z Sync
-                    </a>
-                    .
-                </p>
-            </Card>
-            <Card header="A2Z In-Store Platform">
-                <p>
-                    {'Built and optimized React experiences for the '}
-                    <a
-                        href="https://a2zsync.com/in-store/"
-                        className="underline link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        A2Z Sync in-store platform
-                    </a>
-                    {', including shared component libraries, performance improvements, and CRM integrations.'}
-                </p>
-            </Card>
-            <Card header="A2Z Online Digital Retail">
-                <p>
-                    {'Built features for the '}
-                    <a
-                        href="https://a2zsync.com/online/"
-                        className="underline link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        A2Z Sync online platform
-                    </a>
-                    {', including credit-application integrations with multiple bureaus and lending providers.'}
+                    {', helped guide AI adoption and built custom skills and tools for more reliable, useful, and cost-effective engineering output, keeping the approach agent agnostic as AI tooling evolves.'}
                 </p>
             </Card>
         </div>

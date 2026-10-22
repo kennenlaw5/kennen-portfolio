@@ -1,8 +1,26 @@
 $animation-duration: '300';
 $hover-transition-duration: '200';
+$card-padding: 1.25rem;
+$content-gap: 0.5rem;
 
 .card {
-  @apply p-4 max-h-fit bg-white shadow rounded select-none overflow-hidden;
+  @apply relative max-h-fit select-none overflow-hidden rounded-2xl border border-white/10
+    bg-slate-900/60 shadow-lg shadow-black/20 backdrop-blur transition duration-#{$animation-duration}
+    hover:border-cyan-400/30 hover:bg-slate-900/80 motion-reduce:transition-none;
+
+  padding: $card-padding;
+
+  &::before {
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent
+      via-cyan-400/70 to-transparent opacity-0 transition-opacity duration-#{$animation-duration}
+      motion-reduce:transition-none;
+
+    content: '';
+  }
+
+  &:hover::before {
+    @apply opacity-100;
+  }
 
   &__header {
     @apply flex w-full items-center justify-between text-left;
@@ -15,20 +33,32 @@ $hover-transition-duration: '200';
       @apply text-lg transform duration-#{$animation-duration} motion-reduce:transition-none;
 
       &--clickable {
-        @apply cursor-pointer rounded-sm border-0 bg-transparent p-0 transition
-          duration-#{$hover-transition-duration} ease-in-out hover:text-blue-500
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
-          focus-visible:ring-offset-2 motion-reduce:transition-none;
+        @apply cursor-pointer rounded-2xl border-0 bg-transparent transition
+          duration-#{$hover-transition-duration} ease-in-out hover:text-cyan-300
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset
+          focus-visible:ring-cyan-300 motion-reduce:transition-none;
+
+        // The toggle spans the card's padding so every edge of a collapsed card opens it. Negative
+        // margins cancel the extra padding, so the card's layout is unchanged in either state.
+        margin: -$card-padding;
+        padding: $card-padding;
+        width: calc(100% + #{2 * $card-padding});
+
+        // Once open, the toggle stops at the content gap so its focus ring stays clear of the content.
+        &--expanded {
+          margin-bottom: -$content-gap;
+          padding-bottom: $content-gap;
+        }
 
         &:hover .card__subtitle {
-          @apply text-blue-300;
+          @apply text-cyan-200;
         }
       }
 
       &--collapsed {
         @apply rotate-0;
       }
-      
+
       &--expanded {
         @apply rotate-180;
       }
@@ -36,18 +66,18 @@ $hover-transition-duration: '200';
   }
 
   &__title {
-    @apply font-bold;
+    @apply font-semibold text-slate-100;
   }
 
   &__subtitle {
-    @apply text-gray-500 sm:mt-auto sm:inline-flex;
+    @apply text-slate-400 sm:mt-auto sm:inline-flex;
 
     &Separator {
       @apply hidden sm:inline-block;
     }
 
     &--clickable {
-      @apply transition duration-#{$hover-transition-duration} ease-in-out hover:text-blue-300;
+      @apply transition duration-#{$hover-transition-duration} ease-in-out hover:text-cyan-200;
     }
   }
 
@@ -63,8 +93,12 @@ $hover-transition-duration: '200';
     }
   }
 
+  &__contentBody {
+    padding-top: $content-gap;
+  }
+
   &__contentWrapper{
-      @apply pt-2;
+      @apply leading-relaxed text-slate-400;
 
       &--clipped {
         @apply overflow-hidden;

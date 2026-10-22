@@ -17,7 +17,7 @@ const LetterSelect: React.FC = () => {
         <select
           value={playerLetter}
           onChange={({target: {value}}) => dispatch({type: 'SET_PLAYER_LETTER', payload: value})}
-          className="border p-1 rounded"
+          className="field-select"
         >
           {Object.values(PLAYER_LETTERS).map((letter) => (
             <option key={letter} value={letter}>{letter}</option>

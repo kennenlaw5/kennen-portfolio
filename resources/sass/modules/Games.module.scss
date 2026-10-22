@@ -6,8 +6,9 @@
   }
 
   &__backButton {
-    @apply inline-flex min-h-6 min-w-6 items-center gap-2 mb-4 text-sm font-semibold
-      text-blue-600 hover:text-blue-800;
+    @apply inline-flex min-h-6 min-w-6 items-center gap-2 mb-4 rounded-md text-sm font-semibold
+      text-cyan-300 hover:text-cyan-200 focus-visible:outline-none focus-visible:ring-2
+      focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
   }
 
   &__intro {
@@ -15,7 +16,7 @@
   }
 
   &__eyebrow {
-    @apply block mb-2 text-sm font-semibold uppercase tracking-wider text-blue-600;
+    @apply block mb-2 font-mono text-xs font-semibold uppercase tracking-widest text-cyan-300;
   }
 
   &__title {
@@ -23,7 +24,7 @@
   }
 
   &__description {
-    @apply text-gray-600 leading-relaxed;
+    @apply text-slate-400 leading-relaxed;
   }
 
   &__experimentContext {
@@ -36,13 +37,20 @@
 
   &__option {
     @apply relative
-      bg-blue-100
-      hover:scale-105
-      transition-transform
+      rounded-2xl
+      border
+      border-white/10
+      bg-slate-900/60
       p-6
-      rounded-lg
-      shadow
-      text-left;
+      text-left
+      shadow-lg
+      shadow-black/20
+      backdrop-blur
+      transition
+      duration-300
+      hover:-translate-y-1
+      hover:border-cyan-400/40
+      hover:shadow-cyan-500/10;
 
     @media (prefers-reduced-motion: reduce) {
       transition: none;
@@ -53,7 +61,8 @@
     }
 
     &Button {
-      @apply absolute inset-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2;
+      @apply absolute inset-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-cyan-300 focus:ring-offset-2
+        focus:ring-offset-slate-950;
 
       @media (forced-colors: active) {
         &:focus-visible {
@@ -72,15 +81,15 @@
     }
 
     &Image {
-      @apply w-16 h-16 object-contain;
+      @apply w-16 h-16 object-contain invert opacity-90;
     }
 
     &Title {
-      @apply mb-2 text-xl font-semibold;
+      @apply mb-2 text-xl font-semibold text-slate-100;
     }
 
     &Description {
-      @apply text-sm text-gray-700 leading-relaxed;
+      @apply text-sm text-slate-400 leading-relaxed;
     }
 
     &Icon {
@@ -109,6 +118,7 @@
   }
 
   &__concept {
-    @apply inline-flex rounded-full bg-white px-3 py-1 text-xs font-medium text-blue-800 shadow-sm;
+    @apply inline-flex rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-xs font-medium
+      text-violet-200;
   }
 }

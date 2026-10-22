@@ -1,0 +1,25 @@
+.backdrop {
+  @apply pointer-events-none fixed inset-0 -z-10 overflow-hidden;
+
+  &__grid {
+    @apply absolute inset-0;
+
+    background-image:
+      linear-gradient(to right, rgb(148 163 184 / 6%) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(148 163 184 / 6%) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+  }
+
+  &__glow {
+    @apply absolute rounded-full blur-3xl;
+
+    &--primary {
+      @apply -top-48 left-1/2 h-[32rem] w-[56rem] -translate-x-1/2 bg-violet-600/20;
+    }
+
+    &--secondary {
+      @apply -right-40 top-1/3 h-[28rem] w-[28rem] bg-cyan-500/10;
+    }
+  }
+}

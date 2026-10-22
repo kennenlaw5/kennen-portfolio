@@ -11,12 +11,16 @@ import {
 import {
     AnalyticsPreferencesProvider,
 } from 'Components/analytics/AnalyticsPreferencesContext'
+import Backdrop from './Backdrop'
 import Header from './Header'
+import SpotlightTracker from './SpotlightTracker'
 
 const Layout: React.FC = () => (
     <AnalyticsPreferencesProvider>
         <AnalyticsConsentLayoutProvider>
             <div className="flex min-h-screen flex-col">
+                <Backdrop />
+                <SpotlightTracker />
                 <PageViewTracker />
                 <Header />
                 <AnalyticsConsent />

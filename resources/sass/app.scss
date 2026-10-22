@@ -1,31 +1,109 @@
+@use 'abstracts/edge-glow';
+@use 'abstracts/select';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    html {
+        color-scheme: dark;
+        scroll-padding-top: 5rem;
+    }
+
+    ::selection {
+        @apply bg-cyan-400/30 text-white;
+    }
+}
+
+@layer components {
+    .surface {
+        @apply rounded-2xl border border-white/10 bg-slate-900/60 shadow-xl shadow-black/20 backdrop-blur;
+    }
+
+    .text-gradient {
+        @apply bg-gradient-to-r from-cyan-300 via-sky-400 to-violet-400 bg-clip-text text-transparent;
+    }
+
+    .eyebrow {
+        @apply inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1
+            font-mono text-xs uppercase tracking-wider text-cyan-300 sm:tracking-widest;
+    }
+
+    .button {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300
+            focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 motion-reduce:transition-none;
+
+        // Buttons are larger than nav links, so their glow reaches further along the edge.
+        --glow-edge-radius: 4.5rem;
+        --glow-text-radius: 2.5rem;
+    }
+
+    .button-primary {
+        @apply bg-gradient-to-r from-cyan-400 to-violet-400 text-slate-950 shadow-lg shadow-cyan-500/20
+            hover:shadow-violet-500/40 hover:brightness-110;
+    }
+
+    .button-secondary {
+        @apply border border-white/15 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/[0.07];
+
+        // A light-gray label, like the nav links, gives the cyan text glow something to stand out from.
+        // Hover only nudges the fill and border so the cursor glow does the highlighting.
+        --glow-text-color: #67e8f9;
+    }
+
+    // Cursor-follow glow on an edge (cyan-300) and on a text-only label (cyan-200). See
+    // abstracts/_edge-glow.scss; all need data-spotlight, and glow-text also needs data-label.
+    // glow-edge lights the edge of a borderless element; glow-border lights an element's own 1px
+    // border, so the border itself is what glows.
+    .glow-edge {
+        @include edge-glow.edge($color: #67e8f9);
+    }
+
+    .glow-border {
+        @include edge-glow.edge($color: #67e8f9, $outset: 1px);
+    }
+
+    .glow-text {
+        @include edge-glow.text($color: #a5f3fc);
+    }
+
+    .field-select {
+        @include select.chevron;
+        @apply rounded-md border border-white/15 bg-slate-900 py-1 pl-3 text-slate-100
+            focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300
+            disabled:cursor-not-allowed disabled:opacity-50;
+
+        @media (forced-colors: active) {
+            @include select.native-arrow;
+        }
+    }
+}
+
 h1 {
-    @apply text-4xl font-bold;
+    @apply text-4xl font-bold tracking-tight text-white;
 }
 
 h2 {
-    @apply text-3xl font-bold;
+    @apply text-3xl font-bold tracking-tight text-white;
 }
 
 h3 {
-    @apply text-2xl;
+    @apply text-2xl text-slate-100;
 }
 
 h4 {
-    @apply text-xl;
+    @apply text-xl text-slate-100;
 }
 
 h5 {
-    @apply text-lg;
+    @apply text-lg text-slate-100;
 }
 
 a {
     @apply transform duration-200;
 
     &.link {
-        @apply hover:text-blue-500;
+        @apply decoration-cyan-400/40 underline-offset-4 hover:text-cyan-300 hover:decoration-cyan-300;
     }
 }
